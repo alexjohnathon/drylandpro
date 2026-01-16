@@ -8,7 +8,6 @@
     <meta property="og:title" content="Dryland Pro - Free Swim Workout Generator">
     <meta property="og:description"
         content="Don't know what dryland to do? Generate pro-level swim circuits instantly. Free, no ads, built by swimmers.">
-    <meta property="og:image" content="">
     <meta property="og:url" content="https://dryland-pro.netlify.app/">
     <meta property="og:type" content="website">
 
@@ -23,6 +22,36 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --radius: 12px;
+        }
+
+        /* V-TAPER Mode - Warm Orange & Amber */
+        html[data-mode="v-taper"] {
+            --accent: #FF6B35;
+            --success: #FBBF24;
+        }
+
+        /* V-TAPER dropdown arrows */
+        html[data-mode="v-taper"] select {
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FF6B35%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+        }
+
+        /* V-TAPER Random Circuit button gradient */
+        html[data-mode="v-taper"] .btn-random {
+            background: linear-gradient(135deg, #FF6B35, #FBBF24);
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.2);
+        }
+
+        html[data-mode="v-taper"] .btn-random:hover {
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        /* V-TAPER Complete button */
+        html[data-mode="v-taper"] .btn-complete {
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+        }
+
+        html[data-mode="v-taper"] .btn-complete:hover {
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
         }
 
         * {
@@ -69,6 +98,12 @@
             margin: 0;
             font-size: 2.8rem;
             line-height: 1;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        h1:hover {
+            opacity: 0.8;
         }
 
         h1 span {
@@ -85,12 +120,7 @@
             opacity: 0.8;
         }
 
-        .db-count {
-            font-size: 0.7rem;
-            color: #475569;
-            margin-top: 8px;
-            font-family: monospace;
-        }
+
 
         .controls {
             background: var(--card-bg);
@@ -175,25 +205,6 @@
             color: #0f172a;
         }
 
-        /* --- SHARE BUTTON STYLE (Under Results) --- */
-        .btn-share {
-            background: transparent;
-            border: 1px dashed var(--text-muted);
-            color: var(--text-muted);
-            margin-top: 25px;
-            /* Space above button */
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.7;
-        }
-
-        .btn-share:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            opacity: 1;
-            transform: translateY(-1px);
-        }
 
         .divider {
             display: flex;
@@ -237,7 +248,7 @@
 
         .section-title {
             margin-top: 0;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             color: var(--text-muted);
             font-size: 0.8rem;
             text-transform: uppercase;
@@ -247,6 +258,8 @@
             text-align: center;
             font-weight: 700;
         }
+
+
 
         /* --- CARD DESIGN V11 --- */
         .exercise-card {
@@ -335,9 +348,10 @@
         }
 
         .meta-container {
-            display: flex;
-            gap: 25px;
-            margin-top: 5px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 12px;
         }
 
         .meta-group {
@@ -353,6 +367,10 @@
             font-weight: 700;
             letter-spacing: 0.5px;
         }
+
+        /* Removed .card-meta styles as instructed by new layout */
+
+
 
         .tag {
             font-size: 0.75rem;
@@ -418,6 +436,10 @@
             .search-section {
                 grid-template-columns: 1fr;
                 gap: 15px;
+            }
+
+            .meta-container {
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .exercise-card {
@@ -671,6 +693,275 @@
             color: var(--success);
             border-color: var(--success);
         }
+
+        /* --- MODE TOGGLE --- */
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .mode-toggle-group {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 4px;
+            gap: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mode-btn:hover {
+            color: var(--text-main);
+        }
+
+        .mode-btn.active {
+            background: var(--accent);
+            color: #0f172a;
+            box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+        }
+
+        .mode-btn.active:hover {
+            transform: none;
+            filter: brightness(1.05);
+        }
+
+        /* --- CONFIRMATION MODAL --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .modal-message {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-btn-cancel {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+        }
+
+        .modal-btn-cancel:hover {
+            border-color: var(--text-main);
+            color: var(--text-main);
+        }
+
+        .modal-btn-confirm {
+            background: var(--accent);
+            border: none;
+            color: #0f172a;
+        }
+
+        .modal-btn-confirm:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        /* Why It Works Modal */
+        .why-modal-content {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 30px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .why-modal-content {
+            transform: scale(1);
+        }
+
+        .why-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .why-modal-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .why-modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .why-modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+        }
+
+        .why-section {
+            margin-bottom: 20px;
+        }
+
+        .why-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .why-section h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 8px 0;
+        }
+
+        .why-section p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .why-section ul {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.8;
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .why-final {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        html[data-mode="v-taper"] .why-final {
+            background: rgba(255, 107, 53, 0.08);
+            border-color: rgba(255, 107, 53, 0.2);
+        }
+
+        .why-final p {
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .why-final p:last-child {
+            margin-bottom: 0;
+        }
+
+        .why-got-it {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: var(--accent);
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .why-got-it:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 
@@ -679,8 +970,20 @@
     <div class="container">
         <header>
             <div class="header-content">
-                <h1>Dryland<span>Pro</span></h1>
-                <p class="subtitle">For swimmers. By a swimmer.</p>
+                <a href="javascript:location.reload();" style="text-decoration: none; color: inherit;">
+                    <h1>Dryland<span>Pro</span></h1>
+                </a>
+                <p id="subtitle" class="subtitle">For swimmers. By a swimmer.</p>
+            </div>
+            <div class="mode-toggle">
+                <div class="mode-toggle-group">
+                    <button id="toggleSwimmer" class="mode-btn active" onclick="setMode('swimmer')">
+                        SWIMMER
+                    </button>
+                    <button id="toggleVTaper" class="mode-btn" onclick="setMode('vTaper')">
+                        V-TAPER
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -694,11 +997,14 @@
                         <option value="Band">Resistance Band</option>
                         <option value="Dumbbell">Dumbbell</option>
                         <option value="Cable Machine">Cable Machine</option>
-                        <option value="Pull-up Bar">Pull-up Bar</option>
+                        <option value="Pull-Up Bar">Pull-Up Bar</option>
                         <option value="Medicine Ball">Medicine Ball</option>
                         <option value="Barbell">Barbell</option>
                         <option value="Plyo Box">Plyo Box</option>
                         <option value="Swiss Ball">Swiss Ball</option>
+                        <option value="Machine">Machine</option>
+                        <option value="Trap Bar">Trap Bar</option>
+                        <option value="Bench">Bench</option>
                     </select>
                 </div>
 
@@ -708,6 +1014,7 @@
                         <option value="all">Any Muscle</option>
                         <option value="Core">Core</option>
                         <option value="Shoulders">Shoulders</option>
+                        <option value="Chest">Chest</option>
                         <option value="Legs">Legs & Glutes</option>
                         <option value="Back">Back & Lats</option>
                         <option value="Power">Power (Plyo)</option>
@@ -715,7 +1022,9 @@
                     </select>
                 </div>
 
-                <button class="btn-primary" onclick="findExercises()">SEARCH</button>
+                <div style="position: relative; width: 100%;">
+                    <button class="btn-primary" onclick="findExercises()">SEARCH</button>
+                </div>
             </div>
 
             <div class="divider"><span>OR</span></div>
@@ -751,106 +1060,295 @@
                 Suggest an Exercise
             </a>
         </p>
+        <p style="margin-top: 15px;">
+            <a href="javascript:void(0)" class="footer-link" onclick="openWhyModal()">Why Dryland Pro Works</a>
+        </p>
         <p style="margin-top: 20px; opacity: 0.5; font-size: 0.7rem;">© 2025 Dryland Pro. Built by Alex.</p>
     </footer>
 
+    <!-- Mode Switch Confirmation Modal -->
+    <div id="modeConfirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">Switch Mode?</div>
+            <div class="modal-message">You have an active circuit. Switching modes will clear your current workout.
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="cancelModeSwitch()">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" onclick="confirmModeSwitch()">Switch</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Why Dryland Pro Works Modal -->
+    <div id="whyModal" class="modal-overlay" onclick="closeWhyModal(event)">
+        <div class="why-modal-content" onclick="event.stopPropagation()">
+            <div class="why-modal-header">
+                <div class="why-modal-title">Why Dryland Pro Works</div>
+                <button class="why-modal-close" onclick="closeWhyModal()">&times;</button>
+            </div>
+
+            <div class="why-section">
+                <h4>The Research</h4>
+                <p>Dryland Pro uses circuit-based periodization with compound movements first. This approach maximizes
+                    neural activation and hormone response when you're freshest. Research consistently shows that
+                    prioritizing multi-joint exercises before isolation work produces better strength and hypertrophy
+                    outcomes.</p>
+            </div>
+
+            <div class="why-section">
+                <h4>What Results Depend On</h4>
+                <ul>
+                    <li>Consistency over months, not days</li>
+                    <li>Progressive overload (adding weight or reps over time)</li>
+                    <li>Adequate nutrition and protein intake</li>
+                    <li>Quality sleep and recovery</li>
+                    <li>Honest effort in every session</li>
+                    <li>Your individual genetics and starting point</li>
+                </ul>
+                <p style="margin-top: 10px; font-style: italic;">The app generates the plan. You determine the results.
+                </p>
+            </div>
+
+            <div class="why-section">
+                <h4>Context & Honesty</h4>
+                <p>This is one approach among many valid training methods. Push/Pull/Legs, Upper/Lower splits, and
+                    full-body programs all work when applied consistently. What matters most: showing up, training with
+                    intensity, and recovering properly.</p>
+            </div>
+
+            <div class="why-section">
+                <h4>Why We Designed It This Way</h4>
+                <p>Swimmers needed accessible dryland training without a personal trainer. Most fitness apps create
+                    decision fatigue with endless options. Dryland Pro eliminates that—one button, one circuit, get to
+                    work. SWIMMER and V-TAPER modes exist because performance and aesthetics require different
+                    approaches.</p>
+            </div>
+
+            <div class="why-section why-final">
+                <p>Start. Stay consistent. Adapt.</p>
+                <p>The best program is the one you'll actually do.</p>
+                <p>Excellence is not an event. It's a living, breathing habit.</p>
+                <p style="color: var(--accent); font-weight: 700;">Stop guessing. Start grinding.</p>
+            </div>
+
+            <button class="why-got-it" onclick="closeWhyModal()">Got It</button>
+        </div>
+    </div>
+
     <script>
-        // === THE MASTER DATABASE v11 ===
+        // === USER MODE ===
+        let userMode = localStorage.getItem('drylandMode') || 'swimmer';
+        let appInitialized = false; // Flag to prevent early initStreak calls
+
+        // Pending mode for modal confirmation
+        let pendingMode = null;
+
+        // Check if there's an active circuit displayed
+        function hasActiveCircuit() {
+            const results = document.getElementById('results');
+            return results && results.querySelectorAll('.exercise-card').length > 0;
+        }
+
+        // Show the confirmation modal
+        function showModeConfirmModal(targetMode) {
+            pendingMode = targetMode;
+            document.getElementById('modeConfirmModal').classList.add('active');
+        }
+
+        // Cancel mode switch - close modal, keep current mode
+        function cancelModeSwitch() {
+            pendingMode = null;
+            document.getElementById('modeConfirmModal').classList.remove('active');
+        }
+
+        // Confirm mode switch - clear circuit, close modal, complete switch
+        function confirmModeSwitch() {
+            document.getElementById('modeConfirmModal').classList.remove('active');
+
+            // Clear the circuit display
+            const resultsContainer = document.getElementById('results');
+            const resultsHeader = document.getElementById('results-header');
+            const actionBar = document.getElementById('action-bar');
+
+            resultsContainer.innerHTML = '<div class="empty-state">Select filters above or generate a random circuit.</div>';
+            resultsHeader.innerHTML = '';
+            actionBar.style.display = 'none';
+
+            // Now complete the mode switch
+            if (pendingMode) {
+                applyModeSwitch(pendingMode);
+            }
+            pendingMode = null;
+        }
+
+        // Apply the actual mode switch (extracted from setMode)
+        function applyModeSwitch(mode) {
+            userMode = mode;
+            localStorage.setItem('drylandMode', mode);
+            document.documentElement.setAttribute('data-mode', mode === 'vTaper' ? 'v-taper' : 'swimmer');
+
+            const swimmerBtn = document.getElementById('toggleSwimmer');
+            const vTaperBtn = document.getElementById('toggleVTaper');
+
+            if (mode === 'swimmer') {
+                swimmerBtn.classList.add('active');
+                vTaperBtn.classList.remove('active');
+            } else {
+                swimmerBtn.classList.remove('active');
+                vTaperBtn.classList.add('active');
+            }
+
+            // Refresh streak display for the new mode (only after app is fully initialized)
+            if (appInitialized) {
+                initStreak();
+            }
+
+            // Update subtitle based on mode
+            const subtitle = document.getElementById('subtitle');
+            if (subtitle) {
+                if (mode === 'vTaper') {
+                    subtitle.textContent = 'For the frame. By the grind.';
+                } else {
+                    subtitle.textContent = 'For swimmers. By a swimmer.';
+                }
+            }
+        }
+
+        function setMode(mode) {
+            // If switching to a different mode and there's an active circuit, show confirmation
+            if (mode !== userMode && hasActiveCircuit()) {
+                showModeConfirmModal(mode);
+                return;
+            }
+
+            // No active circuit or same mode - switch immediately
+            applyModeSwitch(mode);
+        }
+
+        // Initialize mode on page load
+        setMode(userMode);
+
+        // === THE COMPLETE EXERCISE DATABASE WITH INTELLIGENT SETS/REPS/RPE ===
         const exercises = [
-            { name: "Plank", equipment: "None", target: "Core", desc: "Keep core tight, don't let hips sag. Squeeze glutes and maintain straight line from head to heels." },
-            { name: "Side Plank", equipment: "None", target: "Core", desc: "Stack hips and shoulders. Keep core engaged, don't let hips drop. Body forms straight line." },
-            { name: "Streamline Flutter Kick", equipment: "None", target: "Core & Kick", desc: "Arms locked overhead, core braced. Keep legs straight, kick from hips not knees." },
-            { name: "Swiss Ball Jackknife", equipment: "Swiss Ball", target: "Core", desc: "Start in push-up position with feet on ball. Pull knees to chest while keeping core tight." },
-            { name: "Mountain Climbers", equipment: "None", target: "Core", desc: "Keep hips level, core tight. Drive knees explosively. Don't let lower back sag." },
-            { name: "Russian Twists", equipment: "Medicine Ball", target: "Core", desc: "Lean back slightly, feet off ground. Rotate through core, not just arms. Keep chest up." },
-            { name: "Pot Stirrers", equipment: "None", target: "Core & Shoulders", desc: "Hold plank position. Move forearms in small circles. Keep hips stable, core braced throughout." },
-            { name: "Dead Bug", equipment: "None", target: "Core", desc: "Press lower back into floor. Extend opposite limbs slowly. Keep core engaged, no arching." },
-            { name: "Hanging Leg Raises", equipment: "Pull-up Bar", target: "Core", desc: "Hang with straight arms. Raise legs using core, not momentum. Control the descent." },
-            { name: "Streamline Superman", equipment: "None", target: "Core & Back", desc: "Lie face down, arms overhead. Lift arms and legs simultaneously. Squeeze glutes and back." },
-            { name: "Pull-Ups", equipment: "Pull-up Bar", target: "Back & Lats", desc: "Full hang at bottom. Pull chest to bar. Keep core tight, don't swing." },
-            { name: "Resistance Band Rows", equipment: "Band", target: "Back & Shoulders", desc: "Keep elbows close to body. Squeeze shoulder blades together. Don't round shoulders forward." },
-            { name: "Lat Pulldowns", equipment: "Cable Machine", target: "Back & Lats", desc: "Pull bar to upper chest. Lean back slightly. Squeeze lats at bottom, control the return." },
-            { name: "Bench Press", equipment: "Barbell", target: "Chest & Shoulders", desc: "Retract shoulder blades. Lower bar to chest. Press bar in straight line. Keep feet planted." },
-            { name: "Shoulder Ext. Rotations", equipment: "Band", target: "Shoulders", desc: "Keep elbow at 90°. Rotate forearm outward. Don't let elbow drift from body." },
-            { name: "Shoulder Int. Rotations", equipment: "Band", target: "Shoulders", desc: "Keep elbow at 90°. Rotate forearm inward. Maintain shoulder position throughout." },
-            { name: "Scapular Push-Ups", equipment: "None", target: "Shoulders & Back", desc: "Hold plank. Pinch shoulder blades together, then spread them apart. Keep arms straight." },
-            { name: "Shoulder Ext. Rotation 90/90", equipment: "Band", target: "Shoulders", desc: "Arm at 90° to body and elbow. Rotate forearm up. Keep elbow level with shoulder." },
-            { name: "Straight Arm Pull-Down", equipment: "Cable Machine", target: "Lats & Shoulders", desc: "Keep arms straight. Pull cable down using lats. Slight forward lean. Don't bend elbows." },
-            { name: "Bench Pulls", equipment: "Barbell", target: "Back", desc: "Lie face down on bench. Pull barbell to chest. Squeeze shoulder blades. Lower with control." },
-            { name: "Streamline Squats", equipment: "None", target: "Legs & Core", desc: "Arms locked overhead. Squat depth below parallel. Keep chest up, knees track over toes." },
-            { name: "Bulgarian Split Squats", equipment: "Dumbbell", target: "Legs & Glutes", desc: "Back foot elevated. Front knee tracks over toes. Keep torso upright. Don't let knee cave in." },
-            { name: "Jump Squats", equipment: "None", target: "Legs & Power", desc: "Squat down, explode up. Land softly. Keep core tight throughout. Full hip extension at top." },
-            { name: "Broad Jumps", equipment: "None", target: "Legs & Power", desc: "Swing arms back, explode forward. Land with bent knees. Stick the landing, don't step." },
-            { name: "Box Jumps", equipment: "Plyo Box", target: "Legs & Power", desc: "Land softly on box with bent knees. Full hip extension at top. Step down, don't jump down." },
-            { name: "Single-Leg RDL", equipment: "Dumbbell", target: "Legs & Glutes", desc: "Hinge at hips, keep back flat. Standing leg slightly bent. Squeeze glutes to return up." },
-            { name: "Lunges", equipment: "Dumbbell", target: "Legs", desc: "Step forward, drop back knee down. Front knee stays over ankle. Push through front heel." },
-            { name: "Medicine Ball Slams", equipment: "Medicine Ball", target: "Core & Power", desc: "Lift ball overhead, slam down explosively. Use full body. Engage core on slam." },
-            { name: "Vertical Kicking", equipment: "None", target: "Core & Kick", desc: "Tread water vertically. Keep core engaged. Kick from hips. Hands at sides or overhead." },
-            { name: "Burpees", equipment: "None", target: "Full Body & Power", desc: "Chest to ground. Explosive jump at top. Keep core tight. Land softly on jump." },
-            { name: "Med Ball Goblet Squat", equipment: "Medicine Ball", target: "Legs", desc: "Hold ball at chest. Squat depth below parallel. Keep elbows inside knees. Chest up." },
-            { name: "Med Ball Jump Squat", equipment: "Medicine Ball", target: "Legs & Power", desc: "Hold ball at chest. Squat then explode up. Land softly. Keep core braced." },
-            { name: "Med Ball Wall Sit", equipment: "Medicine Ball", target: "Legs", desc: "Back against wall, thighs parallel to ground. Hold ball at chest. Keep knees at 90°." },
-            { name: "Med Ball Overhead Press", equipment: "Medicine Ball", target: "Shoulders", desc: "Press ball overhead. Keep core tight. Full lockout at top. Don't arch lower back." },
-            { name: "Med Ball Shoulder Circles", equipment: "Medicine Ball", target: "Shoulders", desc: "Hold ball overhead. Make controlled circles. Keep core engaged. Don't let ball drop forward." },
-            { name: "Med Ball Front Raise", equipment: "Medicine Ball", target: "Shoulders", desc: "Raise ball to shoulder height. Keep arms straight. Control the descent. Don't swing." },
-            { name: "Dumbbell Lateral Raises", equipment: "Dumbbell", target: "Shoulders", desc: "Raise dumbbells to shoulder height. Slight bend in elbows. Don't shrug shoulders. Lead with elbows." },
-            { name: "Dumbbell Front Raises", equipment: "Dumbbell", target: "Shoulders", desc: "Raise dumbbells to eye level. Keep core tight. Don't use momentum. Control the descent." },
-            { name: "Dumbbell Shoulder Press", equipment: "Dumbbell", target: "Shoulders", desc: "Press dumbbells overhead. Keep core braced. Full lockout at top. Lower to shoulder height." },
-            { name: "Dumbbell Bent-Over Rows", equipment: "Dumbbell", target: "Back", desc: "Hinge at hips, back flat. Pull dumbbells to ribs. Squeeze shoulder blades. Don't round back." },
-            { name: "Single-Arm Dumbbell Row", equipment: "Dumbbell", target: "Back", desc: "One hand on bench. Pull dumbbell to hip. Keep core tight. Don't rotate torso." },
-            { name: "Dumbbell Reverse Fly", equipment: "Dumbbell", target: "Back", desc: "Hinge forward, slight knee bend. Raise dumbbells out to sides. Squeeze shoulder blades together." },
-            { name: "Banded Lateral Walks", equipment: "Band", target: "Legs", desc: "Band around knees or ankles. Stay in quarter squat. Step laterally. Keep tension on band." },
-            { name: "Banded Squats", equipment: "Band", target: "Legs", desc: "Band around knees. Squat depth below parallel. Push knees out against band. Chest up." },
-            { name: "Banded Glute Bridges", equipment: "Band", target: "Legs", desc: "Band above knees. Lie on back, feet flat. Drive hips up. Squeeze glutes at top." },
-            { name: "Barbell Back Squat", equipment: "Barbell", target: "Legs", desc: "Bar on upper back. Break at knees, sit straight down. Chest up. Drive through midfoot." },
-            { name: "Barbell Front Squat", equipment: "Barbell", target: "Legs", desc: "Bar on front shoulders. Elbows high. Squat depth below parallel. Keep torso upright." },
-            { name: "Barbell Split Squat", equipment: "Barbell", target: "Legs", desc: "Bar on back, rear foot elevated. Drop straight down. Front knee tracks over toes." },
-            { name: "Trap Bar Deadlift", equipment: "Barbell", target: "Legs & Back", desc: "Stand inside trap bar. Chest up, back flat. Drive through floor. Full hip extension at top." },
-            { name: "Romanian Deadlift", equipment: "Barbell", target: "Legs & Back", desc: "Bar starts at hips. Hinge back, keep back flat. Feel hamstring stretch. Drive hips forward." },
-            { name: "Power Clean", equipment: "Barbell", target: "Power", desc: "Explosive hip extension. Pull bar close to body. Catch in quarter squat. Elbows high." },
-            { name: "Hang Power Clean", equipment: "Barbell", target: "Power", desc: "Start at mid-thigh. Explosive pull. Catch in quarter squat. Keep bar close to body." },
-            { name: "Power Snatch", equipment: "Barbell", target: "Power", desc: "Wide grip. Explosive pull overhead. Catch in quarter squat. Full lockout overhead." },
-            { name: "Clean & Jerk", equipment: "Barbell", target: "Power", desc: "Clean to shoulders. Dip and drive overhead. Split stance or squat catch. Lock out fully." },
-            { name: "Barbell Bent-Over Rows", equipment: "Barbell", target: "Back", desc: "Hinge at hips, back flat. Pull bar to lower chest. Squeeze shoulder blades. Don't jerk." },
-            { name: "Deadlift", equipment: "Barbell", target: "Back & Legs", desc: "Bar over midfoot. Chest up, back flat. Drive through floor. Full hip and knee extension." },
-            { name: "Pendlay Rows", equipment: "Barbell", target: "Back", desc: "Bar on floor each rep. Explosive pull to chest. Back parallel to floor. Reset each rep." },
-            { name: "Sumo Deadlift", equipment: "Barbell", target: "Back & Legs", desc: "Wide stance, toes out. Chest up. Pull bar straight up. Squeeze glutes at top." },
-            { name: "Swiss Ball Hamstring Curl", equipment: "Swiss Ball", target: "Legs", desc: "Lie on back, heels on ball. Lift hips. Curl ball toward glutes. Keep hips elevated throughout." },
-            { name: "Single-Leg Ball Curl", equipment: "Swiss Ball", target: "Legs", desc: "One heel on ball. Lift hips, curl ball in. Keep hips level. Don't let hips drop." },
-            { name: "Swiss Ball Glute Bridge", equipment: "Swiss Ball", target: "Legs", desc: "Shoulders on ball, feet flat. Drive hips up. Squeeze glutes at top. Keep core engaged." },
-            { name: "Swiss Ball Wall Squat", equipment: "Swiss Ball", target: "Legs", desc: "Ball between back and wall. Squat down. Keep knees behind toes. Push back into ball." },
-            { name: "Swiss Ball Y-Raise", equipment: "Swiss Ball", target: "Shoulders", desc: "Chest on ball, thumbs up. Raise arms in Y shape. Squeeze shoulder blades. Don't shrug." },
-            { name: "Swiss Ball T-Raise", equipment: "Swiss Ball", target: "Shoulders", desc: "Chest on ball, thumbs up. Raise arms to sides in T. Squeeze shoulder blades together." },
-            { name: "Swiss Ball W-Raise", equipment: "Swiss Ball", target: "Shoulders", desc: "Chest on ball. Pull elbows back and up in W shape. Squeeze shoulder blades. External rotation." },
-            { name: "Swiss Ball Pike", equipment: "Swiss Ball", target: "Core & Shoulders", desc: "Feet on ball, push-up position. Pike hips up. Keep legs straight. Control the movement." },
-            { name: "Cable Pallof Press", equipment: "Cable Machine", target: "Core", desc: "Stand sideways to cable. Press straight out. Resist rotation. Keep core braced, hips square." },
-            { name: "Cable Woodchop (Hi-Lo)", equipment: "Cable Machine", target: "Core", desc: "Start high, chop down across body. Rotate through core. Keep arms straight. Pivot back foot." },
-            { name: "Cable Woodchop (Lo-Hi)", equipment: "Cable Machine", target: "Core", desc: "Start low, chop up across body. Rotate through core. Keep arms straight. Pivot back foot." },
-            { name: "Cable Rotational Twist", equipment: "Cable Machine", target: "Core", desc: "Hold cable at chest. Rotate side to side. Keep hips stable. Move from core, not arms." },
-            { name: "Anti-Rotation Press", equipment: "Cable Machine", target: "Core", desc: "Stand sideways. Press cable away. Resist rotation. Keep core tight, shoulders square." },
-            { name: "Cable Face Pulls", equipment: "Cable Machine", target: "Shoulders & Back", desc: "Pull cable to face. Elbows high and back. Squeeze shoulder blades. External rotation at end." },
-            { name: "Cable Int. Rotation", equipment: "Cable Machine", target: "Shoulders", desc: "Elbow at 90° to body. Rotate forearm across body. Keep elbow fixed. Control the movement." },
-            { name: "Cable Ext. Rotation", equipment: "Cable Machine", target: "Shoulders", desc: "Elbow at 90° to body. Rotate forearm away from body. Keep elbow fixed. Don't let shoulder roll." },
-            { name: "Cable Lateral Raises", equipment: "Cable Machine", target: "Shoulders", desc: "Stand sideways to cable. Raise arm to shoulder height. Lead with elbow. Control descent." },
-            { name: "Cable Reverse Fly", equipment: "Cable Machine", target: "Shoulders", desc: "Crossover cables. Pull arms back and out. Squeeze shoulder blades. Keep slight elbow bend." },
-            { name: "Plyo Box Step-Ups", equipment: "Plyo Box", target: "Legs", desc: "Step up with full foot on box. Drive through heel. Stand fully at top. Control descent." },
-            { name: "Box Bulgarian Split Squat", equipment: "Plyo Box", target: "Legs", desc: "Rear foot on box. Drop straight down. Front knee tracks over toes. Keep torso upright." },
-            { name: "Lateral Step-Ups", equipment: "Plyo Box", target: "Legs", desc: "Stand beside box. Step up laterally. Drive through heel. Full hip extension at top." },
-            { name: "Single-Leg Step-Ups", equipment: "Plyo Box", target: "Legs", desc: "One foot on box. Drive up on single leg. Stand fully. Don't push off ground leg." },
-            { name: "Depth Jump", equipment: "Plyo Box", target: "Power", desc: "Step off box. Land and immediately jump up. Minimal ground contact time. Land softly." },
-            { name: "Depth Drop to Box Jump", equipment: "Plyo Box", target: "Power", desc: "Drop from box. Land, immediately jump to second box. Explosive transition. Soft landings." },
-            { name: "Plyo Box Hurdle Jump", equipment: "Plyo Box", target: "Power", desc: "Jump over box side to side. Land softly. Keep core tight. Explosive takeoff each rep." },
-            { name: "Single-Leg Box Drop", equipment: "Plyo Box", target: "Power", desc: "Stand on box, one leg. Step off, land on same leg. Absorb landing. Keep knee stable." },
-            { name: "Dumbbell Thruster", equipment: "Dumbbell", target: "Full Body & Power", desc: "Dumbbells at shoulders. Squat down, drive up and press overhead. One fluid motion." },
-            { name: "Dumbbell Snatch", equipment: "Dumbbell", target: "Full Body & Power", desc: "Squat down, explosive pull overhead. Keep dumbbell close. Catch in quarter squat. Lock out overhead." },
-            { name: "Dumbbell Hang Snatch", equipment: "Dumbbell", target: "Full Body & Power", desc: "Start at hips. Explosive pull overhead. Catch in quarter squat. Full lockout at top." },
-            { name: "Dumbbell Burpee", equipment: "Dumbbell", target: "Full Body & Power", desc: "Hold dumbbells. Burpee down. Jump up with dumbbells. Full extension at top." },
-            { name: "Turkish Get-Up", equipment: "Dumbbell", target: "Full Body & Core", desc: "Lie down, dumbbell up. Stand up keeping dumbbell overhead. Reverse to return. Keep eyes on weight." },
-            { name: "Renegade Rows", equipment: "Dumbbell", target: "Core & Back", desc: "Plank on dumbbells. Row one side while stabilizing. Don't rotate hips. Keep core tight." },
-            { name: "Weighted Sit-Ups", equipment: "Dumbbell", target: "Core", desc: "Hold dumbbell at chest. Sit up using core. Keep feet flat. Control the descent." },
-            { name: "Dumbbell Wood Chops", equipment: "Dumbbell", target: "Core", desc: "Hold dumbbell overhead. Chop down across body. Rotate through core. Pivot back foot." },
-            { name: "Farmer's Carry", equipment: "Dumbbell", target: "Core & Legs", desc: "Hold heavy dumbbells at sides. Walk with upright posture. Keep shoulders down. Core braced." },
-            { name: "Weighted Plank", equipment: "Dumbbell", target: "Core", desc: "Plank position with dumbbell on back. Keep hips level. Don't let back sag. Maintain straight line." }
+            // === TIER 1: STRENGTH FOUNDATION (4 x 5-6 @ RPE 8-9) ===
+            { name: "Pull-Ups", equipment: "Pull-Up Bar", target: "Back & Lats", desc: "Hang from bar with overhand grip. Pull chest to bar. Lower with control. Full range of motion.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds posterior chain and counteracts anterior shoulder dominance from swimming.", vTaperNote: "Develops back width and upper body strength for the classic V-shape.", priority: "core", tags: [] },
+            { name: "Bench Press", equipment: "Barbell", target: "Chest", desc: "Lie on bench. Lower bar to chest. Press up explosively. Keep shoulder blades retracted.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens chest and triceps for powerful push-off and streamline.", vTaperNote: "Builds chest mass and upper body pressing strength for balanced torso.", priority: "core", tags: [] },
+            { name: "Barbell Back Squat", equipment: "Barbell", target: "Legs & Glutes", desc: "Bar on upper back. Squat to parallel or below. Drive through heels. Keep chest up.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds lower body power for explosive starts, turns, and underwater kicking.", vTaperNote: "Develops quadriceps and glutes for proportional leg development.", priority: "core", tags: [] },
+            { name: "Barbell Front Squat", equipment: "Barbell", target: "Legs & Glutes", desc: "Bar on front delts. Squat to depth. Elbows high. Core tight throughout.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops core stability and leg drive essential for powerful starts.", vTaperNote: "Builds quad definition and core strength for athletic physique.", priority: "core", tags: [] },
+            { name: "Trap Bar Deadlift", equipment: "Trap Bar", target: "Legs & Glutes", desc: "Stand in trap bar. Grip handles. Drive through legs to stand. Neutral spine throughout.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds total posterior chain strength with reduced spinal stress.", vTaperNote: "Develops powerful legs and back for overall athletic appearance.", priority: "core", tags: [] },
+            { name: "Deadlift", equipment: "Barbell", target: "Legs & Glutes", desc: "Grip bar outside knees. Drive through floor. Hips and shoulders rise together. Lock out at top.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops entire posterior chain for powerful swimming posture and kicking.", vTaperNote: "Builds back thickness and overall posterior development.", priority: "core", tags: [] },
+            { name: "Romanian Deadlift", equipment: "Barbell", target: "Legs & Glutes", desc: "Hold bar at hips. Hinge at hips, lowering bar along legs. Feel hamstring stretch. Return to standing.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens hamstrings and glutes critical for powerful kicking.", vTaperNote: "Develops hamstring and glute definition for balanced leg aesthetics.", priority: "core", tags: [] },
+            { name: "Sumo Deadlift", equipment: "Barbell", target: "Legs & Glutes", desc: "Wide stance, toes out. Grip bar inside knees. Drive through legs. Lock out at top.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds adductor and glute strength for breaststroke and fly kick.", vTaperNote: "Develops inner thigh and glute for complete leg development.", priority: "core", tags: [] },
+            { name: "Barbell Bent-Over Rows", equipment: "Barbell", target: "Back & Lats", desc: "Hinge at hips, back flat. Pull bar to lower chest. Squeeze shoulder blades. Lower with control.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Essential for balanced shoulder development and swimming stroke power.", vTaperNote: "Builds back thickness and lat width for V-taper foundation.", priority: "core", tags: [] },
+            { name: "Pendlay Rows", equipment: "Barbell", target: "Back & Lats", desc: "Bar on floor each rep. Explosive pull to lower chest. Set bar down with control. Reset each rep.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops explosive pulling power for catch phase of swimming strokes.", vTaperNote: "Builds back width and pulling strength for impressive back development.", priority: "core", tags: [] },
+            { name: "Barbell Split Squat", equipment: "Barbell", target: "Legs & Glutes", desc: "Bar on back. One foot forward, one back. Lower rear knee to floor. Drive through front heel.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds single-leg power for starts and asymmetry correction.", vTaperNote: "Develops quad and glute definition with unilateral strength.", priority: "core", tags: [] },
+            { name: "Lat Pulldowns", equipment: "Cable Machine", target: "Back & Lats", desc: "Grip bar wide. Pull to upper chest. Squeeze lats at bottom. Control the return.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Mimics pulling pattern of swimming strokes for stroke-specific strength.", vTaperNote: "Builds lat width essential for the V-taper silhouette.", priority: "core", tags: [] },
+
+            // === TIER 2: POWER DEVELOPMENT (5 x 3-5 @ RPE 8-9) ===
+            { name: "Box Jumps", equipment: "Plyo Box", target: "Power", desc: "Stand facing box. Explode upward. Land softly on box. Step down and reset.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops explosive leg power for starts and turns.", vTaperNote: "Builds athletic explosiveness and leg power.", priority: "tertiary", tags: ["power"] },
+            { name: "Broad Jumps", equipment: "None", target: "Power", desc: "Stand with feet hip-width. Swing arms and explode forward. Land softly. Reset and repeat.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Translates directly to powerful diving starts.", vTaperNote: "Develops horizontal power and athletic performance.", priority: "tertiary", tags: ["power"] },
+            { name: "Jump Squats", equipment: "None", target: "Power", desc: "Squat down. Explode upward. Land softly and immediately descend into next rep.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds explosive leg drive for powerful starts.", vTaperNote: "Develops leg power and definition through explosive training.", priority: "tertiary", tags: ["power"] },
+            { name: "Burpees", equipment: "None", target: "Full Body", desc: "Drop to floor. Chest touches. Push up and jump explosively. Land and repeat.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds full-body power and cardiovascular conditioning.", vTaperNote: "Develops full-body conditioning and metabolic capacity.", priority: "tertiary", tags: ["power"] },
+            { name: "Medicine Ball Slams", equipment: "Medicine Ball", target: "Power", desc: "Raise ball overhead. Slam down with full force. Catch on bounce. Repeat explosively.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops explosive lat power and core engagement for stroke power.", vTaperNote: "Builds core strength and upper body power through explosive movement.", priority: "tertiary", tags: ["power"] },
+            { name: "Med Ball Jump Squat", equipment: "Medicine Ball", target: "Power", desc: "Hold ball at chest. Squat and explode upward. Land softly. Repeat immediately.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Adds resistance to explosive leg training for starts.", vTaperNote: "Builds leg power with added resistance for athletic development.", priority: "tertiary", tags: ["power"] },
+            { name: "Power Clean", equipment: "Barbell", target: "Power", desc: "Bar at shins. Explosive pull. Catch in front rack. Stand and reset.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops total body explosive power and coordination.", vTaperNote: "Builds athletic power and full-body coordination.", priority: "tertiary", tags: ["power"] },
+            { name: "Hang Power Clean", equipment: "Barbell", target: "Power", desc: "Start at hang position. Explosive hip drive. Catch in front rack. Stand and reset.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Emphasizes hip extension power critical for underwater dolphin kicks.", vTaperNote: "Develops explosive hip drive and upper back power.", priority: "tertiary", tags: ["power"] },
+            { name: "Power Snatch", equipment: "Barbell", target: "Power", desc: "Wide grip. Explosive pull from floor. Catch overhead. Stand and reset.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds overhead power and shoulder stability for streamline.", vTaperNote: "Develops full-body power and shoulder mobility.", priority: "tertiary", tags: ["power"] },
+            { name: "Clean & Jerk", equipment: "Barbell", target: "Power", desc: "Clean bar to shoulders. Dip and drive overhead. Lock out arms. Lower and reset.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Ultimate full-body power exercise for athletic swimmers.", vTaperNote: "Builds total body power and athletic performance.", priority: "tertiary", tags: ["power"] },
+            { name: "Dumbbell Snatch", equipment: "Dumbbell", target: "Power", desc: "One dumbbell from floor. Explosive pull to overhead in one motion. Alternate sides.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops unilateral power and shoulder stability.", vTaperNote: "Builds explosive shoulder power and coordination.", priority: "tertiary", tags: ["power"] },
+            { name: "Dumbbell Hang Snatch", equipment: "Dumbbell", target: "Power", desc: "Start at hang. Explosive hip drive. Catch overhead. Alternate sides.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Emphasizes hip and shoulder power connection.", vTaperNote: "Develops athletic explosiveness and shoulder power.", priority: "tertiary", tags: ["power"] },
+            { name: "Depth Jump", equipment: "Plyo Box", target: "Power", desc: "Step off box. Land and immediately explode upward. Minimize ground contact time.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops reactive power for explosive push-offs.", vTaperNote: "Builds reactive leg power and explosiveness.", priority: "tertiary", tags: ["power"] },
+            { name: "Depth Drop to Box Jump", equipment: "Plyo Box", target: "Power", desc: "Drop from box. Land and immediately jump onto second box. Reactive power.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Maximizes reactive strength for starts and turns.", vTaperNote: "Develops advanced reactive power and leg strength.", priority: "tertiary", tags: ["power"] },
+            { name: "Plyo Box Hurdle Jump", equipment: "Plyo Box", target: "Power", desc: "Jump over hurdles in sequence. Minimize ground contact. Explosive rebounds.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds continuous explosive power for repeated efforts.", vTaperNote: "Develops reactive power and leg conditioning.", priority: "tertiary", tags: ["power"] },
+            { name: "Single-Leg Box Drop", equipment: "Plyo Box", target: "Power", desc: "Step off box on one leg. Land softly. Control the landing. Alternate legs.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops single-leg stability and landing mechanics.", vTaperNote: "Builds unilateral leg strength and control.", priority: "tertiary", tags: ["power"] },
+            { name: "Dumbbell Thruster", equipment: "Dumbbell", target: "Power", desc: "Dumbbells at shoulders. Squat down. Drive up explosively pressing overhead.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Combines leg drive and overhead power for full-body conditioning.", vTaperNote: "Builds leg and shoulder power with metabolic demand.", priority: "tertiary", tags: ["power"] },
+            { name: "Dumbbell Burpee", equipment: "Dumbbell", target: "Full Body", desc: "Hold dumbbells. Drop to floor. Push up. Stand and press overhead.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Full-body power and conditioning with added resistance.", vTaperNote: "Develops full-body power and metabolic conditioning.", priority: "tertiary", tags: ["power"] },
+            { name: "Med Ball Rotational Slam", equipment: "Medicine Ball", target: "Power", desc: "Hold ball overhead. Slam down, rotate side to side each rep. Full body rotation.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops explosive rotational power essential for all swimming strokes.", vTaperNote: "Builds core power and oblique definition through rotation.", priority: "tertiary", tags: ["power"] },
+            { name: "Med Ball Rotational Throw", equipment: "Medicine Ball", target: "Power", desc: "Stand sideways to wall. Throw ball with rotation from core. Catch and return.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Translates rotational power to swimming stroke mechanics.", vTaperNote: "Develops rotational power and core strength.", priority: "tertiary", tags: ["power"] },
+            { name: "Plyo Box Step-Ups", equipment: "Plyo Box", target: "Power", desc: "Step onto box explosively. Drive through heel. Alternate legs with power.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds single-leg drive power for asymmetrical movements.", vTaperNote: "Develops leg power and definition through explosive step work.", priority: "tertiary", tags: ["power"] },
+
+            // === TIER 3: HYPERTROPHY/ACCESSORY (3 x 8-12 @ RPE 7-8) ===
+            { name: "Bulgarian Split Squats", equipment: "Plyo Box", target: "Legs & Glutes", desc: "Rear foot on bench. Lower until back knee nearly touches floor. Drive through front heel.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds single-leg strength and corrects muscle imbalances.", vTaperNote: "Develops quad and glute definition for aesthetic legs.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Single-Leg RDL", equipment: "Dumbbell", target: "Legs & Glutes", desc: "Stand on one leg. Hinge at hip, lowering weight. Feel hamstring stretch. Return to standing.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops hamstring and glute strength with balance demands.", vTaperNote: "Builds hamstring definition and unilateral leg aesthetics.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Lunges", equipment: "None", target: "Legs & Glutes", desc: "Step forward. Lower back knee to floor. Push back to standing. Alternate legs.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds functional leg strength and hip mobility.", vTaperNote: "Develops leg definition and functional movement patterns.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Streamline Squats", equipment: "None", target: "Legs & Glutes", desc: "Arms overhead in streamline. Squat to depth. Maintain tight core and position.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer"], swimmerNote: "Combines leg strength with streamline position practice.", vTaperNote: "Builds leg strength while improving shoulder mobility.", priority: "secondary", tags: ["swimmer_only"] },
+            { name: "Med Ball Goblet Squat", equipment: "Medicine Ball", target: "Legs & Glutes", desc: "Hold ball at chest. Squat to depth. Keep chest up. Drive through heels.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops leg strength with core engagement.", vTaperNote: "Builds quad development and core stability.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Dumbbell Lateral Raises", equipment: "Dumbbell", target: "Shoulders", desc: "Arms at sides. Raise to shoulder height. Control the descent. No swinging.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens medial deltoids for shoulder health and stability.", vTaperNote: "Builds shoulder width essential for V-taper aesthetics.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Dumbbell Front Raises", equipment: "Dumbbell", target: "Shoulders", desc: "Arms in front. Raise to shoulder height. Lower with control. Alternate or together.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds anterior deltoid strength for stroke recovery.", vTaperNote: "Develops front delt definition for shoulder fullness.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Dumbbell Shoulder Press", equipment: "Dumbbell", target: "Shoulders", desc: "Dumbbells at shoulders. Press overhead. Lower with control. Full range of motion.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds overhead strength for streamline and starts.", vTaperNote: "Develops shoulder mass and pressing strength.", priority: "core", tags: ["hypertrophy"] },
+            { name: "Dumbbell Bent-Over Rows", equipment: "Dumbbell", target: "Back & Lats", desc: "Hinge at hips. Pull dumbbells to ribcage. Squeeze shoulder blades. Lower with control.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds back strength to balance shoulder-dominant swimming.", vTaperNote: "Develops back thickness and lat definition.", priority: "core", tags: ["hypertrophy"] },
+            { name: "Single-Arm Dumbbell Row", equipment: "Dumbbell", target: "Back & Lats", desc: "One hand on bench. Pull dumbbell to hip. Squeeze lat. Lower with control.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops unilateral back strength and rotational stability.", vTaperNote: "Builds lat width and back definition.", priority: "core", tags: ["hypertrophy"] },
+            { name: "Dumbbell Reverse Fly", equipment: "Dumbbell", target: "Shoulders", desc: "Hinged at hips. Raise arms out to sides. Squeeze rear delts. Lower with control.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens rear delts to counter heavy swimming volume.", vTaperNote: "Builds rear delt definition for 3D shoulder appearance.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Resistance Band Rows", equipment: "Band", target: "Back & Lats", desc: "Band anchored in front. Pull to ribcage. Squeeze shoulder blades. Control return.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Low-impact back work ideal for high-volume swim training.", vTaperNote: "Builds back development with accommodating resistance.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Straight Arm Pull-Down", equipment: "Cable Machine", target: "Back & Lats", desc: "Arms straight. Pull cable down to thighs. Squeeze lats. Control the return.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Mimics the catch and pull phase of swimming strokes.", vTaperNote: "Develops lat width and definition for V-shape.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Bench Pulls", equipment: "Bench", target: "Back & Lats", desc: "Lie face down on bench. Pull weight to chest. Squeeze shoulder blades. Lower with control.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops horizontal pulling strength for balanced shoulders.", vTaperNote: "Builds upper back thickness and rear delt development.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Cable Lateral Raises", equipment: "Cable Machine", target: "Shoulders", desc: "Cable at low position. Raise arm to shoulder height. Constant tension. Control descent.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Constant tension builds shoulder stability endurance.", vTaperNote: "Maximizes shoulder width development with constant load.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Cable Reverse Fly", equipment: "Cable Machine", target: "Shoulders", desc: "Cables at chest height. Pull apart, squeezing rear delts. Control return.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds rear delt strength for shoulder balance.", vTaperNote: "Develops rear delt definition for complete shoulder development.", priority: "secondary", tags: ["hypertrophy"] },
+
+            { name: "Lateral Step-Ups", equipment: "Plyo Box", target: "Legs & Glutes", desc: "Stand beside box. Step up laterally. Drive through stepping leg. Alternate sides.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds lateral hip strength and stability.", vTaperNote: "Develops outer quad and glute sweep.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Single-Leg Step-Ups", equipment: "Plyo Box", target: "Legs & Glutes", desc: "One foot on box. Drive through to stand. Lower with control. All reps one leg.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops single-leg strength and balance.", vTaperNote: "Builds leg definition and unilateral strength.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Renegade Rows", equipment: "Dumbbell", target: "Back & Lats", desc: "Plank with dumbbells. Row one arm at a time. Keep hips stable. Alternate sides.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Combines anti-rotation core work with back strengthening.", vTaperNote: "Builds back and core while developing anti-rotation strength.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Weighted Sit-Ups", equipment: "Dumbbell", target: "Core", desc: "Weight on chest. Sit up fully. Lower with control. Keep feet anchored.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds core flexion strength for underwater dolphin kicks.", vTaperNote: "Develops visible ab definition and core strength.", priority: "tertiary", tags: ["hypertrophy"] },
+            { name: "Dumbbell Wood Chops", equipment: "Dumbbell", target: "Core", desc: "Hold dumbbell. Rotate from low to high. Control the weight. Full core rotation.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops rotational power through the core.", vTaperNote: "Builds oblique definition and rotational strength.", priority: "tertiary", tags: ["hypertrophy"] },
+            { name: "Farmer's Carry", equipment: "Dumbbell", target: "Full Body", desc: "Heavy weights at sides. Walk with control. Keep core tight. Shoulders back.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds grip, core, and postural endurance.", vTaperNote: "Develops trap, forearm, and core strength.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Turkish Get-Up", equipment: "Dumbbell", target: "Full Body", desc: "Start on floor. Stand up with weight overhead. Reverse the movement. Control throughout.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds shoulder stability and full-body coordination.", vTaperNote: "Develops functional strength and body control.", priority: "tertiary", tags: [] },
+            { name: "Swiss Ball Hamstring Curl", equipment: "Swiss Ball", target: "Legs & Glutes", desc: "Lie on back, heels on ball. Roll ball toward glutes. Squeeze hamstrings. Roll back.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Isolates hamstrings critical for kicking power.", vTaperNote: "Builds hamstring definition and leg balance.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Single-Leg Ball Curl", equipment: "Swiss Ball", target: "Legs & Glutes", desc: "One heel on ball. Curl ball toward glutes. Squeeze hamstring. Roll back. One leg only.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops unilateral hamstring strength and coordination.", vTaperNote: "Builds hamstring definition with unilateral focus.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Swiss Ball Glute Bridge", equipment: "Swiss Ball", target: "Legs & Glutes", desc: "Feet on ball. Lift hips high. Squeeze glutes at top. Lower with control.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds glute strength with core stability demands.", vTaperNote: "Develops glute definition and posterior chain.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Swiss Ball Wall Squat", equipment: "Swiss Ball", target: "Legs & Glutes", desc: "Ball behind back on wall. Squat to parallel. Hold and return. Constant tension.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds quad endurance with reduced impact.", vTaperNote: "Develops quad definition with constant tension.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Hanging Leg Raises", equipment: "Pull-Up Bar", target: "Core", desc: "Hang from bar. Raise legs to 90 degrees or higher. Lower with control. No swinging.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops hip flexor strength for kicking.", vTaperNote: "Builds visible lower ab definition.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Swiss Ball Jackknife", equipment: "Swiss Ball", target: "Core", desc: "Feet on ball, plank position. Roll ball in, pulling knees to chest. Extend back out.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops core flexion strength with stability demands.", vTaperNote: "Builds ab definition and core control.", priority: "secondary", tags: ["hypertrophy"] },
+
+            // === TIER 4: MOBILITY/ANTI-ROTATION (3 x 10-15 @ RPE 6) ===
+            { name: "Plank", equipment: "None", target: "Core", desc: "Forearms on floor. Body straight. Hold position. No sagging or piking.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "30-60s", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds core stability for maintaining streamline.", vTaperNote: "Develops core endurance and abdominal definition.", priority: "tertiary", tags: [] },
+            { name: "Side Plank", equipment: "None", target: "Core", desc: "On one forearm. Body straight. Hold position. Stack feet or stagger.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "30-60s", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens obliques for rotational stability in strokes.", vTaperNote: "Develops oblique definition and core stability.", priority: "tertiary", tags: [] },
+            { name: "Weighted Plank", equipment: "Dumbbell", target: "Core", desc: "Weight on upper back. Plank position. Hold with control. No form breakdown.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "30-60s", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Progressive core stability for advanced swimmers.", vTaperNote: "Builds core strength and abdominal definition.", priority: "tertiary", tags: [] },
+            { name: "Dead Bug", equipment: "None", target: "Core", desc: "On back, arms up, knees at 90. Extend opposite arm and leg. Keep back flat.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops contralateral coordination essential for swimming.", vTaperNote: "Builds core control and stability.", priority: "tertiary", tags: [] },
+            { name: "Streamline Superman", equipment: "None", target: "Back & Lats", desc: "Face down, arms in streamline. Lift arms and legs. Hold and squeeze. Lower with control.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 6, bestFor: ["swimmer"], swimmerNote: "Reinforces streamline position while building back strength.", vTaperNote: "Develops lower back and posterior chain.", priority: "tertiary", tags: ["swimmer_only"] },
+            { name: "Shoulder Ext. Rotations", equipment: "Band", target: "Shoulders", desc: "Elbow at side, 90 degrees. Rotate forearm outward. Control throughout. Prehab movement.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 5, bestFor: ["swimmer", "vTaper"], swimmerNote: "Essential for rotator cuff health in high-volume swimmers.", vTaperNote: "Maintains shoulder health for continued training.", priority: "tertiary", tags: [] },
+            { name: "Shoulder Int. Rotations", equipment: "Band", target: "Shoulders", desc: "Elbow at side, 90 degrees. Rotate forearm inward. Control throughout. Prehab movement.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 5, bestFor: ["swimmer", "vTaper"], swimmerNote: "Balances rotator cuff for injury prevention.", vTaperNote: "Maintains shoulder health and mobility.", priority: "tertiary", tags: [] },
+            { name: "Scapular Push-Ups", equipment: "None", target: "Shoulders", desc: "Push-up position. Only move shoulder blades. Protract and retract. No elbow bend.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds scapular control essential for healthy swimming shoulders.", vTaperNote: "Develops serratus anterior for shoulder stability.", priority: "tertiary", tags: [] },
+            { name: "Cable Pallof Press", equipment: "Cable Machine", target: "Core", desc: "Cable at chest. Press out straight. Hold against rotation. Return with control.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops anti-rotation strength for stroke stability.", vTaperNote: "Builds oblique definition and core anti-rotation.", priority: "tertiary", tags: [] },
+            { name: "Anti-Rotation Press", equipment: "Band", target: "Core", desc: "Band anchored to side. Press out. Hold against rotation. Control return.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds core stability for maintaining body position.", vTaperNote: "Develops core anti-rotation and stability.", priority: "tertiary", tags: [] },
+            { name: "Cable Woodchop (Hi-Lo)", equipment: "Cable Machine", target: "Core", desc: "Cable high. Chop down across body. Rotate from core. Control the return.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops rotational power pattern for stroke mechanics.", vTaperNote: "Builds oblique definition through rotational work.", priority: "tertiary", tags: [] },
+            { name: "Cable Woodchop (Lo-Hi)", equipment: "Cable Machine", target: "Core", desc: "Cable low. Chop up across body. Rotate from core. Control the return.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops ascending rotational power for catch phase.", vTaperNote: "Builds oblique definition and rotational strength.", priority: "tertiary", tags: [] },
+            { name: "Cable Rotational Twist", equipment: "Cable Machine", target: "Core", desc: "Cable at chest. Rotate from core. Arms stay straight. Control throughout.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops controlled rotational strength for all strokes.", vTaperNote: "Builds oblique and core rotational control.", priority: "tertiary", tags: [] },
+            { name: "Cable Int. Rotation", equipment: "Cable Machine", target: "Shoulders", desc: "Cable at elbow height. Rotate arm inward. Control movement. Prehab focus.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 5, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens internal rotators for balanced shoulders.", vTaperNote: "Maintains shoulder health for longevity.", priority: "tertiary", tags: [] },
+            { name: "Cable Ext. Rotation", equipment: "Cable Machine", target: "Shoulders", desc: "Cable at elbow height. Rotate arm outward. Control movement. Prehab focus.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 5, bestFor: ["swimmer", "vTaper"], swimmerNote: "Critical for preventing swimmer's shoulder injuries.", vTaperNote: "Maintains shoulder health and mobility.", priority: "tertiary", tags: [] },
+            { name: "Swiss Ball Y-Raise", equipment: "Swiss Ball", target: "Shoulders", desc: "Lie on ball face down. Raise arms in Y shape. Squeeze shoulders. Lower with control.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Activates lower traps for scapular health.", vTaperNote: "Builds upper back definition and posture.", priority: "tertiary", tags: [] },
+            { name: "Swiss Ball T-Raise", equipment: "Swiss Ball", target: "Shoulders", desc: "Lie on ball face down. Raise arms in T shape. Squeeze shoulders. Lower with control.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens mid-traps for shoulder blade stability.", vTaperNote: "Develops rear delt and mid-back definition.", priority: "tertiary", tags: [] },
+            { name: "Swiss Ball W-Raise", equipment: "Swiss Ball", target: "Shoulders", desc: "Lie on ball face down. Raise arms in W shape. Squeeze shoulders. Lower with control.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Activates external rotators in functional pattern.", vTaperNote: "Builds rear delt and rotator cuff strength.", priority: "tertiary", tags: [] },
+            { name: "Swiss Ball Pike", equipment: "Swiss Ball", target: "Core", desc: "Feet on ball, hands on floor. Pike hips up. Keep legs straight. Lower with control.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops core strength and shoulder stability.", vTaperNote: "Builds core definition and shoulder control.", priority: "tertiary", tags: [] },
+            { name: "Band Pull-Aparts", equipment: "Band", target: "Shoulders", desc: "Bands at chest height. Pull band apart to shoulder width. Squeeze shoulder blades.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "15-20", rpe: 5, bestFor: ["swimmer", "vTaper"], swimmerNote: "Essential for posterior shoulder activation and injury prevention.", vTaperNote: "Builds rear delt and upper back for balanced shoulders.", priority: "secondary", tags: [] },
+            { name: "Prone Y-T-I Raises", equipment: "None", target: "Shoulders", desc: "Lie face down. Raise arms in Y, T, I positions. Controlled, squeeze shoulders throughout.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Comprehensive shoulder prehab for swimmer's shoulder prevention.", vTaperNote: "Develops upper back and rear delt definition.", priority: "tertiary", tags: [] },
+            { name: "Reverse Snow Angels", equipment: "None", target: "Shoulders", desc: "Lie face down, arms at sides. Raise arms up and out in snow angel motion. Squeeze shoulder blades.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Activates entire posterior shoulder chain for prehab.", vTaperNote: "Builds rear delt and upper back mobility.", priority: "tertiary", tags: [] },
+            { name: "Plank to Down Dog", equipment: "None", target: "Shoulders", desc: "Start in plank. Push hips back to Down Dog position. Return to plank. Smooth transition.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Improves shoulder mobility and core engagement.", vTaperNote: "Develops shoulder flexibility and core control.", priority: "tertiary", tags: [] },
+
+            // === TIER 5: METABOLIC/FINISHER (3 x 15-20 @ RPE 7-8) ===
+            { name: "Mountain Climbers", equipment: "None", target: "Core", desc: "Plank position. Drive knees to chest alternating. Fast pace. Keep hips low.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds core endurance and hip flexor conditioning.", vTaperNote: "Develops core endurance and metabolic conditioning.", priority: "tertiary", tags: [] },
+            { name: "Russian Twists", equipment: "Medicine Ball", target: "Core", desc: "Seated, feet off floor. Rotate side to side with ball. Control the movement. Feel obliques.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops rotational endurance for sustained stroke power.", vTaperNote: "Builds oblique definition and core endurance.", priority: "tertiary", tags: [] },
+            { name: "Med Ball Wall Sit", equipment: "Medicine Ball", target: "Legs & Glutes", desc: "Back against wall. Hold ball. Squat at 90 degrees. Hold for time.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "45-60s", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds quad endurance for sustained kicking.", vTaperNote: "Develops quad endurance and mental toughness.", priority: "tertiary", tags: [] },
+            { name: "Med Ball Shoulder Circles", equipment: "Medicine Ball", target: "Shoulders", desc: "Hold ball with arms extended. Circle overhead. Control the weight. Burn in shoulders.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds shoulder endurance for high-volume training.", vTaperNote: "Develops shoulder endurance and definition.", priority: "tertiary", tags: [] },
+            { name: "Med Ball Front Raise", equipment: "Medicine Ball", target: "Shoulders", desc: "Ball at thighs. Raise to shoulder height. Lower with control. High reps for endurance.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds anterior delt endurance for stroke recovery.", vTaperNote: "Develops front delt definition and endurance.", priority: "tertiary", tags: [] },
+            { name: "Banded Lateral Walks", equipment: "Band", target: "Legs & Glutes", desc: "Band around ankles. Step sideways. Keep tension constant. Burn in glutes.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Activates glute medius for hip stability.", vTaperNote: "Builds glute definition and hip stability.", priority: "tertiary", tags: [] },
+            { name: "Banded Squats", equipment: "Band", target: "Legs & Glutes", desc: "Band above knees. Squat with knees pressing out. High reps. Glute activation.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Activates glutes and develops hip control.", vTaperNote: "Builds leg definition and glute activation.", priority: "tertiary", tags: [] },
+            { name: "Banded Glute Bridges", equipment: "Band", target: "Legs & Glutes", desc: "Band above knees. Bridge up, pressing knees out. Squeeze glutes at top. High reps.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds glute strength and hip extension power.", vTaperNote: "Develops glute definition and posterior chain.", priority: "tertiary", tags: [] },
+            { name: "Cable Face Pulls", equipment: "Cable Machine", target: "Shoulders", desc: "Rope at face height. Pull to face, elbows high. Squeeze rear delts. High reps.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Essential for rear delt development and shoulder balance.", vTaperNote: "Builds rear delt and upper back for balanced shoulders.", priority: "secondary", tags: [] },
+
+            // === NEW EXERCISES (Stefan's V-Taper Protocol) ===
+            { name: "Incline Dumbbell Press", equipment: "Dumbbell", target: "Chest", desc: "Incline allows deeper stretch and better contraction. Go deep, feel the stretch before pushing.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds upper chest strength for powerful streamline.", vTaperNote: "Develops upper chest mass for balanced chest aesthetics.", priority: "core", tags: ["hypertrophy"] },
+            { name: "Dumbbell Chest Flyes (Incline)", equipment: "Dumbbell", target: "Chest", desc: "Controlled stretch at bottom. Arc motion, not straight lines. Full range of motion.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops chest flexibility and stretch under load.", vTaperNote: "Builds chest definition and separation.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Machine Chest Flyes", equipment: "Cable Machine", target: "Chest", desc: "Stable movement. Focus on contraction. No momentum.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Isolated chest work with reduced shoulder stress.", vTaperNote: "Builds chest definition with constant tension.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Dumbbell Chest Flyes (Flat)", equipment: "Dumbbell", target: "Chest", desc: "Full ROM, light weight, control. Feel the stretch.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops chest stretch and pec flexibility.", vTaperNote: "Builds chest width and definition.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Lying Leg Curl", equipment: "Machine", target: "Legs & Glutes", desc: "Hamstring isolation. Controlled descent. Squeeze at top.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Isolated hamstring work for kicking power.", vTaperNote: "Builds hamstring definition and leg balance.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Machine Leg Press", equipment: "Machine", target: "Legs & Glutes", desc: "Vertical push, controlled depth. Full ROM. Good quad focus.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds quad strength with reduced spinal load.", vTaperNote: "Develops quad mass and leg definition.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Hack Squat", equipment: "Machine", target: "Legs & Glutes", desc: "Vertical bar path, quad dominant. Controlled descent.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Quad-focused leg development with stability.", vTaperNote: "Builds quad sweep and leg definition.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Machine Pec Deck", equipment: "Machine", target: "Chest", desc: "Isolated chest work. No shoulder strain. Full contraction.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Chest isolation with minimal shoulder involvement.", vTaperNote: "Builds chest contraction and inner chest definition.", priority: "secondary", tags: ["hypertrophy"] },
+            { name: "Single-Leg Leg Press", equipment: "Machine", target: "Legs & Glutes", desc: "Unilateral quad work. Balance and stability. Full ROM.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds single-leg strength for starts and turns.", vTaperNote: "Develops unilateral leg strength and balance.", priority: "secondary", tags: ["hypertrophy"] },
+
+            // === SWIMMER-SPECIFIC EXERCISES ===
+            { name: "Streamline Flutter Kick", equipment: "None", target: "Core & Kick", desc: "Arms locked overhead, core braced. Keep legs straight, kick from hips not knees. 30-45 second holds.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "30-45s", rpe: 7, bestFor: ["swimmer"], swimmerNote: "Develops proper kick mechanics and core stability for streamline.", vTaperNote: "", priority: "core", tags: ["swimmer_only"] },
+            { name: "Vertical Kicking", equipment: "None", target: "Core & Kick", desc: "Tread water vertically. Keep core engaged. Kick from hips. Hands at sides or overhead. 30-60 seconds.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "30-60s", rpe: 7, bestFor: ["swimmer"], swimmerNote: "Builds powerful kicking endurance and hip drive.", vTaperNote: "", priority: "secondary", tags: ["swimmer_only"] }
         ];
 
         document.getElementById('db-count').innerText = `Database: ${exercises.length} Exercises`;
@@ -865,9 +1363,25 @@
         const streakCounter = document.getElementById('streak-counter');
 
         // === STREAK LOGIC ===
+        // Mode-specific localStorage keys for streaks
+        function getStreakKeys() {
+            if (userMode === 'swimmer') {
+                return {
+                    streak: 'swimmerStreak',
+                    lastWorkoutDate: 'swimmerLastWorkoutDate'
+                };
+            } else {
+                return {
+                    streak: 'vTaperStreak',
+                    lastWorkoutDate: 'vTaperLastWorkoutDate'
+                };
+            }
+        }
+
         function initStreak() {
-            const lastWorkout = localStorage.getItem('lastWorkoutDate');
-            const currentStreak = parseInt(localStorage.getItem('streak') || '0');
+            const keys = getStreakKeys();
+            const lastWorkout = localStorage.getItem(keys.lastWorkoutDate);
+            const currentStreak = parseInt(localStorage.getItem(keys.streak) || '0');
 
             const today = new Date().toDateString();
             const yesterday = new Date();
@@ -876,7 +1390,7 @@
 
             // Reset if missed yesterday (and didn't workout today yet)
             if (lastWorkout && lastWorkout !== today && lastWorkout !== yesterdayStr) {
-                localStorage.setItem('streak', '0');
+                localStorage.setItem(keys.streak, '0');
                 streakCounter.innerText = '🔥 0';
             } else {
                 streakCounter.innerText = `🔥 ${currentStreak}`;
@@ -885,20 +1399,22 @@
 
         // Initialize on load
         initStreak();
+        appInitialized = true; // Now mode switches can call initStreak
 
         function completeWorkout() {
+            const keys = getStreakKeys();
             const today = new Date().toDateString();
-            const lastWorkout = localStorage.getItem('lastWorkoutDate');
-            let currentStreak = parseInt(localStorage.getItem('streak') || '0');
+            const lastWorkout = localStorage.getItem(keys.lastWorkoutDate);
+            let currentStreak = parseInt(localStorage.getItem(keys.streak) || '0');
             const btn = document.getElementById('completeBtn');
             let streakIncreased = false;
 
             // 1. Immediate Updates
-            // Update Data
+            // Update Data (mode-specific)
             if (lastWorkout !== today) {
                 currentStreak++;
-                localStorage.setItem('streak', currentStreak);
-                localStorage.setItem('lastWorkoutDate', today);
+                localStorage.setItem(keys.streak, currentStreak);
+                localStorage.setItem(keys.lastWorkoutDate, today);
                 streakIncreased = true;
             }
 
@@ -941,9 +1457,82 @@
 
             }, 700);
         }
+        // Get mode-specific sets/reps/rest based on exercise properties
+        function getExerciseProtocol(exercise, mode) {
+            const priority = exercise.priority || 'secondary';
+            const equipment = exercise.equipment || 'None';
+            const target = exercise.target || '';
+
+            // Check for special exercise types
+            const isBodyweight = ['None', 'Pull-Up Bar'].includes(equipment) &&
+                ['Pull-Ups', 'Dips', 'Push-Ups', 'Push-Up Variations'].some(n => exercise.name.includes(n));
+            const isMachine = equipment.toLowerCase().includes('machine');
+            const isPlyometric = exercise.tags?.includes('power') || target === 'Power';
+            const isCardioFinisher = ['Burpees', 'Mountain Climbers', 'Jump Rope'].some(n => exercise.name.includes(n));
+            const isCore = target === 'Core' || target.includes('Core');
+            const isTimeHold = exercise.reps?.includes('s') || exercise.name.includes('Plank') || exercise.name.includes('Hold');
+
+            // Default protocol structure
+            let protocol = { sets: 3, reps: '8-12', rest: 60 };
+
+            if (mode === 'vTaper' || mode === 'v-taper') {
+                // V-TAPER MODE: Strength + Hypertrophy focus
+                if (isPlyometric) {
+                    protocol = { sets: 4, reps: '5-8', rest: 90 };
+                } else if (isCardioFinisher) {
+                    protocol = { sets: 3, reps: '15-20', rest: 45 };
+                } else if (isTimeHold) {
+                    protocol = { sets: 3, reps: exercise.reps || '30-45s', rest: 60 };
+                } else if (priority === 'core') {
+                    // Heavy compounds: 4 sets, lower reps
+                    if (isBodyweight) {
+                        protocol = { sets: 4, reps: '6-10', rest: 90 };
+                    } else {
+                        protocol = { sets: 4, reps: '6-8', rest: 120 };
+                    }
+                } else if (priority === 'secondary') {
+                    // Moderate accessory: 3-4 sets, moderate reps
+                    if (isMachine) {
+                        protocol = { sets: 3, reps: '10-12', rest: 60 };
+                    } else {
+                        protocol = { sets: 4, reps: '8-12', rest: 75 };
+                    }
+                } else {
+                    // Tertiary/isolation: 3 sets, higher reps
+                    protocol = { sets: 3, reps: '12-15', rest: 60 };
+                }
+            } else {
+                // SWIMMER MODE: Endurance + Conditioning focus
+                if (isPlyometric) {
+                    protocol = { sets: 3, reps: '6-10', rest: 60 };
+                } else if (isCardioFinisher) {
+                    protocol = { sets: 3, reps: '20-30', rest: 30 };
+                } else if (isTimeHold) {
+                    protocol = { sets: 3, reps: exercise.reps || '45-60s', rest: 45 };
+                } else if (priority === 'core') {
+                    // Controlled compounds: moderate sets/reps
+                    if (isBodyweight) {
+                        protocol = { sets: 4, reps: '8-12', rest: 60 };
+                    } else {
+                        protocol = { sets: 3, reps: '8-10', rest: 75 };
+                    }
+                } else if (priority === 'secondary') {
+                    // Conditioning focus: higher reps
+                    protocol = { sets: 3, reps: '12-15', rest: 45 };
+                } else {
+                    // Finishers: high reps, short rest
+                    protocol = { sets: 3, reps: '15-20', rest: 30 };
+                }
+            }
+
+            return protocol;
+        }
 
         function displayExercises(list, isRandom = false) {
             resultsContainer.innerHTML = '';
+
+            // Get current mode
+            const currentMode = document.documentElement.getAttribute('data-mode') || 'swimmer';
 
             // Handle Empty State
             if (list.length === 0) {
@@ -983,6 +1572,10 @@
                     card.style.setProperty('--y', `${y}px`);
                 };
 
+                // Get mode-specific protocol
+                const protocol = getExerciseProtocol(ex, currentMode);
+                const restDisplay = protocol.rest >= 60 ? `${Math.floor(protocol.rest / 60)}:${(protocol.rest % 60).toString().padStart(2, '0')}` : `${protocol.rest}s`;
+
                 let headerHTML = `<h3>${ex.name}</h3>`;
                 if (isRandom) {
                     headerHTML = `
@@ -1003,12 +1596,20 @@
 
                     <div class="meta-container">
                         <div class="meta-group">
-                            <span class="meta-label">Equipment</span>
+                            <div class="meta-label">EQUIPMENT</div>
                             <span class="tag">${ex.equipment}</span>
                         </div>
                         <div class="meta-group">
-                            <span class="meta-label">Target</span>
+                            <div class="meta-label">TARGET</div>
                             <span class="tag">${ex.target}</span>
+                        </div>
+                        <div class="meta-group">
+                            <div class="meta-label">SETS × REPS</div>
+                            <span class="tag">${protocol.sets} × ${protocol.reps}</span>
+                        </div>
+                        <div class="meta-group">
+                            <div class="meta-label">REST</div>
+                            <span class="tag">${restDisplay}</span>
                         </div>
                     </div>
                 `;
@@ -1019,32 +1620,222 @@
         function findExercises() {
             const equip = equipSelect.value;
             const target = targetSelect.value;
+            const currentMode = document.documentElement.getAttribute('data-mode') || 'swimmer';
 
             resultsHeader.innerHTML = '<div class="section-title">Specific Exercises</div>';
 
-            const filtered = exercises.filter(ex => {
+            // First apply equipment/target filters
+            let filtered = exercises.filter(ex => {
                 const matchEquip = equip === 'all' || ex.equipment === equip;
                 const matchTarget = target === 'all' || ex.target.includes(target);
                 return matchEquip && matchTarget;
             });
 
+            // Then filter by mode (removes swimmer_only in V-TAPER mode)
+            filtered = filterByMode(filtered, currentMode);
+
             displayExercises(filtered);
         }
 
         function generateRandomCircuit() {
-            equipSelect.value = 'all';
-            targetSelect.value = 'all';
+            // IGNORE filters for random circuit - purely random biased by mode
+            const circuit = generateBiasedCircuit(userMode, 5);
 
-            const shuffled = [...exercises];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            // Get current mode label
+            const modeLabel = userMode === 'swimmer' ? 'SWIMMER' : 'V-TAPER';
+
+            // Display structured header: title only
+            resultsHeader.innerHTML = `
+                <div class="section-title">${circuit.length}-Exercise Circuit • ${modeLabel}</div>
+            `;
+            displayExercises(circuit, true);
+        }
+
+
+
+        // === MODE-AWARE FILTERING HELPERS ===
+        function filterByMode(exerciseList, mode) {
+            if (mode === 'v-taper' || mode === 'vTaper') {
+                // Filter out swimmer_only exercises in V-TAPER mode
+                return exerciseList.filter(ex => !ex.tags || !ex.tags.includes('swimmer_only'));
+            }
+            // SWIMMER mode: return all exercises
+            return exerciseList;
+        }
+
+        function getRandomItems(array, count) {
+            const shuffled = [...array].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        // Super-core exercises that should appear more frequently in V-TAPER
+        const SUPER_CORE_EXERCISES = ['Incline Dumbbell Press', 'Pull-Ups', 'Barbell Bent-Over Rows', 'Dumbbell Shoulder Press'];
+        // Featured exercise with higher guarantee rate
+        const FEATURED_EXERCISE = 'Incline Dumbbell Press';
+
+        function selectWeightedByPriority(exerciseList, count, mode = 'vTaper') {
+            // Separate by priority
+            let core = exerciseList.filter(ex => ex.priority === 'core');
+            let secondary = exerciseList.filter(ex => ex.priority === 'secondary');
+            let tertiary = exerciseList.filter(ex => ex.priority === 'tertiary');
+
+            // For V-TAPER mode, boost shoulder exercises by adding 1.4x weight (add twice)
+            if (mode === 'vTaper' || mode === 'v-taper') {
+                const shoulderCore = exerciseList.filter(ex => ex.target === 'Shoulders' && ex.priority === 'core');
+                const shoulderSecondary = exerciseList.filter(ex => ex.target === 'Shoulders' && ex.priority === 'secondary');
+                // Add shoulder exercises twice more for ~1.4x probability boost
+                core = [...core, ...shoulderCore, ...shoulderCore];
+                secondary = [...secondary, ...shoulderSecondary, ...shoulderSecondary];
             }
 
-            const circuit = shuffled.slice(0, 4);
+            // NEW WEIGHTING: 50% core, 30% secondary, 20% tertiary
+            const coreCount = Math.min(Math.round(count * 0.5), core.length); // 2-3 for 5 exercises
+            const secondaryCount = Math.min(Math.round(count * 0.3), secondary.length); // 1-2
+            const tertiaryCount = Math.min(Math.max(1, count - coreCount - secondaryCount), tertiary.length); // At least 1
 
-            resultsHeader.innerHTML = '<div class="section-title"> Random 4-Exercise Circuit</div>';
-            displayExercises(circuit, true);
+            // Track used targets to ensure unique target areas
+            let selected = [];
+            let usedTargets = new Set();
+
+            // Helper to select exercise with unique target
+            function selectWithUniqueTarget(pool, maxCount) {
+                const result = [];
+                const shuffled = [...pool].sort(() => Math.random() - 0.5);
+                for (const ex of shuffled) {
+                    if (result.length >= maxCount) break;
+                    if (!usedTargets.has(ex.target)) {
+                        result.push(ex);
+                        usedTargets.add(ex.target);
+                    }
+                }
+                return result;
+            }
+
+            // FEATURED EXERCISE GUARANTEE: 28% chance (1 in 3.5 circuits)
+            if (mode === 'vTaper' || mode === 'v-taper') {
+                const featuredEx = core.find(ex => ex.name === FEATURED_EXERCISE);
+                if (featuredEx && Math.random() < 0.28 && !usedTargets.has(featuredEx.target)) {
+                    selected.push(featuredEx);
+                    usedTargets.add(featuredEx.target);
+                    core = core.filter(ex => ex.name !== FEATURED_EXERCISE);
+                }
+            }
+
+            // SUPER-CORE GUARANTEE: 50% chance if no featured already selected
+            if ((mode === 'vTaper' || mode === 'v-taper') && selected.length === 0) {
+                const superCorePool = core.filter(ex => SUPER_CORE_EXERCISES.includes(ex.name) && !usedTargets.has(ex.target));
+                if (superCorePool.length > 0 && Math.random() < 0.5) {
+                    const guaranteed = getRandomItems(superCorePool, 1);
+                    selected.push(...guaranteed);
+                    usedTargets.add(guaranteed[0].target);
+                    core = core.filter(ex => ex.name !== guaranteed[0].name);
+                }
+            }
+
+            // Fill remaining slots with unique targets
+            const remainingCore = Math.max(0, coreCount - selected.length);
+            const coreFiltered = core.filter(ex => !usedTargets.has(ex.target));
+            selected.push(...selectWithUniqueTarget(coreFiltered, remainingCore));
+
+            const secondaryFiltered = secondary.filter(ex => !usedTargets.has(ex.target));
+            selected.push(...selectWithUniqueTarget(secondaryFiltered, secondaryCount));
+
+            const tertiaryFiltered = tertiary.filter(ex => !usedTargets.has(ex.target));
+            selected.push(...selectWithUniqueTarget(tertiaryFiltered, tertiaryCount));
+
+            // If we still need more (relaxed mode - allow any remaining)
+            if (selected.length < count) {
+                const remaining = exerciseList.filter(ex =>
+                    !selected.some(s => s.name === ex.name) && !usedTargets.has(ex.target)
+                );
+                selected.push(...selectWithUniqueTarget(remaining, count - selected.length));
+            }
+
+            // Final fallback: if still short, allow duplicate targets
+            if (selected.length < count) {
+                const remaining = exerciseList.filter(ex => !selected.some(s => s.name === ex.name));
+                const shuffled = [...remaining].sort(() => Math.random() - 0.5);
+                selected.push(...shuffled.slice(0, count - selected.length));
+            }
+
+            // Deduplicate by name
+            selected = [...new Map(selected.map(ex => [ex.name, ex])).values()];
+
+            // Shuffle to mix tiers
+            return selected.sort(() => Math.random() - 0.5);
+        }
+
+        // === BIASED CIRCUIT GENERATOR ===
+        function generateBiasedCircuit(mode, circuitSize = 5, filters = {}) {
+            // First, filter by mode to exclude swimmer_only exercises in V-TAPER
+            let basePool = filterByMode(exercises, mode);
+
+            // Apply equipment/target filters if provided
+            let filteredPool = basePool.filter(exercise => {
+                const matchesEquipment = !filters.equipment || exercise.equipment === filters.equipment;
+                const matchesTarget = !filters.target || exercise.target.includes(filters.target);
+                return matchesEquipment && matchesTarget;
+            });
+
+            // For V-TAPER mode, use priority-weighted selection with shoulder boost
+            if (mode === 'vTaper') {
+                return selectWeightedByPriority(filteredPool, circuitSize, mode);
+            }
+
+            // For SWIMMER mode, use existing tier-based biasing
+            const BIAS_PERCENTAGE = 0.6;
+            const tierPriority = {
+                swimmer: [
+                    "TIER_1_STRENGTH_FOUNDATION",
+                    "TIER_2_POWER_DEVELOPMENT",
+                    "TIER_4_MOBILITY_ANTI_ROTATION"
+                ]
+            };
+
+            const prioritizedTiers = tierPriority.swimmer;
+
+            let biasedPool = [];
+            let generalPool = [];
+
+            filteredPool.forEach(exercise => {
+                const isPrioritizedTier = prioritizedTiers.includes(exercise.tier);
+                const hasModeSpecificStrength = exercise.swimmerNote?.toLowerCase().includes("swimmer") ||
+                    exercise.name.toLowerCase().includes("streamline");
+
+                if (isPrioritizedTier && hasModeSpecificStrength) {
+                    biasedPool.push(exercise);
+                } else {
+                    generalPool.push(exercise);
+                }
+            });
+
+            const biasedCount = Math.round(circuitSize * BIAS_PERCENTAGE);
+
+            const shuffle = (array) => {
+                const shuffled = [...array];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled;
+            };
+
+            const shuffledBiased = shuffle(biasedPool);
+            const shuffledGeneral = shuffle(generalPool);
+
+            let selectedExercises = [];
+            selectedExercises.push(...shuffledBiased.slice(0, biasedCount));
+
+            const remainingSlots = circuitSize - selectedExercises.length;
+            selectedExercises.push(...shuffledGeneral.slice(0, remainingSlots));
+
+            if (selectedExercises.length < circuitSize) {
+                const stillNeeded = circuitSize - selectedExercises.length;
+                const remainingBiased = shuffledBiased.slice(biasedCount);
+                selectedExercises.push(...remainingBiased.slice(0, stillNeeded));
+            }
+
+            return selectedExercises;
         }
 
         // --- SHARE FUNCTIONALITY ---
@@ -1052,7 +1843,7 @@
             const cards = document.querySelectorAll('.exercise-card h3');
             if (cards.length === 0) return;
 
-            let textToCopy = "🏊 Dryland Pro Workout 🏊\n\n";
+            let textToCopy = "Dryland Pro Workout\n\n";
 
             cards.forEach((card, index) => {
                 textToCopy += `${index + 1}. ${card.innerText}\n`;
@@ -1114,6 +1905,33 @@
                 btn.style.opacity = '0.5';
             }
         }
+
+        // === EXPOSE FUNCTIONS GLOBALLY FOR ONCLICK HANDLERS ===
+        window.findExercises = findExercises;
+        window.generateRandomCircuit = generateRandomCircuit;
+        window.completeWorkout = completeWorkout;
+        window.shareWorkout = shareWorkout;
+        window.toggleCard = toggleCard;
+        window.handleCardClick = handleCardClick;
+        window.setMode = setMode;
+        window.cancelModeSwitch = cancelModeSwitch;
+        window.confirmModeSwitch = confirmModeSwitch;
+
+        // === WHY MODAL FUNCTIONS ===
+        function openWhyModal() {
+            document.getElementById('whyModal').classList.add('active');
+        }
+
+        function closeWhyModal(event) {
+            // If called from overlay click, only close if clicking the overlay itself
+            if (event && event.target !== document.getElementById('whyModal')) {
+                return;
+            }
+            document.getElementById('whyModal').classList.remove('active');
+        }
+
+        window.openWhyModal = openWhyModal;
+        window.closeWhyModal = closeWhyModal;
     </script>
 </body>
 
