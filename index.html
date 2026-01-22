@@ -4,14 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <meta property="og:title" content="Dryland Pro - Free Swim Workout Generator">
     <meta property="og:description"
         content="Don't know what dryland to do? Generate pro-level swim circuits instantly. Free, no ads, built by swimmers.">
     <meta property="og:url" content="https://dryland-pro.netlify.app/">
     <meta property="og:type" content="website">
-
     <title>Dryland Pro - Swimmer's Generator</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -22,36 +21,6 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --radius: 12px;
-        }
-
-        /* V-TAPER Mode - Warm Orange & Amber */
-        html[data-mode="v-taper"] {
-            --accent: #FF6B35;
-            --success: #FBBF24;
-        }
-
-        /* V-TAPER dropdown arrows */
-        html[data-mode="v-taper"] select {
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FF6B35%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-        }
-
-        /* V-TAPER Random Circuit button gradient */
-        html[data-mode="v-taper"] .btn-random {
-            background: linear-gradient(135deg, #FF6B35, #FBBF24);
-            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.2);
-        }
-
-        html[data-mode="v-taper"] .btn-random:hover {
-            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
-        }
-
-        /* V-TAPER Complete button */
-        html[data-mode="v-taper"] .btn-complete {
-            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
-        }
-
-        html[data-mode="v-taper"] .btn-complete:hover {
-            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
         }
 
         * {
@@ -79,17 +48,6 @@
         header {
             text-align: center;
             margin-bottom: 40px;
-            position: relative;
-            display: block;
-            /* Changed from flex to block for centering */
-        }
-
-        .header-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
         }
 
         h1 {
@@ -98,12 +56,6 @@
             margin: 0;
             font-size: 2.8rem;
             line-height: 1;
-            cursor: pointer;
-            transition: opacity 0.2s ease;
-        }
-
-        h1:hover {
-            opacity: 0.8;
         }
 
         h1 span {
@@ -120,8 +72,6 @@
             opacity: 0.8;
         }
 
-
-
         .controls {
             background: var(--card-bg);
             padding: 35px;
@@ -134,12 +84,42 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* --- SEARCH SECTION --- */
+        .view-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .view-toggle-btn {
+            background: transparent;
+            border: 1px solid #334155;
+            color: var(--text-muted);
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-toggle-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #0f172a;
+        }
+
+        .view-toggle-btn:hover:not(.active) {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
         .search-section {
             display: grid;
-            grid-template-columns: 1.2fr 1.2fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
-            align-items: end;
         }
 
         label {
@@ -167,7 +147,6 @@
             background-repeat: no-repeat;
             background-position: right 15px top 50%;
             background-size: 10px auto;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: all 0.2s ease;
         }
 
@@ -176,79 +155,131 @@
             box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
         }
 
-        button {
-            border: none;
-            font-size: 0.95rem;
-            font-weight: 700;
+        .finisher-control-card {
+            background: #0f172a;
+            border: 1px solid #334155;
             border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-            height: 50px;
+            padding: 18px 20px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            letter-spacing: 0.5px;
+            justify-content: space-between;
+            margin-top: 5px;
         }
 
-        button:hover {
+        .finisher-text-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .finisher-main-label {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .finisher-subtext {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #334155;
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .toggle-slider::before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked+.toggle-slider {
+            background-color: var(--accent);
+        }
+
+        .toggle-switch input:checked+.toggle-slider::before {
+            transform: translateX(22px);
+        }
+
+        .game-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .btn-generate {
+            flex: 1;
+            background: var(--accent);
+            color: #0f172a;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+            border: none;
+            border-radius: 8px;
+            height: 52px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-generate:hover {
             transform: translateY(-2px);
             filter: brightness(1.1);
         }
 
-        button:active {
-            transform: translateY(0);
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: #0f172a;
-        }
-
-
-        .divider {
+        .streak-counter {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
-            text-align: center;
-            color: #475569;
-            font-size: 0.7rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            opacity: 0.6;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid #334155;
-        }
-
-        .divider span {
+            justify-content: center;
+            gap: 6px;
+            height: 52px;
+            min-width: 70px;
             padding: 0 15px;
         }
 
-        .btn-random {
-            background: linear-gradient(135deg, var(--accent), var(--success));
-            color: #0f172a;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.2);
-        }
-
-        /* --- RESULTS GRID --- */
         .results-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 16px;
-            width: 100%;
-            /* Removed padding-bottom since share button is now there */
         }
 
         .section-title {
-            margin-top: 0;
-            margin-bottom: 12px;
+            margin: 0 0 20px;
             color: var(--text-muted);
             font-size: 0.8rem;
             text-transform: uppercase;
@@ -259,9 +290,6 @@
             font-weight: 700;
         }
 
-
-
-        /* --- CARD DESIGN V11 --- */
         .exercise-card {
             background: var(--card-bg);
             padding: 22px;
@@ -271,21 +299,27 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
-            /* For the glow effect */
         }
 
-        /* Flashlight Effect - Desktop Only */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         @media (hover: hover) {
             .exercise-card::before {
                 content: "";
                 position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
+                inset: 0;
                 background: radial-gradient(1200px circle at var(--x) var(--y), rgba(255, 255, 255, 0.04), transparent 60%);
                 z-index: 1;
                 pointer-events: none;
@@ -293,48 +327,20 @@
                 transition: opacity 0.5s;
             }
 
-            .exercise-card::after {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: radial-gradient(600px circle at var(--x) var(--y), rgba(56, 189, 248, 0.2), transparent 40%);
-                z-index: 0;
-                pointer-events: none;
-                opacity: 0;
-                transition: opacity 0.5s;
-                border-radius: var(--radius);
-                /* Ensure it follows border radius */
-            }
-
-            .exercise-card:hover::before,
-            .exercise-card:hover::after {
+            .exercise-card:hover::before {
                 opacity: 1;
             }
 
-            .exercise-card:hover {
-                box-shadow: 0 10px 40px -10px rgba(56, 189, 248, 0.15);
-            }
-
-            /* Ensure content stays above the glow */
             .exercise-card>* {
                 position: relative;
                 z-index: 2;
             }
         }
 
-        .random-card {
-            border-left: 5px solid var(--success);
-        }
-
         .exercise-card h3 {
             margin: 0;
             font-size: 1.2rem;
             font-weight: 800;
-            line-height: 1.3;
-            color: var(--text-main);
         }
 
         .exercise-desc {
@@ -348,10 +354,9 @@
         }
 
         .meta-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-top: 12px;
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
         }
 
         .meta-group {
@@ -365,12 +370,7 @@
             text-transform: uppercase;
             color: #64748b;
             font-weight: 700;
-            letter-spacing: 0.5px;
         }
-
-        /* Removed .card-meta styles as instructed by new layout */
-
-
 
         .tag {
             font-size: 0.75rem;
@@ -379,8 +379,177 @@
             background: rgba(56, 189, 248, 0.1);
             color: var(--accent);
             font-weight: 700;
-            letter-spacing: 0.3px;
             width: fit-content;
+        }
+
+        .rep-scheme-badge {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .card-actions {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 3;
+        }
+
+        .card-action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* Remove focus outline */
+        .card-action-btn:focus {
+            outline: none;
+        }
+
+        /* Icon color - cyan-400 */
+        .card-action-btn svg {
+            color: #38bdf8;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        /* Hover state - cyan-300 with slight scale */
+        .card-action-btn:hover svg {
+            color: #67e8f9;
+        }
+
+        .card-action-btn.swap-btn:hover svg {
+            transform: scale(1.05);
+        }
+
+        .card-action-btn.locked {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--accent);
+        }
+
+        /* Micro-animations */
+        @keyframes bounce-lock {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake-unlock {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(-8deg);
+            }
+
+            75% {
+                transform: rotate(8deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+        @keyframes spin-swap {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .card-action-btn.animate-lock svg {
+            animation: bounce-lock 0.3s ease-out;
+        }
+
+        .card-action-btn.animate-unlock svg {
+            animation: shake-unlock 0.3s ease-in-out;
+        }
+
+        .card-action-btn.animate-swap svg {
+            animation: spin-swap 0.5s ease-in-out;
+        }
+
+        .slot-category {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            padding-right: 80px;
+        }
+
+        .interactive-card {
+            cursor: pointer;
+        }
+
+        .exercise-checkbox {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            border: 2px solid var(--accent);
+            border-radius: 6px;
+            background-color: transparent;
+            display: grid;
+            place-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .exercise-checkbox::before {
+            content: "";
+            width: 14px;
+            height: 14px;
+            transform: scale(0);
+            transition: 0.2s transform ease-in-out;
+            box-shadow: inset 14px 14px white;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+
+        .exercise-checkbox:checked {
+            background-color: var(--accent);
+        }
+
+        .exercise-checkbox:checked::before {
+            transform: scale(1);
+        }
+
+        .exercise-card.checked {
+            opacity: 0.6;
+            border-left-color: var(--text-muted);
+        }
+
+        .exercise-card.checked h3 {
+            text-decoration: line-through;
+            color: var(--text-muted);
         }
 
         .empty-state {
@@ -391,6 +560,150 @@
             background: rgba(255, 255, 255, 0.02);
             border-radius: var(--radius);
             border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-share-ghost {
+            flex: 1;
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            height: 52px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .btn-share-ghost:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-complete {
+            flex: 2;
+            background: var(--success);
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+            transition: all 0.2s;
+            height: 52px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .btn-complete:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .btn-complete:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(1);
+            pointer-events: none;
+        }
+
+        .btn-success-state {
+            background: var(--success) !important;
+            cursor: default;
+            transform: none !important;
+        }
+
+        @keyframes streak-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .pulse-animation {
+            animation: streak-pulse 0.5s ease-in-out;
+            color: var(--success);
+            border-color: var(--success);
+        }
+
+        .benchmarks-view {
+            display: none;
+        }
+
+        .benchmarks-view.active {
+            display: block;
+        }
+
+        .generator-view.hidden {
+            display: none;
+        }
+
+        .benchmark-card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--accent);
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @media (hover: hover) {
+            .benchmark-card::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(1200px circle at var(--x) var(--y), rgba(255, 255, 255, 0.04), transparent 60%);
+                z-index: 1;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.5s;
+            }
+
+            .benchmark-card:hover::before {
+                opacity: 1;
+            }
+
+            .benchmark-card>* {
+                position: relative;
+                z-index: 2;
+            }
+        }
+
+        .benchmark-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .benchmark-card .workout-type {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .benchmark-card ul {
+            margin: 12px 0 0 0;
+            padding-left: 20px;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            line-height: 1.8;
         }
 
         footer {
@@ -420,1518 +733,748 @@
             border-bottom-style: solid;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         @media (max-width: 600px) {
             .search-section {
                 grid-template-columns: 1fr;
-                gap: 15px;
             }
 
-            .meta-container {
-                grid-template-columns: repeat(2, 1fr);
+            .game-bar {
+                flex-direction: column;
             }
 
-            .exercise-card {
-                padding: 18px;
-            }
-
-            .header-content h1 {
-                margin-top: 10px;
-                /* Prevent overlap with badge if needed */
-            }
-
+            .btn-generate,
             .streak-counter {
-                font-size: 0.9rem;
-                padding: 6px 12px;
-                flex: 1 !important;
-                /* 25% on mobile */
+                width: 100%;
             }
-
-            .btn-random {
-                flex: 3 !important;
-                /* 75% on mobile */
-            }
-
-            .btn-complete,
-            .btn-share-ghost,
-            .btn-random {
-                font-size: 0.8rem !important;
-                letter-spacing: 0.5px !important;
-            }
-        }
-
-        /* --- STREAK & ACTION BAR --- */
-        /* --- STREAK & ACTION BAR --- */
-        /* --- STREAK & ACTION BAR --- */
-        .game-bar {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            margin-top: 15px;
-            /* Space from divider */
-        }
-
-        .streak-counter {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 0;
-            /* Remove padding, use flex centering */
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            white-space: nowrap;
-            gap: 6px;
-            flex: 1;
-            /* Default to 20% (1 vs 4) for desktop */
-            height: 52px;
-            /* Fixed height */
-            min-width: 0;
-            /* Allow shrinking if needed */
-            cursor: default;
-            transition: all 0.2s ease;
-        }
-
-        .btn-random {
-            flex: 4;
-            /* Default to 80% (4 vs 1) for desktop */
-            height: 52px;
-            /* Fixed height */
-            margin-top: 0 !important;
-            /* Override any top margin */
-        }
-
-        .action-bar {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        .btn-primary,
-        .btn-random,
-        .btn-share-ghost,
-        .btn-complete {
-            padding: 14px 24px;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-        }
-
-        .btn-share-ghost {
-            flex: 1;
-            background: transparent;
-            border: 1px solid var(--text-muted);
-            color: var(--text-muted);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 52px;
-            letter-spacing: 1px;
-        }
-
-        .btn-share-ghost:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: rgba(56, 189, 248, 0.05);
-        }
-
-        .btn-complete {
-            flex: 2;
-            background: var(--success);
-            color: #0f172a;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 52px;
-            letter-spacing: 1px;
-        }
-
-        .btn-complete:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
-        }
-
-        .btn-complete:active {
-            transform: translateY(0);
-        }
-
-        @media (max-width: 600px) {
-            header {
-                margin-top: 10px;
-                /* Breathing room */
-            }
-
-            .header-content h1 {
-                margin-top: 10px;
-                /* Prevent overlap with badge if needed */
-            }
-
-            .streak-counter {
-                font-size: 0.9rem;
-                padding: 6px 12px;
-            }
-
-            .btn-complete {
-                font-size: 0.8rem !important;
-            }
-        }
-
-        /* --- CHECKBOX & COMPLETION STYLES --- */
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-        }
-
-        .interactive-card {
-            cursor: pointer;
-        }
-
-        .exercise-checkbox {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            border: 2px solid var(--accent);
-            border-radius: 6px;
-            background-color: transparent;
-            display: grid;
-            place-content: center;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .exercise-checkbox::before {
-            content: "";
-            width: 14px;
-            height: 14px;
-            transform: scale(0);
-            transition: 0.2s transform ease-in-out;
-            box-shadow: inset 14px 14px white;
-            transform-origin: center;
-            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-        }
-
-        .exercise-checkbox:checked {
-            background-color: var(--accent);
-        }
-
-        .exercise-checkbox:checked::before {
-            transform: scale(1);
-        }
-
-        .exercise-card.checked {
-            opacity: 0.6;
-            border-left-color: var(--text-muted);
-        }
-
-        .exercise-card.checked h3 {
-            text-decoration: line-through;
-            color: var(--text-muted);
-        }
-
-        .btn-complete:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            filter: grayscale(1);
-            pointer-events: none;
-            box-shadow: none;
-        }
-
-        .btn-success-state {
-            background: var(--success) !important;
-            color: #0f172a !important;
-            box-shadow: 0 0 15px rgba(34, 197, 94, 0.4) !important;
-            cursor: default;
-            transform: none !important;
-        }
-
-        @keyframes streak-pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.2);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .pulse-animation {
-            animation: streak-pulse 0.5s ease-in-out;
-            color: var(--success);
-            border-color: var(--success);
-        }
-
-        /* --- MODE TOGGLE --- */
-        .mode-toggle {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .mode-toggle-group {
-            display: flex;
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 4px;
-            gap: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .mode-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: transparent;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .mode-btn:hover {
-            color: var(--text-main);
-        }
-
-        .mode-btn.active {
-            background: var(--accent);
-            color: #0f172a;
-            box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
-        }
-
-        .mode-btn.active:hover {
-            transform: none;
-            filter: brightness(1.05);
-        }
-
-        /* --- CONFIRMATION MODAL --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.75);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s ease, visibility 0.2s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            transform: scale(0.9);
-            transition: transform 0.2s ease;
-        }
-
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-        }
-
-        .modal-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: var(--text-main);
-        }
-
-        .modal-message {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 24px;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 12px;
-        }
-
-        .modal-btn {
-            flex: 1;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .modal-btn-cancel {
-            background: transparent;
-            border: 1px solid var(--text-muted);
-            color: var(--text-muted);
-        }
-
-        .modal-btn-cancel:hover {
-            border-color: var(--text-main);
-            color: var(--text-main);
-        }
-
-        .modal-btn-confirm {
-            background: var(--accent);
-            border: none;
-            color: #0f172a;
-        }
-
-        .modal-btn-confirm:hover {
-            filter: brightness(1.1);
-            transform: translateY(-1px);
-        }
-
-        /* Why It Works Modal */
-        .why-modal-content {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 30px;
-            max-width: 550px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            text-align: left;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            transform: scale(0.9);
-            transition: transform 0.2s ease;
-        }
-
-        .modal-overlay.active .why-modal-content {
-            transform: scale(1);
-        }
-
-        .why-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .why-modal-title {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--text-main);
-        }
-
-        .why-modal-close {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .why-modal-close:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
-        }
-
-        .why-section {
-            margin-bottom: 20px;
-        }
-
-        .why-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .why-section h4 {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 0 0 8px 0;
-        }
-
-        .why-section p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        .why-section ul {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            line-height: 1.8;
-            margin: 0;
-            padding-left: 18px;
-        }
-
-        .why-final {
-            background: rgba(56, 189, 248, 0.08);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-        }
-
-        html[data-mode="v-taper"] .why-final {
-            background: rgba(255, 107, 53, 0.08);
-            border-color: rgba(255, 107, 53, 0.2);
-        }
-
-        .why-final p {
-            color: var(--text-main);
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 6px;
-        }
-
-        .why-final p:last-child {
-            margin-bottom: 0;
-        }
-
-        .why-got-it {
-            width: 100%;
-            margin-top: 20px;
-            padding: 12px 20px;
-            background: var(--accent);
-            color: #0f172a;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .why-got-it:hover {
-            filter: brightness(1.1);
-            transform: translateY(-1px);
         }
     </style>
 </head>
 
 <body>
-
     <div class="container">
         <header>
-            <div class="header-content">
-                <a href="javascript:location.reload();" style="text-decoration: none; color: inherit;">
-                    <h1>Dryland<span>Pro</span></h1>
-                </a>
-                <p id="subtitle" class="subtitle">For swimmers. By a swimmer.</p>
-            </div>
-            <div class="mode-toggle">
-                <div class="mode-toggle-group">
-                    <button id="toggleSwimmer" class="mode-btn active" onclick="setMode('swimmer')">
-                        SWIMMER
-                    </button>
-                    <button id="toggleVTaper" class="mode-btn" onclick="setMode('vTaper')">
-                        V-TAPER
-                    </button>
-                </div>
-            </div>
+            <h1>Dryland<span>Pro</span></h1>
+            <p class="subtitle">For swimmers. By a swimmer.</p>
         </header>
 
         <div class="controls">
-            <div class="search-section">
-                <div>
-                    <label>Equipment</label>
-                    <select id="equipmentSelect">
-                        <option value="all">Any Equipment</option>
-                        <option value="None">None (Bodyweight)</option>
-                        <option value="Band">Resistance Band</option>
-                        <option value="Dumbbell">Dumbbell</option>
-                        <option value="Cable Machine">Cable Machine</option>
-                        <option value="Pull-Up Bar">Pull-Up Bar</option>
-                        <option value="Medicine Ball">Medicine Ball</option>
-                        <option value="Barbell">Barbell</option>
-                        <option value="Plyo Box">Plyo Box</option>
-                        <option value="Swiss Ball">Swiss Ball</option>
-                        <option value="Machine">Machine</option>
-                        <option value="Trap Bar">Trap Bar</option>
-                        <option value="Bench">Bench</option>
-                    </select>
+            <div class="view-toggle">
+                <button class="view-toggle-btn active" id="tabGenerator">Generator</button>
+                <button class="view-toggle-btn" id="tabBenchmarks">Benchmarks</button>
+            </div>
+
+            <div class="generator-view" id="generatorView">
+                <div class="search-section">
+                    <div>
+                        <label>Session Goal</label>
+                        <select id="goalSelect">
+                            <option value="Power">Explosive Power</option>
+                            <option value="Strength" selected>Strength</option>
+                            <option value="Endurance">Endurance</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Equipment</label>
+                        <select id="equipmentSelect">
+                            <option value="All">Any Equipment</option>
+                            <option value="Bodyweight">Bodyweight Only</option>
+                            <option value="Dumbbells">Dumbbells</option>
+                            <option value="Barbell">Barbell</option>
+                            <option value="Cable Machine">Cable Machine</option>
+                            <option value="Band">Resistance Band</option>
+                            <option value="Medicine Ball">Medicine Ball</option>
+                            <option value="Plyo Box">Plyo Box</option>
+                            <option value="Swiss Ball">Swiss Ball</option>
+                            <option value="Pull-up Bar">Pull-up Bar</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div>
-                    <label>Target Area</label>
-                    <select id="targetSelect">
-                        <option value="all">Any Muscle</option>
-                        <option value="Core">Core</option>
-                        <option value="Shoulders">Shoulders</option>
-                        <option value="Chest">Chest</option>
-                        <option value="Legs">Legs & Glutes</option>
-                        <option value="Back">Back & Lats</option>
-                        <option value="Power">Power (Plyo)</option>
-                        <option value="Full Body">Full Body</option>
-                    </select>
+                <div class="finisher-control-card">
+                    <div class="finisher-text-group">
+                        <div class="finisher-main-label">Add Metabolic Finisher (Slot 6)</div>
+                        <div class="finisher-subtext">High-intensity burnout to simulate race fatigue.</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="finisherToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
 
-                <div style="position: relative; width: 100%;">
-                    <button class="btn-primary" onclick="findExercises()">SEARCH</button>
+                <div class="game-bar">
+                    <button class="btn-generate" id="generateBtn">GENERATE WORKOUT</button>
+                    <div id="streak-counter" class="streak-counter">🔥 0</div>
                 </div>
             </div>
 
-            <div class="divider"><span>OR</span></div>
-
-            <div class="game-bar">
-                <button class="btn-random" onclick="generateRandomCircuit()"> Random Circuit</button>
-                <div id="streak-counter" class="streak-counter">🔥 0</div>
+            <div class="benchmarks-view" id="benchmarksView">
+                <div class="benchmark-card">
+                    <div class="workout-type">Core Focus</div>
+                    <h3>💪 The Iron Streamline</h3>
+                    <ul>
+                        <li>Plank Hold — 3 x 45s</li>
+                        <li>Dead Bug — 3 x 12 each side</li>
+                        <li>Swiss Ball Jackknife — 3 x 10</li>
+                        <li>Hanging Leg Raises — 3 x 8</li>
+                        <li>Streamline Flutter Kick — 3 x 30s</li>
+                    </ul>
+                </div>
+                <div class="benchmark-card">
+                    <div class="workout-type">Power Focus</div>
+                    <h3>⚡ The 50m Sprint Prep</h3>
+                    <ul>
+                        <li>Box Jumps — 4 x 5</li>
+                        <li>Medicine Ball Slams — 4 x 8</li>
+                        <li>Broad Jumps — 4 x 5</li>
+                        <li>Power Clean — 4 x 3</li>
+                        <li>Plyo Push-Ups — 3 x 8</li>
+                    </ul>
+                </div>
+                <div class="benchmark-card">
+                    <div class="workout-type">Mobility Focus</div>
+                    <h3>🛡️ The Shoulder Shield</h3>
+                    <ul>
+                        <li>Shoulder Dislocates — 2 x 15</li>
+                        <li>Prone Y-T-W Raises — 2 x 10 each</li>
+                        <li>Cable Face Pulls — 3 x 15</li>
+                        <li>Thoracic Spine Rotation — 2 x 10 each</li>
+                        <li>World's Greatest Stretch — 2 x 5 each</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
         <div id="results-header"></div>
-
         <div id="results" class="results-grid">
-            <div class="empty-state">Select filters above or generate a random circuit.</div>
+            <div class="empty-state">Select your session goal and generate a smart workout.</div>
         </div>
-
         <div id="action-bar" class="action-bar" style="display: none;">
-            <button id="completeBtn" class="btn-complete" onclick="completeWorkout()">
-                Complete Workout
-            </button>
-            <button id="shareBtn" class="btn-share-ghost" onclick="shareWorkout()">
-                Share
-            </button>
+            <button id="completeBtn" class="btn-complete">Complete Workout</button>
+            <button id="shareBtn" class="btn-share-ghost">Share</button>
         </div>
     </div>
 
     <footer>
         <div id="db-count" style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px;"></div>
         <p>Missing a movement?</p>
-        <p>
-            <a href="mailto:chiriacalexandru05@icloud.com?subject=Dryland%20Pro%20Suggestion&body=Exercise%20Name:%0AEquipment:%0ATarget%20Area:"
-                class="footer-link">
-                Suggest an Exercise
-            </a>
-        </p>
-        <p style="margin-top: 15px;">
-            <a href="javascript:void(0)" class="footer-link" onclick="openWhyModal()">Why Dryland Pro Works</a>
-        </p>
+        <p><a href="mailto:chiriacalexandru05@icloud.com?subject=Dryland%20Pro%20Suggestion&body=Exercise%20Name:%0AEquipment:%0ATarget%20Area:"
+                class="footer-link">Suggest an Exercise</a></p>
         <p style="margin-top: 20px; opacity: 0.5; font-size: 0.7rem;">© 2025 Dryland Pro. Built by Alex.</p>
     </footer>
 
-    <!-- Mode Switch Confirmation Modal -->
-    <div id="modeConfirmModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-title">Switch Mode?</div>
-            <div class="modal-message">You have an active circuit. Switching modes will clear your current workout.
-            </div>
-            <div class="modal-buttons">
-                <button class="modal-btn modal-btn-cancel" onclick="cancelModeSwitch()">Cancel</button>
-                <button class="modal-btn modal-btn-confirm" onclick="confirmModeSwitch()">Switch</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Why Dryland Pro Works Modal -->
-    <div id="whyModal" class="modal-overlay" onclick="closeWhyModal(event)">
-        <div class="why-modal-content" onclick="event.stopPropagation()">
-            <div class="why-modal-header">
-                <div class="why-modal-title">Why Dryland Pro Works</div>
-                <button class="why-modal-close" onclick="closeWhyModal()">&times;</button>
-            </div>
-
-            <div class="why-section">
-                <h4>The Research</h4>
-                <p>Dryland Pro uses circuit-based periodization with compound movements first. This approach maximizes
-                    neural activation and hormone response when you're freshest. Research consistently shows that
-                    prioritizing multi-joint exercises before isolation work produces better strength and hypertrophy
-                    outcomes.</p>
-            </div>
-
-            <div class="why-section">
-                <h4>What Results Depend On</h4>
-                <ul>
-                    <li>Consistency over months, not days</li>
-                    <li>Progressive overload (adding weight or reps over time)</li>
-                    <li>Adequate nutrition and protein intake</li>
-                    <li>Quality sleep and recovery</li>
-                    <li>Honest effort in every session</li>
-                    <li>Your individual genetics and starting point</li>
-                </ul>
-                <p style="margin-top: 10px; font-style: italic;">The app generates the plan. You determine the results.
-                </p>
-            </div>
-
-            <div class="why-section">
-                <h4>Context & Honesty</h4>
-                <p>This is one approach among many valid training methods. Push/Pull/Legs, Upper/Lower splits, and
-                    full-body programs all work when applied consistently. What matters most: showing up, training with
-                    intensity, and recovering properly.</p>
-            </div>
-
-            <div class="why-section">
-                <h4>Why We Designed It This Way</h4>
-                <p>Swimmers needed accessible dryland training without a personal trainer. Most fitness apps create
-                    decision fatigue with endless options. Dryland Pro eliminates that—one button, one circuit, get to
-                    work. SWIMMER and V-TAPER modes exist because performance and aesthetics require different
-                    approaches.</p>
-            </div>
-
-            <div class="why-section why-final">
-                <p>Start. Stay consistent. Adapt.</p>
-                <p>The best program is the one you'll actually do.</p>
-                <p>Excellence is not an event. It's a living, breathing habit.</p>
-                <p style="color: var(--accent); font-weight: 700;">Stop guessing. Start grinding.</p>
-            </div>
-
-            <button class="why-got-it" onclick="closeWhyModal()">Got It</button>
-        </div>
-    </div>
-
     <script>
-        // === USER MODE ===
-        let userMode = localStorage.getItem('drylandMode') || 'swimmer';
-        let appInitialized = false; // Flag to prevent early initStreak calls
+        console.log("App Started");
 
-        // Pending mode for modal confirmation
-        let pendingMode = null;
+        // ═══════════════════════════════════════════════════════════════
+        // STEP A: THE DATA (from exercises.js)
+        // ═══════════════════════════════════════════════════════════════
+        const exerciseTiers = {
+            STRENGTH: 'STRENGTH',
+            POWER: 'POWER',
+            HYPERTROPHY: 'HYPERTROPHY',
+            MOBILITY: 'MOBILITY',
+            METABOLIC: 'METABOLIC'
+        };
 
-        // Check if there's an active circuit displayed
-        function hasActiveCircuit() {
-            const results = document.getElementById('results');
-            return results && results.querySelectorAll('.exercise-card').length > 0;
-        }
-
-        // Show the confirmation modal
-        function showModeConfirmModal(targetMode) {
-            pendingMode = targetMode;
-            document.getElementById('modeConfirmModal').classList.add('active');
-        }
-
-        // Cancel mode switch - close modal, keep current mode
-        function cancelModeSwitch() {
-            pendingMode = null;
-            document.getElementById('modeConfirmModal').classList.remove('active');
-        }
-
-        // Confirm mode switch - clear circuit, close modal, complete switch
-        function confirmModeSwitch() {
-            document.getElementById('modeConfirmModal').classList.remove('active');
-
-            // Clear the circuit display
-            const resultsContainer = document.getElementById('results');
-            const resultsHeader = document.getElementById('results-header');
-            const actionBar = document.getElementById('action-bar');
-
-            resultsContainer.innerHTML = '<div class="empty-state">Select filters above or generate a random circuit.</div>';
-            resultsHeader.innerHTML = '';
-            actionBar.style.display = 'none';
-
-            // Now complete the mode switch
-            if (pendingMode) {
-                applyModeSwitch(pendingMode);
-            }
-            pendingMode = null;
-        }
-
-        // Apply the actual mode switch (extracted from setMode)
-        function applyModeSwitch(mode) {
-            userMode = mode;
-            localStorage.setItem('drylandMode', mode);
-            document.documentElement.setAttribute('data-mode', mode === 'vTaper' ? 'v-taper' : 'swimmer');
-
-            const swimmerBtn = document.getElementById('toggleSwimmer');
-            const vTaperBtn = document.getElementById('toggleVTaper');
-
-            if (mode === 'swimmer') {
-                swimmerBtn.classList.add('active');
-                vTaperBtn.classList.remove('active');
-            } else {
-                swimmerBtn.classList.remove('active');
-                vTaperBtn.classList.add('active');
-            }
-
-            // Refresh streak display for the new mode (only after app is fully initialized)
-            if (appInitialized) {
-                initStreak();
-            }
-
-            // Update subtitle based on mode
-            const subtitle = document.getElementById('subtitle');
-            if (subtitle) {
-                if (mode === 'vTaper') {
-                    subtitle.textContent = 'For the frame. By the grind.';
-                } else {
-                    subtitle.textContent = 'For swimmers. By a swimmer.';
-                }
-            }
-        }
-
-        function setMode(mode) {
-            // If switching to a different mode and there's an active circuit, show confirmation
-            if (mode !== userMode && hasActiveCircuit()) {
-                showModeConfirmModal(mode);
-                return;
-            }
-
-            // No active circuit or same mode - switch immediately
-            applyModeSwitch(mode);
-        }
-
-        // Initialize mode on page load
-        setMode(userMode);
-
-        // === THE COMPLETE EXERCISE DATABASE WITH INTELLIGENT SETS/REPS/RPE ===
         const exercises = [
-            // === TIER 1: STRENGTH FOUNDATION (4 x 5-6 @ RPE 8-9) ===
-            { name: "Pull-Ups", equipment: "Pull-Up Bar", target: "Back & Lats", desc: "Hang from bar with overhand grip. Pull chest to bar. Lower with control. Full range of motion.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds posterior chain and counteracts anterior shoulder dominance from swimming.", vTaperNote: "Develops back width and upper body strength for the classic V-shape.", priority: "core", tags: [] },
-            { name: "Bench Press", equipment: "Barbell", target: "Chest", desc: "Lie on bench. Lower bar to chest. Press up explosively. Keep shoulder blades retracted.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens chest and triceps for powerful push-off and streamline.", vTaperNote: "Builds chest mass and upper body pressing strength for balanced torso.", priority: "core", tags: [] },
-            { name: "Barbell Back Squat", equipment: "Barbell", target: "Legs & Glutes", desc: "Bar on upper back. Squat to parallel or below. Drive through heels. Keep chest up.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds lower body power for explosive starts, turns, and underwater kicking.", vTaperNote: "Develops quadriceps and glutes for proportional leg development.", priority: "core", tags: [] },
-            { name: "Barbell Front Squat", equipment: "Barbell", target: "Legs & Glutes", desc: "Bar on front delts. Squat to depth. Elbows high. Core tight throughout.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops core stability and leg drive essential for powerful starts.", vTaperNote: "Builds quad definition and core strength for athletic physique.", priority: "core", tags: [] },
-            { name: "Trap Bar Deadlift", equipment: "Trap Bar", target: "Legs & Glutes", desc: "Stand in trap bar. Grip handles. Drive through legs to stand. Neutral spine throughout.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds total posterior chain strength with reduced spinal stress.", vTaperNote: "Develops powerful legs and back for overall athletic appearance.", priority: "core", tags: [] },
-            { name: "Deadlift", equipment: "Barbell", target: "Legs & Glutes", desc: "Grip bar outside knees. Drive through floor. Hips and shoulders rise together. Lock out at top.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops entire posterior chain for powerful swimming posture and kicking.", vTaperNote: "Builds back thickness and overall posterior development.", priority: "core", tags: [] },
-            { name: "Romanian Deadlift", equipment: "Barbell", target: "Legs & Glutes", desc: "Hold bar at hips. Hinge at hips, lowering bar along legs. Feel hamstring stretch. Return to standing.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens hamstrings and glutes critical for powerful kicking.", vTaperNote: "Develops hamstring and glute definition for balanced leg aesthetics.", priority: "core", tags: [] },
-            { name: "Sumo Deadlift", equipment: "Barbell", target: "Legs & Glutes", desc: "Wide stance, toes out. Grip bar inside knees. Drive through legs. Lock out at top.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds adductor and glute strength for breaststroke and fly kick.", vTaperNote: "Develops inner thigh and glute for complete leg development.", priority: "core", tags: [] },
-            { name: "Barbell Bent-Over Rows", equipment: "Barbell", target: "Back & Lats", desc: "Hinge at hips, back flat. Pull bar to lower chest. Squeeze shoulder blades. Lower with control.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Essential for balanced shoulder development and swimming stroke power.", vTaperNote: "Builds back thickness and lat width for V-taper foundation.", priority: "core", tags: [] },
-            { name: "Pendlay Rows", equipment: "Barbell", target: "Back & Lats", desc: "Bar on floor each rep. Explosive pull to lower chest. Set bar down with control. Reset each rep.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops explosive pulling power for catch phase of swimming strokes.", vTaperNote: "Builds back width and pulling strength for impressive back development.", priority: "core", tags: [] },
-            { name: "Barbell Split Squat", equipment: "Barbell", target: "Legs & Glutes", desc: "Bar on back. One foot forward, one back. Lower rear knee to floor. Drive through front heel.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds single-leg power for starts and asymmetry correction.", vTaperNote: "Develops quad and glute definition with unilateral strength.", priority: "core", tags: [] },
-            { name: "Lat Pulldowns", equipment: "Cable Machine", target: "Back & Lats", desc: "Grip bar wide. Pull to upper chest. Squeeze lats at bottom. Control the return.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "5-6", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Mimics pulling pattern of swimming strokes for stroke-specific strength.", vTaperNote: "Builds lat width essential for the V-taper silhouette.", priority: "core", tags: [] },
-
-            // === TIER 2: POWER DEVELOPMENT (5 x 3-5 @ RPE 8-9) ===
-            { name: "Box Jumps", equipment: "Plyo Box", target: "Power", desc: "Stand facing box. Explode upward. Land softly on box. Step down and reset.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops explosive leg power for starts and turns.", vTaperNote: "Builds athletic explosiveness and leg power.", priority: "tertiary", tags: ["power"] },
-            { name: "Broad Jumps", equipment: "None", target: "Power", desc: "Stand with feet hip-width. Swing arms and explode forward. Land softly. Reset and repeat.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Translates directly to powerful diving starts.", vTaperNote: "Develops horizontal power and athletic performance.", priority: "tertiary", tags: ["power"] },
-            { name: "Jump Squats", equipment: "None", target: "Power", desc: "Squat down. Explode upward. Land softly and immediately descend into next rep.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds explosive leg drive for powerful starts.", vTaperNote: "Develops leg power and definition through explosive training.", priority: "tertiary", tags: ["power"] },
-            { name: "Burpees", equipment: "None", target: "Full Body", desc: "Drop to floor. Chest touches. Push up and jump explosively. Land and repeat.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds full-body power and cardiovascular conditioning.", vTaperNote: "Develops full-body conditioning and metabolic capacity.", priority: "tertiary", tags: ["power"] },
-            { name: "Medicine Ball Slams", equipment: "Medicine Ball", target: "Power", desc: "Raise ball overhead. Slam down with full force. Catch on bounce. Repeat explosively.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops explosive lat power and core engagement for stroke power.", vTaperNote: "Builds core strength and upper body power through explosive movement.", priority: "tertiary", tags: ["power"] },
-            { name: "Med Ball Jump Squat", equipment: "Medicine Ball", target: "Power", desc: "Hold ball at chest. Squat and explode upward. Land softly. Repeat immediately.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Adds resistance to explosive leg training for starts.", vTaperNote: "Builds leg power with added resistance for athletic development.", priority: "tertiary", tags: ["power"] },
-            { name: "Power Clean", equipment: "Barbell", target: "Power", desc: "Bar at shins. Explosive pull. Catch in front rack. Stand and reset.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops total body explosive power and coordination.", vTaperNote: "Builds athletic power and full-body coordination.", priority: "tertiary", tags: ["power"] },
-            { name: "Hang Power Clean", equipment: "Barbell", target: "Power", desc: "Start at hang position. Explosive hip drive. Catch in front rack. Stand and reset.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Emphasizes hip extension power critical for underwater dolphin kicks.", vTaperNote: "Develops explosive hip drive and upper back power.", priority: "tertiary", tags: ["power"] },
-            { name: "Power Snatch", equipment: "Barbell", target: "Power", desc: "Wide grip. Explosive pull from floor. Catch overhead. Stand and reset.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds overhead power and shoulder stability for streamline.", vTaperNote: "Develops full-body power and shoulder mobility.", priority: "tertiary", tags: ["power"] },
-            { name: "Clean & Jerk", equipment: "Barbell", target: "Power", desc: "Clean bar to shoulders. Dip and drive overhead. Lock out arms. Lower and reset.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Ultimate full-body power exercise for athletic swimmers.", vTaperNote: "Builds total body power and athletic performance.", priority: "tertiary", tags: ["power"] },
-            { name: "Dumbbell Snatch", equipment: "Dumbbell", target: "Power", desc: "One dumbbell from floor. Explosive pull to overhead in one motion. Alternate sides.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops unilateral power and shoulder stability.", vTaperNote: "Builds explosive shoulder power and coordination.", priority: "tertiary", tags: ["power"] },
-            { name: "Dumbbell Hang Snatch", equipment: "Dumbbell", target: "Power", desc: "Start at hang. Explosive hip drive. Catch overhead. Alternate sides.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Emphasizes hip and shoulder power connection.", vTaperNote: "Develops athletic explosiveness and shoulder power.", priority: "tertiary", tags: ["power"] },
-            { name: "Depth Jump", equipment: "Plyo Box", target: "Power", desc: "Step off box. Land and immediately explode upward. Minimize ground contact time.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops reactive power for explosive push-offs.", vTaperNote: "Builds reactive leg power and explosiveness.", priority: "tertiary", tags: ["power"] },
-            { name: "Depth Drop to Box Jump", equipment: "Plyo Box", target: "Power", desc: "Drop from box. Land and immediately jump onto second box. Reactive power.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Maximizes reactive strength for starts and turns.", vTaperNote: "Develops advanced reactive power and leg strength.", priority: "tertiary", tags: ["power"] },
-            { name: "Plyo Box Hurdle Jump", equipment: "Plyo Box", target: "Power", desc: "Jump over hurdles in sequence. Minimize ground contact. Explosive rebounds.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds continuous explosive power for repeated efforts.", vTaperNote: "Develops reactive power and leg conditioning.", priority: "tertiary", tags: ["power"] },
-            { name: "Single-Leg Box Drop", equipment: "Plyo Box", target: "Power", desc: "Step off box on one leg. Land softly. Control the landing. Alternate legs.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops single-leg stability and landing mechanics.", vTaperNote: "Builds unilateral leg strength and control.", priority: "tertiary", tags: ["power"] },
-            { name: "Dumbbell Thruster", equipment: "Dumbbell", target: "Power", desc: "Dumbbells at shoulders. Squat down. Drive up explosively pressing overhead.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Combines leg drive and overhead power for full-body conditioning.", vTaperNote: "Builds leg and shoulder power with metabolic demand.", priority: "tertiary", tags: ["power"] },
-            { name: "Dumbbell Burpee", equipment: "Dumbbell", target: "Full Body", desc: "Hold dumbbells. Drop to floor. Push up. Stand and press overhead.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Full-body power and conditioning with added resistance.", vTaperNote: "Develops full-body power and metabolic conditioning.", priority: "tertiary", tags: ["power"] },
-            { name: "Med Ball Rotational Slam", equipment: "Medicine Ball", target: "Power", desc: "Hold ball overhead. Slam down, rotate side to side each rep. Full body rotation.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops explosive rotational power essential for all swimming strokes.", vTaperNote: "Builds core power and oblique definition through rotation.", priority: "tertiary", tags: ["power"] },
-            { name: "Med Ball Rotational Throw", equipment: "Medicine Ball", target: "Power", desc: "Stand sideways to wall. Throw ball with rotation from core. Catch and return.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 9, bestFor: ["swimmer", "vTaper"], swimmerNote: "Translates rotational power to swimming stroke mechanics.", vTaperNote: "Develops rotational power and core strength.", priority: "tertiary", tags: ["power"] },
-            { name: "Plyo Box Step-Ups", equipment: "Plyo Box", target: "Power", desc: "Step onto box explosively. Drive through heel. Alternate legs with power.", tier: "TIER_2_POWER_DEVELOPMENT", sets: 5, reps: "3-5", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds single-leg drive power for asymmetrical movements.", vTaperNote: "Develops leg power and definition through explosive step work.", priority: "tertiary", tags: ["power"] },
-
-            // === TIER 3: HYPERTROPHY/ACCESSORY (3 x 8-12 @ RPE 7-8) ===
-            { name: "Bulgarian Split Squats", equipment: "Plyo Box", target: "Legs & Glutes", desc: "Rear foot on bench. Lower until back knee nearly touches floor. Drive through front heel.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds single-leg strength and corrects muscle imbalances.", vTaperNote: "Develops quad and glute definition for aesthetic legs.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Single-Leg RDL", equipment: "Dumbbell", target: "Legs & Glutes", desc: "Stand on one leg. Hinge at hip, lowering weight. Feel hamstring stretch. Return to standing.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops hamstring and glute strength with balance demands.", vTaperNote: "Builds hamstring definition and unilateral leg aesthetics.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Lunges", equipment: "None", target: "Legs & Glutes", desc: "Step forward. Lower back knee to floor. Push back to standing. Alternate legs.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds functional leg strength and hip mobility.", vTaperNote: "Develops leg definition and functional movement patterns.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Streamline Squats", equipment: "None", target: "Legs & Glutes", desc: "Arms overhead in streamline. Squat to depth. Maintain tight core and position.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer"], swimmerNote: "Combines leg strength with streamline position practice.", vTaperNote: "Builds leg strength while improving shoulder mobility.", priority: "secondary", tags: ["swimmer_only"] },
-            { name: "Med Ball Goblet Squat", equipment: "Medicine Ball", target: "Legs & Glutes", desc: "Hold ball at chest. Squat to depth. Keep chest up. Drive through heels.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops leg strength with core engagement.", vTaperNote: "Builds quad development and core stability.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Dumbbell Lateral Raises", equipment: "Dumbbell", target: "Shoulders", desc: "Arms at sides. Raise to shoulder height. Control the descent. No swinging.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens medial deltoids for shoulder health and stability.", vTaperNote: "Builds shoulder width essential for V-taper aesthetics.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Dumbbell Front Raises", equipment: "Dumbbell", target: "Shoulders", desc: "Arms in front. Raise to shoulder height. Lower with control. Alternate or together.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds anterior deltoid strength for stroke recovery.", vTaperNote: "Develops front delt definition for shoulder fullness.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Dumbbell Shoulder Press", equipment: "Dumbbell", target: "Shoulders", desc: "Dumbbells at shoulders. Press overhead. Lower with control. Full range of motion.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds overhead strength for streamline and starts.", vTaperNote: "Develops shoulder mass and pressing strength.", priority: "core", tags: ["hypertrophy"] },
-            { name: "Dumbbell Bent-Over Rows", equipment: "Dumbbell", target: "Back & Lats", desc: "Hinge at hips. Pull dumbbells to ribcage. Squeeze shoulder blades. Lower with control.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds back strength to balance shoulder-dominant swimming.", vTaperNote: "Develops back thickness and lat definition.", priority: "core", tags: ["hypertrophy"] },
-            { name: "Single-Arm Dumbbell Row", equipment: "Dumbbell", target: "Back & Lats", desc: "One hand on bench. Pull dumbbell to hip. Squeeze lat. Lower with control.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops unilateral back strength and rotational stability.", vTaperNote: "Builds lat width and back definition.", priority: "core", tags: ["hypertrophy"] },
-            { name: "Dumbbell Reverse Fly", equipment: "Dumbbell", target: "Shoulders", desc: "Hinged at hips. Raise arms out to sides. Squeeze rear delts. Lower with control.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens rear delts to counter heavy swimming volume.", vTaperNote: "Builds rear delt definition for 3D shoulder appearance.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Resistance Band Rows", equipment: "Band", target: "Back & Lats", desc: "Band anchored in front. Pull to ribcage. Squeeze shoulder blades. Control return.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Low-impact back work ideal for high-volume swim training.", vTaperNote: "Builds back development with accommodating resistance.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Straight Arm Pull-Down", equipment: "Cable Machine", target: "Back & Lats", desc: "Arms straight. Pull cable down to thighs. Squeeze lats. Control the return.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Mimics the catch and pull phase of swimming strokes.", vTaperNote: "Develops lat width and definition for V-shape.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Bench Pulls", equipment: "Bench", target: "Back & Lats", desc: "Lie face down on bench. Pull weight to chest. Squeeze shoulder blades. Lower with control.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops horizontal pulling strength for balanced shoulders.", vTaperNote: "Builds upper back thickness and rear delt development.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Cable Lateral Raises", equipment: "Cable Machine", target: "Shoulders", desc: "Cable at low position. Raise arm to shoulder height. Constant tension. Control descent.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Constant tension builds shoulder stability endurance.", vTaperNote: "Maximizes shoulder width development with constant load.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Cable Reverse Fly", equipment: "Cable Machine", target: "Shoulders", desc: "Cables at chest height. Pull apart, squeezing rear delts. Control return.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds rear delt strength for shoulder balance.", vTaperNote: "Develops rear delt definition for complete shoulder development.", priority: "secondary", tags: ["hypertrophy"] },
-
-            { name: "Lateral Step-Ups", equipment: "Plyo Box", target: "Legs & Glutes", desc: "Stand beside box. Step up laterally. Drive through stepping leg. Alternate sides.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds lateral hip strength and stability.", vTaperNote: "Develops outer quad and glute sweep.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Single-Leg Step-Ups", equipment: "Plyo Box", target: "Legs & Glutes", desc: "One foot on box. Drive through to stand. Lower with control. All reps one leg.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops single-leg strength and balance.", vTaperNote: "Builds leg definition and unilateral strength.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Renegade Rows", equipment: "Dumbbell", target: "Back & Lats", desc: "Plank with dumbbells. Row one arm at a time. Keep hips stable. Alternate sides.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Combines anti-rotation core work with back strengthening.", vTaperNote: "Builds back and core while developing anti-rotation strength.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Weighted Sit-Ups", equipment: "Dumbbell", target: "Core", desc: "Weight on chest. Sit up fully. Lower with control. Keep feet anchored.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds core flexion strength for underwater dolphin kicks.", vTaperNote: "Develops visible ab definition and core strength.", priority: "tertiary", tags: ["hypertrophy"] },
-            { name: "Dumbbell Wood Chops", equipment: "Dumbbell", target: "Core", desc: "Hold dumbbell. Rotate from low to high. Control the weight. Full core rotation.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops rotational power through the core.", vTaperNote: "Builds oblique definition and rotational strength.", priority: "tertiary", tags: ["hypertrophy"] },
-            { name: "Farmer's Carry", equipment: "Dumbbell", target: "Full Body", desc: "Heavy weights at sides. Walk with control. Keep core tight. Shoulders back.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds grip, core, and postural endurance.", vTaperNote: "Develops trap, forearm, and core strength.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Turkish Get-Up", equipment: "Dumbbell", target: "Full Body", desc: "Start on floor. Stand up with weight overhead. Reverse the movement. Control throughout.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds shoulder stability and full-body coordination.", vTaperNote: "Develops functional strength and body control.", priority: "tertiary", tags: [] },
-            { name: "Swiss Ball Hamstring Curl", equipment: "Swiss Ball", target: "Legs & Glutes", desc: "Lie on back, heels on ball. Roll ball toward glutes. Squeeze hamstrings. Roll back.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Isolates hamstrings critical for kicking power.", vTaperNote: "Builds hamstring definition and leg balance.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Single-Leg Ball Curl", equipment: "Swiss Ball", target: "Legs & Glutes", desc: "One heel on ball. Curl ball toward glutes. Squeeze hamstring. Roll back. One leg only.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops unilateral hamstring strength and coordination.", vTaperNote: "Builds hamstring definition with unilateral focus.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Swiss Ball Glute Bridge", equipment: "Swiss Ball", target: "Legs & Glutes", desc: "Feet on ball. Lift hips high. Squeeze glutes at top. Lower with control.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds glute strength with core stability demands.", vTaperNote: "Develops glute definition and posterior chain.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Swiss Ball Wall Squat", equipment: "Swiss Ball", target: "Legs & Glutes", desc: "Ball behind back on wall. Squat to parallel. Hold and return. Constant tension.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds quad endurance with reduced impact.", vTaperNote: "Develops quad definition with constant tension.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Hanging Leg Raises", equipment: "Pull-Up Bar", target: "Core", desc: "Hang from bar. Raise legs to 90 degrees or higher. Lower with control. No swinging.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops hip flexor strength for kicking.", vTaperNote: "Builds visible lower ab definition.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Swiss Ball Jackknife", equipment: "Swiss Ball", target: "Core", desc: "Feet on ball, plank position. Roll ball in, pulling knees to chest. Extend back out.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops core flexion strength with stability demands.", vTaperNote: "Builds ab definition and core control.", priority: "secondary", tags: ["hypertrophy"] },
-
-            // === TIER 4: MOBILITY/ANTI-ROTATION (3 x 10-15 @ RPE 6) ===
-            { name: "Plank", equipment: "None", target: "Core", desc: "Forearms on floor. Body straight. Hold position. No sagging or piking.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "30-60s", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds core stability for maintaining streamline.", vTaperNote: "Develops core endurance and abdominal definition.", priority: "tertiary", tags: [] },
-            { name: "Side Plank", equipment: "None", target: "Core", desc: "On one forearm. Body straight. Hold position. Stack feet or stagger.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "30-60s", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens obliques for rotational stability in strokes.", vTaperNote: "Develops oblique definition and core stability.", priority: "tertiary", tags: [] },
-            { name: "Weighted Plank", equipment: "Dumbbell", target: "Core", desc: "Weight on upper back. Plank position. Hold with control. No form breakdown.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "30-60s", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Progressive core stability for advanced swimmers.", vTaperNote: "Builds core strength and abdominal definition.", priority: "tertiary", tags: [] },
-            { name: "Dead Bug", equipment: "None", target: "Core", desc: "On back, arms up, knees at 90. Extend opposite arm and leg. Keep back flat.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops contralateral coordination essential for swimming.", vTaperNote: "Builds core control and stability.", priority: "tertiary", tags: [] },
-            { name: "Streamline Superman", equipment: "None", target: "Back & Lats", desc: "Face down, arms in streamline. Lift arms and legs. Hold and squeeze. Lower with control.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 6, bestFor: ["swimmer"], swimmerNote: "Reinforces streamline position while building back strength.", vTaperNote: "Develops lower back and posterior chain.", priority: "tertiary", tags: ["swimmer_only"] },
-            { name: "Shoulder Ext. Rotations", equipment: "Band", target: "Shoulders", desc: "Elbow at side, 90 degrees. Rotate forearm outward. Control throughout. Prehab movement.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 5, bestFor: ["swimmer", "vTaper"], swimmerNote: "Essential for rotator cuff health in high-volume swimmers.", vTaperNote: "Maintains shoulder health for continued training.", priority: "tertiary", tags: [] },
-            { name: "Shoulder Int. Rotations", equipment: "Band", target: "Shoulders", desc: "Elbow at side, 90 degrees. Rotate forearm inward. Control throughout. Prehab movement.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 5, bestFor: ["swimmer", "vTaper"], swimmerNote: "Balances rotator cuff for injury prevention.", vTaperNote: "Maintains shoulder health and mobility.", priority: "tertiary", tags: [] },
-            { name: "Scapular Push-Ups", equipment: "None", target: "Shoulders", desc: "Push-up position. Only move shoulder blades. Protract and retract. No elbow bend.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds scapular control essential for healthy swimming shoulders.", vTaperNote: "Develops serratus anterior for shoulder stability.", priority: "tertiary", tags: [] },
-            { name: "Cable Pallof Press", equipment: "Cable Machine", target: "Core", desc: "Cable at chest. Press out straight. Hold against rotation. Return with control.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops anti-rotation strength for stroke stability.", vTaperNote: "Builds oblique definition and core anti-rotation.", priority: "tertiary", tags: [] },
-            { name: "Anti-Rotation Press", equipment: "Band", target: "Core", desc: "Band anchored to side. Press out. Hold against rotation. Control return.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds core stability for maintaining body position.", vTaperNote: "Develops core anti-rotation and stability.", priority: "tertiary", tags: [] },
-            { name: "Cable Woodchop (Hi-Lo)", equipment: "Cable Machine", target: "Core", desc: "Cable high. Chop down across body. Rotate from core. Control the return.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops rotational power pattern for stroke mechanics.", vTaperNote: "Builds oblique definition through rotational work.", priority: "tertiary", tags: [] },
-            { name: "Cable Woodchop (Lo-Hi)", equipment: "Cable Machine", target: "Core", desc: "Cable low. Chop up across body. Rotate from core. Control the return.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops ascending rotational power for catch phase.", vTaperNote: "Builds oblique definition and rotational strength.", priority: "tertiary", tags: [] },
-            { name: "Cable Rotational Twist", equipment: "Cable Machine", target: "Core", desc: "Cable at chest. Rotate from core. Arms stay straight. Control throughout.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops controlled rotational strength for all strokes.", vTaperNote: "Builds oblique and core rotational control.", priority: "tertiary", tags: [] },
-            { name: "Cable Int. Rotation", equipment: "Cable Machine", target: "Shoulders", desc: "Cable at elbow height. Rotate arm inward. Control movement. Prehab focus.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 5, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens internal rotators for balanced shoulders.", vTaperNote: "Maintains shoulder health for longevity.", priority: "tertiary", tags: [] },
-            { name: "Cable Ext. Rotation", equipment: "Cable Machine", target: "Shoulders", desc: "Cable at elbow height. Rotate arm outward. Control movement. Prehab focus.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 5, bestFor: ["swimmer", "vTaper"], swimmerNote: "Critical for preventing swimmer's shoulder injuries.", vTaperNote: "Maintains shoulder health and mobility.", priority: "tertiary", tags: [] },
-            { name: "Swiss Ball Y-Raise", equipment: "Swiss Ball", target: "Shoulders", desc: "Lie on ball face down. Raise arms in Y shape. Squeeze shoulders. Lower with control.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Activates lower traps for scapular health.", vTaperNote: "Builds upper back definition and posture.", priority: "tertiary", tags: [] },
-            { name: "Swiss Ball T-Raise", equipment: "Swiss Ball", target: "Shoulders", desc: "Lie on ball face down. Raise arms in T shape. Squeeze shoulders. Lower with control.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Strengthens mid-traps for shoulder blade stability.", vTaperNote: "Develops rear delt and mid-back definition.", priority: "tertiary", tags: [] },
-            { name: "Swiss Ball W-Raise", equipment: "Swiss Ball", target: "Shoulders", desc: "Lie on ball face down. Raise arms in W shape. Squeeze shoulders. Lower with control.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "12-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Activates external rotators in functional pattern.", vTaperNote: "Builds rear delt and rotator cuff strength.", priority: "tertiary", tags: [] },
-            { name: "Swiss Ball Pike", equipment: "Swiss Ball", target: "Core", desc: "Feet on ball, hands on floor. Pike hips up. Keep legs straight. Lower with control.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops core strength and shoulder stability.", vTaperNote: "Builds core definition and shoulder control.", priority: "tertiary", tags: [] },
-            { name: "Band Pull-Aparts", equipment: "Band", target: "Shoulders", desc: "Bands at chest height. Pull band apart to shoulder width. Squeeze shoulder blades.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "15-20", rpe: 5, bestFor: ["swimmer", "vTaper"], swimmerNote: "Essential for posterior shoulder activation and injury prevention.", vTaperNote: "Builds rear delt and upper back for balanced shoulders.", priority: "secondary", tags: [] },
-            { name: "Prone Y-T-I Raises", equipment: "None", target: "Shoulders", desc: "Lie face down. Raise arms in Y, T, I positions. Controlled, squeeze shoulders throughout.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Comprehensive shoulder prehab for swimmer's shoulder prevention.", vTaperNote: "Develops upper back and rear delt definition.", priority: "tertiary", tags: [] },
-            { name: "Reverse Snow Angels", equipment: "None", target: "Shoulders", desc: "Lie face down, arms at sides. Raise arms up and out in snow angel motion. Squeeze shoulder blades.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Activates entire posterior shoulder chain for prehab.", vTaperNote: "Builds rear delt and upper back mobility.", priority: "tertiary", tags: [] },
-            { name: "Plank to Down Dog", equipment: "None", target: "Shoulders", desc: "Start in plank. Push hips back to Down Dog position. Return to plank. Smooth transition.", tier: "TIER_4_MOBILITY_ANTI_ROTATION", sets: 3, reps: "10-15", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Improves shoulder mobility and core engagement.", vTaperNote: "Develops shoulder flexibility and core control.", priority: "tertiary", tags: [] },
-
-            // === TIER 5: METABOLIC/FINISHER (3 x 15-20 @ RPE 7-8) ===
-            { name: "Mountain Climbers", equipment: "None", target: "Core", desc: "Plank position. Drive knees to chest alternating. Fast pace. Keep hips low.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds core endurance and hip flexor conditioning.", vTaperNote: "Develops core endurance and metabolic conditioning.", priority: "tertiary", tags: [] },
-            { name: "Russian Twists", equipment: "Medicine Ball", target: "Core", desc: "Seated, feet off floor. Rotate side to side with ball. Control the movement. Feel obliques.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops rotational endurance for sustained stroke power.", vTaperNote: "Builds oblique definition and core endurance.", priority: "tertiary", tags: [] },
-            { name: "Med Ball Wall Sit", equipment: "Medicine Ball", target: "Legs & Glutes", desc: "Back against wall. Hold ball. Squat at 90 degrees. Hold for time.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "45-60s", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds quad endurance for sustained kicking.", vTaperNote: "Develops quad endurance and mental toughness.", priority: "tertiary", tags: [] },
-            { name: "Med Ball Shoulder Circles", equipment: "Medicine Ball", target: "Shoulders", desc: "Hold ball with arms extended. Circle overhead. Control the weight. Burn in shoulders.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds shoulder endurance for high-volume training.", vTaperNote: "Develops shoulder endurance and definition.", priority: "tertiary", tags: [] },
-            { name: "Med Ball Front Raise", equipment: "Medicine Ball", target: "Shoulders", desc: "Ball at thighs. Raise to shoulder height. Lower with control. High reps for endurance.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds anterior delt endurance for stroke recovery.", vTaperNote: "Develops front delt definition and endurance.", priority: "tertiary", tags: [] },
-            { name: "Banded Lateral Walks", equipment: "Band", target: "Legs & Glutes", desc: "Band around ankles. Step sideways. Keep tension constant. Burn in glutes.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Activates glute medius for hip stability.", vTaperNote: "Builds glute definition and hip stability.", priority: "tertiary", tags: [] },
-            { name: "Banded Squats", equipment: "Band", target: "Legs & Glutes", desc: "Band above knees. Squat with knees pressing out. High reps. Glute activation.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Activates glutes and develops hip control.", vTaperNote: "Builds leg definition and glute activation.", priority: "tertiary", tags: [] },
-            { name: "Banded Glute Bridges", equipment: "Band", target: "Legs & Glutes", desc: "Band above knees. Bridge up, pressing knees out. Squeeze glutes at top. High reps.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds glute strength and hip extension power.", vTaperNote: "Develops glute definition and posterior chain.", priority: "tertiary", tags: [] },
-            { name: "Cable Face Pulls", equipment: "Cable Machine", target: "Shoulders", desc: "Rope at face height. Pull to face, elbows high. Squeeze rear delts. High reps.", tier: "TIER_5_METABOLIC_FINISHER", sets: 3, reps: "15-20", rpe: 6, bestFor: ["swimmer", "vTaper"], swimmerNote: "Essential for rear delt development and shoulder balance.", vTaperNote: "Builds rear delt and upper back for balanced shoulders.", priority: "secondary", tags: [] },
-
-            // === NEW EXERCISES (Stefan's V-Taper Protocol) ===
-            { name: "Incline Dumbbell Press", equipment: "Dumbbell", target: "Chest", desc: "Incline allows deeper stretch and better contraction. Go deep, feel the stretch before pushing.", tier: "TIER_1_STRENGTH_FOUNDATION", sets: 4, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds upper chest strength for powerful streamline.", vTaperNote: "Develops upper chest mass for balanced chest aesthetics.", priority: "core", tags: ["hypertrophy"] },
-            { name: "Dumbbell Chest Flyes (Incline)", equipment: "Dumbbell", target: "Chest", desc: "Controlled stretch at bottom. Arc motion, not straight lines. Full range of motion.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops chest flexibility and stretch under load.", vTaperNote: "Builds chest definition and separation.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Machine Chest Flyes", equipment: "Cable Machine", target: "Chest", desc: "Stable movement. Focus on contraction. No momentum.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Isolated chest work with reduced shoulder stress.", vTaperNote: "Builds chest definition with constant tension.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Dumbbell Chest Flyes (Flat)", equipment: "Dumbbell", target: "Chest", desc: "Full ROM, light weight, control. Feel the stretch.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Develops chest stretch and pec flexibility.", vTaperNote: "Builds chest width and definition.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Lying Leg Curl", equipment: "Machine", target: "Legs & Glutes", desc: "Hamstring isolation. Controlled descent. Squeeze at top.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Isolated hamstring work for kicking power.", vTaperNote: "Builds hamstring definition and leg balance.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Machine Leg Press", equipment: "Machine", target: "Legs & Glutes", desc: "Vertical push, controlled depth. Full ROM. Good quad focus.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds quad strength with reduced spinal load.", vTaperNote: "Develops quad mass and leg definition.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Hack Squat", equipment: "Machine", target: "Legs & Glutes", desc: "Vertical bar path, quad dominant. Controlled descent.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "8-12", rpe: 8, bestFor: ["swimmer", "vTaper"], swimmerNote: "Quad-focused leg development with stability.", vTaperNote: "Builds quad sweep and leg definition.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Machine Pec Deck", equipment: "Machine", target: "Chest", desc: "Isolated chest work. No shoulder strain. Full contraction.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Chest isolation with minimal shoulder involvement.", vTaperNote: "Builds chest contraction and inner chest definition.", priority: "secondary", tags: ["hypertrophy"] },
-            { name: "Single-Leg Leg Press", equipment: "Machine", target: "Legs & Glutes", desc: "Unilateral quad work. Balance and stability. Full ROM.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "10-12", rpe: 7, bestFor: ["swimmer", "vTaper"], swimmerNote: "Builds single-leg strength for starts and turns.", vTaperNote: "Develops unilateral leg strength and balance.", priority: "secondary", tags: ["hypertrophy"] },
-
-            // === SWIMMER-SPECIFIC EXERCISES ===
-            { name: "Streamline Flutter Kick", equipment: "None", target: "Core & Kick", desc: "Arms locked overhead, core braced. Keep legs straight, kick from hips not knees. 30-45 second holds.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "30-45s", rpe: 7, bestFor: ["swimmer"], swimmerNote: "Develops proper kick mechanics and core stability for streamline.", vTaperNote: "", priority: "core", tags: ["swimmer_only"] },
-            { name: "Vertical Kicking", equipment: "None", target: "Core & Kick", desc: "Tread water vertically. Keep core engaged. Kick from hips. Hands at sides or overhead. 30-60 seconds.", tier: "TIER_3_HYPERTROPHY_ACCESSORY", sets: 3, reps: "30-60s", rpe: 7, bestFor: ["swimmer"], swimmerNote: "Builds powerful kicking endurance and hip drive.", vTaperNote: "", priority: "secondary", tags: ["swimmer_only"] }
+            // STRENGTH TIER - Bodyweight (6)
+            { name: 'Pull-Up', equipment: 'Bodyweight', target: 'Back & Lats', desc: 'Vertical pulling movement, chest to bar.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Explosive pulling strength for freestyle/butterfly propulsion; mimics catch-to-finish mechanics.' },
+            { name: 'Weighted Pull-Up', equipment: 'Bodyweight', target: 'Back & Lats', desc: 'Pull-up with weight belt added.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Absolute strength in pull pattern essential for sprint starts and underwater power.' },
+            { name: 'Dip', equipment: 'Bodyweight', target: 'Chest & Triceps', desc: 'Parallel bar pressing movement.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Pushing strength for starts, turns, and breaststroke acceleration.' },
+            { name: 'Handstand Push-Up', equipment: 'Bodyweight', target: 'Shoulders & Triceps', desc: 'Inverted push-up against wall.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Shoulder stability and overhead pressing; streamline position core engagement.' },
+            { name: 'Single-Leg Deadlift', equipment: 'Bodyweight', target: 'Legs & Glutes', desc: 'Hip hinge on single leg.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Unilateral leg drive and ankle stability for powerful wall push mechanics.' },
+            { name: 'Pistol Squat', equipment: 'Bodyweight', target: 'Legs & Glutes', desc: 'Full-depth single-leg squat.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Unilateral leg strength; asymmetrical turn mechanics and explosive ankle mobility.' },
+            // STRENGTH TIER - Barbell (4)
+            { name: 'Barbell Back Squat', equipment: 'Barbell', target: 'Legs & Glutes', desc: 'Heavy bilateral lower body press.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Foundation for lower body power; direct translation to wall push velocity.' },
+            { name: 'Barbell Deadlift', equipment: 'Barbell', target: 'Back & Glutes', desc: 'Hip hinge lifting from ground.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Deadlift correlates strongest to sprint swimming performance. Posterior chain integrity critical.' },
+            { name: 'Barbell Bench Press', equipment: 'Barbell', target: 'Chest & Triceps', desc: 'Heavy bilateral pressing.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Bench press explains 50-65% of swim block start power. Essential for starts.' },
+            { name: 'Barbell Bent-Over Row', equipment: 'Barbell', target: 'Back & Lats', desc: 'Horizontal pulling, torso parallel.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Raw back strength; horizontal pulling pattern essential for catch mechanics.' },
+            // STRENGTH TIER - Dumbbell (4)
+            { name: 'Dumbbell Floor Press', equipment: 'Dumbbell', target: 'Chest & Triceps', desc: 'Single-arm pressing movement.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Unilateral chest strength and core stability; alternating arm pattern of freestyle.' },
+            { name: 'Dumbbell Bench Press', equipment: 'Dumbbell', target: 'Chest & Triceps', desc: 'Alternating arm press.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Core ignition during pressing; alternating pattern mimics freestyle/backstroke.' },
+            { name: 'Dumbbell Goblet Squat', equipment: 'Dumbbell', target: 'Legs & Glutes', desc: 'Squat holding dumbbell at chest.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Core-intensive squat; chest-held position emphasizes streamline posture.' },
+            { name: 'Dumbbell Single-Leg Deadlift', equipment: 'Dumbbell', target: 'Legs & Glutes', desc: 'Unilateral hip hinge with dumbbell.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Unilateral posterior chain critical for asymmetrical wall push mechanics.' },
+            // STRENGTH TIER - Resistance Band (5)
+            { name: 'Band Pull-Apart', equipment: 'Resistance Band', target: 'Shoulders & Upper Back', desc: 'Horizontal pull with straight arms.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Scapular activation and rear shoulder strength; foundational prehab for shoulder health.' },
+            { name: 'Band External Rotation', equipment: 'Resistance Band', target: 'Rotator Cuff', desc: 'Band anchored at elbow height, forearm rotates outward.', tier: exerciseTiers.STRENGTH, swimmerNote: "Verified: Swimmer's Shoulder prevention. Strengthens external rotators; essential for rotator cuff integrity." },
+            { name: 'Band Internal Rotation', equipment: 'Resistance Band', target: 'Rotator Cuff', desc: 'Forearm rotates toward body.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Balanced rotator cuff development preventing repetitive overhead imbalance.' },
+            { name: 'Banded Pull-Up', equipment: 'Resistance Band', target: 'Back & Lats', desc: 'Pull-up assisted with band.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Progression toward unassisted pulls; maintains proper pulling mechanics while building strength.' },
+            { name: 'Band Row', equipment: 'Resistance Band', target: 'Back & Lats', desc: 'High anchor point, row with high elbows.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Rear shoulder and upper back strength; high elbow position mimics catch phase.' },
+            // POWER TIER - Bodyweight (5)
+            { name: 'Box Jump', equipment: 'Plyo Box', target: 'Legs & Glutes', desc: 'Explosive vertical jump onto elevated box.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Elastic lower body power; direct translation to wall push velocity and block acceleration.' },
+            { name: 'Broad Jump', equipment: 'Bodyweight', target: 'Legs & Glutes', desc: 'Explosive horizontal jump for maximum distance.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Broad jump correlates to sprint swimming. Horizontal propulsion mirrors water mechanics.' },
+            { name: 'Squat Jump', equipment: 'Bodyweight', target: 'Legs & Glutes', desc: 'Jump from squat position, explosive bottom-to-top power.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Concentric power isolation; critical for explosive starts and rapid wall push mechanics.' },
+            { name: 'Clap Push-Up', equipment: 'Bodyweight', target: 'Chest & Triceps', desc: 'Explosive push-up generating clap height.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Upper body explosive pressing power; direct transfer to starts and breaststroke acceleration.' },
+            { name: 'Single-Leg Hop', equipment: 'Bodyweight', target: 'Legs & Glutes', desc: 'Rapid sequential hopping on single leg.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Unilateral power development; trains explosive single-leg push critical for asymmetrical turns.' },
+            // POWER TIER - Medicine Ball (4)
+            { name: 'Medicine Ball Chest Pass', equipment: 'Medicine Ball', target: 'Chest & Core', desc: 'Explosive chest pass against wall or to partner.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Upper body power; mimics explosive push pattern from wall and block starts.' },
+            { name: 'Medicine Ball Slam', equipment: 'Medicine Ball', target: 'Core & Legs', desc: 'Overhead slam to ground with full-body power.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Core power and hip extension explosiveness; rapid turning mechanics development.' },
+            { name: 'Medicine Ball Rotational Throw', equipment: 'Medicine Ball', target: 'Core & Shoulders', desc: 'Explosive rotational throw from athletic stance.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Rotational power and core explosion; diagonal power lines critical for freestyle rotation.' },
+            { name: 'Medicine Ball Overhead Slam Single-Leg', equipment: 'Medicine Ball', target: 'Core & Legs', desc: 'Overhead slam on single-leg stance.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Unilateral power with core stability; asymmetrical explosive mechanics for turning.' },
+            // POWER TIER - Plyo Box (3)
+            { name: 'Depth Jump', equipment: 'Plyo Box', target: 'Legs & Glutes', desc: 'Step off box, land and immediately jump vertically.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Rapid eccentric-to-concentric transition; explosive rebound off walls critical for fast turns.' },
+            { name: 'Box Jump Lateral Bound', equipment: 'Plyo Box', target: 'Legs & Glutes', desc: 'Jump onto box, jump down, lateral bound away.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Lateral power development; multi-directional power for turn mechanics and wall push angles.' },
+            { name: 'Split Squat Jump', equipment: 'Plyo Box', target: 'Legs & Glutes', desc: 'Lunge position explosive jump switching leg position.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Unilateral power and rapid leg switching; alternating leg drive mechanics.' },
+            // POWER TIER - Additional (2)
+            { name: 'Tuck Jump', equipment: 'Bodyweight', target: 'Legs & Glutes', desc: 'Vertical jump pulling knees to chest at peak.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Maximum vertical velocity; elastic leg power for wall push and turn execution.' },
+            { name: 'Jump Rope Double-Unders', equipment: 'Jump Rope', target: 'Legs & Cardiovascular', desc: 'Double-under rope jumps (rope passes twice per jump).', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Rapid leg turnover and ankle power; fast-twitch recruitment patterns of starts and turns.' },
+            // HYPERTROPHY TIER - Bodyweight (5)
+            { name: 'Push-Up', equipment: 'Bodyweight', target: 'Chest & Shoulders', desc: 'Push-up emphasizing scapular protraction at top.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Scapular mobility and chest strength; healthy shoulder position under fatigue.' },
+            { name: 'Plank Hip Dip', equipment: 'Bodyweight', target: 'Core & Obliques', desc: 'Side plank with alternating hip dips.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Unilateral core stability and oblique strength; asymmetrical core control for body roll.' },
+            { name: 'Hollow Body Hold', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Streamlined position on back, entire body arced.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Builds neuromuscular connection to streamline position; essential body awareness.' },
+            { name: 'Glute Bridge', equipment: 'Bodyweight', target: 'Glutes', desc: 'Bridge driving through one leg, opposite extended.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Unilateral glute activation; trains single-leg hip extension critical for wall push mechanics.' },
+            { name: 'Donkey Kick', equipment: 'Bodyweight', target: 'Glutes', desc: 'Quadruped pulsing knee lifts.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Hip extension strength and glute activation; trains dolphin kick muscle contraction pattern.' },
+            // HYPERTROPHY TIER - Dumbbell (4)
+            { name: 'Dumbbell Lateral Raise', equipment: 'Dumbbell', target: 'Shoulders', desc: 'Bilateral lateral shoulder raise.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Shoulder abduction strength; lateral stability critical for overhead pulling.' },
+            { name: 'Dumbbell Reverse Fly', equipment: 'Dumbbell', target: 'Rear Shoulders', desc: 'Bent-over lateral raise emphasizing rear shoulder.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: "Verified: Rear shoulder and scapular strength; prehab essential for Swimmer's Shoulder prevention." },
+            { name: 'Dumbbell Concentration Curl', equipment: 'Dumbbell', target: 'Biceps', desc: 'Seated single-arm curl with peak contraction emphasis.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Isolated bicep strength; supports pulling mechanics and endurance during long sets.' },
+            { name: 'Dumbbell Lying Triceps Extension', equipment: 'Dumbbell', target: 'Triceps', desc: 'Lying bench, single dumbbell overhead extension.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Isolated tricep strength; supports pushing mechanics and breaststroke arm drive.' },
+            // HYPERTROPHY TIER - Cable Machine (3)
+            { name: 'Cable Fly', equipment: 'Cable Machine', target: 'Chest', desc: 'High cable fly bringing hands down and across body.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Chest isolation with full range; develops pressing strength through complete motion arc.' },
+            { name: 'Cable Row', equipment: 'Cable Machine', target: 'Back & Lats', desc: 'Rowing with close grip, high elbow position.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Mid-back and lower lat isolation; supports pulling strength and back endurance.' },
+            { name: 'Cable External Rotation', equipment: 'Cable Machine', target: 'Rotator Cuff', desc: 'Standing cable external rotation, 90° elbow.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Loaded rotator cuff strengthening; advanced shoulder health for injury prevention.' },
+            // HYPERTROPHY TIER - Resistance Band (3)
+            { name: 'Banded Bicep Curl', equipment: 'Resistance Band', target: 'Biceps', desc: 'Bilateral bicep curl standing on band.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Bicep endurance; supports pulling power and strength through full range.' },
+            { name: 'Banded Tricep Extension', equipment: 'Resistance Band', target: 'Triceps', desc: 'Overhead band extension from flexed position.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Tricep endurance and shoulder health; supports breaststroke and pushing mechanics.' },
+            { name: 'Banded Pull-Apart Lateral Raise', equipment: 'Resistance Band', target: 'Shoulders & Upper Back', desc: 'Band pull-apart transitioning into lateral raise.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Shoulder mobility and lateral stability; builds shoulder width and rotator cuff resilience.' },
+            // HYPERTROPHY TIER - Swiss Ball (2)
+            { name: 'Swiss Ball Pike', equipment: 'Swiss Ball', target: 'Core & Shoulders', desc: 'Feet on ball in push-up position, pike hips high.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Core flexion strength and shoulder stability under load.' },
+            { name: 'Swiss Ball Rollout', equipment: 'Swiss Ball', target: 'Core', desc: 'Rollout from knees on ball, extending fully.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Advanced core stability and shoulder health; full-range anterior core essential for streamline.' },
+            // HYPERTROPHY TIER - Medicine Ball (2)
+            { name: 'Medicine Ball Chest Pass Kneeling', equipment: 'Medicine Ball', target: 'Chest & Core', desc: 'Kneeling chest pass emphasizing core stability.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Core stability under explosive loading; core resilience during powerful wall pushes.' },
+            { name: 'Medicine Ball Dead Bug', equipment: 'Medicine Ball', target: 'Core', desc: 'Supine position ball overhead, alternating opposite arm-leg extension.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Contralateral core strength; essential for diagonal power lines and body roll control.' },
+            // MOBILITY TIER - Core-Specific (10)
+            { name: 'Front Plank', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Push-up position plank, 30-90 second hold.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Streamline position strength and body tension; foundational for efficient streamline.' },
+            { name: 'Side Plank', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Lateral plank on forearm, 30-60 seconds each side.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Unilateral core stability and oblique strength; asymmetrical core control for body roll.' },
+            { name: 'Dead Bug', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Supine position alternating opposite arm-leg extension.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Contralateral stability; diagonal power lines essential for efficient rotation.' },
+            { name: 'Hollow Hold', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Full-body streamline on back, 20-60 second hold.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Single most important exercise for position awareness in all strokes.' },
+            { name: 'Hollow Body Rocks', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Hollow position rocking front-to-back with controlled momentum.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Dynamic streamline stability; core tension maintenance through subtle movement.' },
+            { name: 'Plank Hip Dips', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Plank position lowering hips left-right alternating.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Unilateral core stability and anti-rotation; obliques and deep core stabilizers.' },
+            { name: 'Superman', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Prone simultaneous arm and leg extension hold 2-3 sec.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Posterior core and lower back strength; essential for streamline maintenance.' },
+            { name: 'Superman Rocks', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Superman position with rocking motion.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Dynamic posterior core and hip extension strength; posterior chain muscular endurance.' },
+            { name: 'V-Up', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Lying position explosive sit-up transitioning to pike.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Advanced core flexion and hip flexion strength; explosive core power for dolphin kick.' },
+            { name: 'Streamline Squat', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Squat maintaining arms overhead in streamline.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Core stability under loading; maintain streamline during dynamic movement and turns.' },
+            // MOBILITY TIER - Shoulder Mobility (5)
+            { name: 'Shoulder Dislocate', equipment: 'Resistance Band', target: 'Shoulders', desc: 'Band overhead mobility drill, overhead to behind body.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Full shoulder mobility through complete range; foundational for shoulder health.' },
+            { name: 'Prone Y-T-W Raises', equipment: 'Bodyweight', target: 'Shoulders', desc: 'Prone position making Y, T, W positions with arms.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Shoulder stability in multiple planes; rotator cuff and scapular stabilizer activation.' },
+            { name: 'Sleeper Stretch', equipment: 'Bodyweight', target: 'Shoulders', desc: 'Side-lying shoulder stretch with active pressure.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Shoulder internal rotation and anterior shoulder flexibility.' },
+            { name: 'Cross-Body Shoulder Stretch', equipment: 'Bodyweight', target: 'Shoulders', desc: 'Arm across body pulling elbow toward opposite shoulder.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Posterior shoulder and upper back flexibility; essential for stroke mechanics.' },
+            { name: 'Scapular Wall Slides', equipment: 'Bodyweight', target: 'Shoulders', desc: 'Back against wall, arms in W position sliding overhead.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Scapular mobility and shoulder stability; foundational for healthy shoulder mechanics.' },
+            // MOBILITY TIER - Hip Mobility (3)
+            { name: '90-90 Stretch', equipment: 'Bodyweight', target: 'Hips & Glutes', desc: 'Seated hip flexor stretch with active forward fold.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Hip flexor and glute flexibility; healthy hip mobility for body roll.' },
+            { name: 'Hip Opening Stretch', equipment: 'Bodyweight', target: 'Hips & Glutes', desc: 'Seated deep hip opener stretching external rotators.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: External hip rotator flexibility; supports rotation mechanics and turn execution.' },
+            { name: 'Lunge Hold', equipment: 'Bodyweight', target: 'Hips & Glutes', desc: 'Deep lunge position holding 20-30 seconds.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Hip flexor and quad flexibility; healthy hip mechanics for streamline.' },
+            // METABOLIC TIER - Conditioning Finishers (7)
+            { name: 'Burpee', equipment: 'Bodyweight', target: 'Full Body', desc: 'Squat to push-up to standing jump sequence.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Total-body conditioning and lactate tolerance; high metabolic demand of race intensity.' },
+            { name: 'Mountain Climber', equipment: 'Bodyweight', target: 'Core & Legs', desc: 'Push-up position rapid knee drives alternating.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Core endurance and rapid leg recruitment; maintain core tension under fatigue.' },
+            { name: 'Bear Crawl', equipment: 'Bodyweight', target: 'Core & Shoulders', desc: 'Quadruped position moving forward with coordination.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Shoulder stability under endurance loading; maintain shoulder position through fatigue.' },
+            { name: 'High Knees', equipment: 'Bodyweight', target: 'Legs & Core', desc: 'Running in place driving knees to hip height.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Rapid leg recruitment and cardiovascular conditioning; nervous system demands of race pace.' },
+            { name: 'Jumping Jacks', equipment: 'Bodyweight', target: 'Full Body', desc: 'Rhythmic jumping jack sustained 20-60 seconds.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Cardiovascular conditioning and full-body coordination; warm-up and conditioning finisher.' },
+            { name: 'Battle Ropes', equipment: 'Battle Ropes', target: 'Shoulders & Core', desc: 'Dual rope undulating waves with full-body power.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Upper body explosive endurance and core stability under fatigue.' },
+            { name: 'Jump Rope', equipment: 'Jump Rope', target: 'Legs & Cardiovascular', desc: 'Jump rope sustained 3-10 minutes with intensity variation.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Ankle power and cardiovascular conditioning; essential warm-up and lower body power endurance.' }
         ];
 
-        document.getElementById('db-count').innerText = `Database: ${exercises.length} Exercises`;
+        // ═══════════════════════════════════════════════════════════════
+        // STEP B: THE LOGIC (from WorkoutManager.js)
+        // ═══════════════════════════════════════════════════════════════
+        class WorkoutManager {
+            constructor() {
+                this.currentWorkout = [];
+                this.lockedIndices = new Set();
+                this.filters = { goal: 'Strength', equipment: 'All', finisherEnabled: false };
+                this.slotConfig = [
+                    { slot: 1, category: 'Mobility', tier: exerciseTiers.MOBILITY, isCore: false },
+                    { slot: 2, category: 'Power', tier: exerciseTiers.POWER, isCore: false },
+                    { slot: 3, category: 'Strength', tier: exerciseTiers.STRENGTH, isCore: false },
+                    { slot: 4, category: 'Accessory', tier: exerciseTiers.HYPERTROPHY, isCore: false },
+                    { slot: 5, category: 'Core', tier: exerciseTiers.MOBILITY, isCore: true },
+                    { slot: 6, category: 'Finisher', tier: exerciseTiers.METABOLIC, isCore: false, optional: true }
+                ];
+            }
 
-        const resultsContainer = document.getElementById('results');
-        const resultsHeader = document.getElementById('results-header');
-        const equipSelect = document.getElementById('equipmentSelect');
-        const targetSelect = document.getElementById('targetSelect');
-        // UI Elements
-        const shareBtn = document.getElementById('shareBtn');
-        const actionBar = document.getElementById('action-bar');
-        const streakCounter = document.getElementById('streak-counter');
+            setFilters(newFilters) {
+                this.filters = { ...this.filters, ...newFilters };
+            }
 
-        // === STREAK LOGIC ===
-        // Mode-specific localStorage keys for streaks
-        function getStreakKeys() {
-            if (userMode === 'swimmer') {
-                return {
-                    streak: 'swimmerStreak',
-                    lastWorkoutDate: 'swimmerLastWorkoutDate'
+            generateWorkout() {
+                const usedExerciseNames = new Set();
+                const newWorkout = [];
+                const slotsToFill = this.filters.finisherEnabled ? 6 : 5;
+
+                for (let i = 0; i < slotsToFill; i++) {
+                    if (this.lockedIndices.has(i) && this.currentWorkout[i]) {
+                        const lockedExercise = this.currentWorkout[i];
+                        usedExerciseNames.add(lockedExercise.name);
+                        newWorkout.push(lockedExercise);
+                        continue;
+                    }
+
+                    const slotDef = this.slotConfig[i];
+                    const exercise = this._findExerciseForSlot(slotDef, usedExerciseNames);
+
+                    if (exercise) {
+                        usedExerciseNames.add(exercise.name);
+                        const workoutExercise = {
+                            ...exercise,
+                            slotCategory: slotDef.category,
+                            repScheme: this.getRepScheme(exercise.tier, this.filters.goal)
+                        };
+                        newWorkout.push(workoutExercise);
+                    }
+                }
+
+                this.currentWorkout = newWorkout;
+                return this.currentWorkout;
+            }
+
+            _findExerciseForSlot(slotDef, usedNames) {
+                let candidates = exercises.filter(ex => ex.tier === slotDef.tier);
+
+                if (slotDef.isCore) {
+                    candidates = candidates.filter(ex =>
+                        ex.target.toLowerCase().includes('core') ||
+                        ex.target.toLowerCase().includes('abs')
+                    );
+                }
+
+                // FIX 1: Smart Equipment Cascading - 3-step fallback
+                if (this.filters.equipment !== 'All') {
+                    const selectedEq = this.filters.equipment.toLowerCase();
+
+                    // Step 1: Try exact equipment match ONLY
+                    let exactMatch = candidates.filter(ex =>
+                        ex.equipment.toLowerCase() === selectedEq
+                    );
+
+                    if (exactMatch.length > 0) {
+                        candidates = exactMatch;
+                    } else {
+                        // Step 2: Fall back to Bodyweight ONLY
+                        let bodyweightFallback = candidates.filter(ex =>
+                            ex.equipment.toLowerCase() === 'bodyweight' ||
+                            ex.equipment.toLowerCase() === 'none'
+                        );
+
+                        if (bodyweightFallback.length > 0) {
+                            candidates = bodyweightFallback;
+                        }
+                        // Step 3: If Bodyweight empty, use full tier (implicit - no change to candidates)
+                    }
+                }
+
+                candidates = candidates.filter(ex => !usedNames.has(ex.name));
+
+                if (candidates.length === 0) {
+                    candidates = exercises.filter(ex => ex.tier === slotDef.tier && !usedNames.has(ex.name));
+                }
+                if (candidates.length === 0) return null;
+
+                return candidates[Math.floor(Math.random() * candidates.length)];
+            }
+
+            swapExercise(index) {
+                if (index < 0 || index >= this.currentWorkout.length || this.lockedIndices.has(index)) return null;
+
+                const usedNames = new Set(this.currentWorkout.filter((_, i) => i !== index).map(ex => ex.name));
+                usedNames.add(this.currentWorkout[index].name);
+
+                const slotDef = this.slotConfig[index];
+                const newExercise = this._findExerciseForSlot(slotDef, usedNames);
+
+                if (newExercise) {
+                    const workoutExercise = {
+                        ...newExercise,
+                        slotCategory: slotDef.category,
+                        repScheme: this.getRepScheme(newExercise.tier, this.filters.goal)
+                    };
+                    this.currentWorkout[index] = workoutExercise;
+                    return workoutExercise;
+                }
+                return null;
+            }
+
+            toggleLock(index) {
+                if (index < 0 || index >= this.currentWorkout.length) return false;
+                if (this.lockedIndices.has(index)) {
+                    this.lockedIndices.delete(index);
+                    return false;
+                } else {
+                    this.lockedIndices.add(index);
+                    return true;
+                }
+            }
+
+            isLocked(index) {
+                return this.lockedIndices.has(index);
+            }
+
+            clearLocks() {
+                this.lockedIndices.clear();
+            }
+
+            getRepScheme(tier, sessionGoal) {
+                const repSchemes = {
+                    [exerciseTiers.STRENGTH]: { 'Strength': '4x5', 'Power': '5x3', 'Endurance': '3x12' },
+                    [exerciseTiers.POWER]: { 'Strength': '4x6', 'Power': '5x3', 'Endurance': '3x10' },
+                    [exerciseTiers.HYPERTROPHY]: { 'Strength': '3x8', 'Power': '4x6', 'Endurance': '3x15' },
+                    [exerciseTiers.MOBILITY]: { 'Strength': '2x30s', 'Power': '2x30s', 'Endurance': '3x45s' },
+                    [exerciseTiers.METABOLIC]: { 'Strength': '3x30s', 'Power': '4x20s', 'Endurance': '3x45s' }
                 };
-            } else {
-                return {
-                    streak: 'vTaperStreak',
-                    lastWorkoutDate: 'vTaperLastWorkoutDate'
-                };
+                return repSchemes[tier]?.[sessionGoal] || '3x10';
+            }
+
+            getCurrentWorkout() {
+                return [...this.currentWorkout];
+            }
+
+            reset() {
+                this.currentWorkout = [];
+                this.lockedIndices.clear();
             }
         }
 
-        function initStreak() {
-            const keys = getStreakKeys();
-            const lastWorkout = localStorage.getItem(keys.lastWorkoutDate);
-            const currentStreak = parseInt(localStorage.getItem(keys.streak) || '0');
+        // ═══════════════════════════════════════════════════════════════
+        // STEP C: THE UI WIRING
+        // ═══════════════════════════════════════════════════════════════
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('App Initialized - DOMContentLoaded fired');
 
-            const today = new Date().toDateString();
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayStr = yesterday.toDateString();
+            const workoutManager = new WorkoutManager();
 
-            // Reset if missed yesterday (and didn't workout today yet)
-            if (lastWorkout && lastWorkout !== today && lastWorkout !== yesterdayStr) {
-                localStorage.setItem(keys.streak, '0');
-                streakCounter.innerText = '🔥 0';
-            } else {
-                streakCounter.innerText = `🔥 ${currentStreak}`;
-            }
-        }
+            const resultsContainer = document.getElementById('results');
+            const resultsHeader = document.getElementById('results-header');
+            const goalSelect = document.getElementById('goalSelect');
+            const equipmentSelect = document.getElementById('equipmentSelect');
+            const finisherToggle = document.getElementById('finisherToggle');
+            const shareBtn = document.getElementById('shareBtn');
+            const actionBar = document.getElementById('action-bar');
+            const streakCounter = document.getElementById('streak-counter');
+            const generateBtn = document.getElementById('generateBtn');
+            const completeBtn = document.getElementById('completeBtn');
+            const tabGenerator = document.getElementById('tabGenerator');
+            const tabBenchmarks = document.getElementById('tabBenchmarks');
+            const generatorView = document.getElementById('generatorView');
+            const benchmarksView = document.getElementById('benchmarksView');
 
-        // Initialize on load
-        initStreak();
-        appInitialized = true; // Now mode switches can call initStreak
-
-        function completeWorkout() {
-            const keys = getStreakKeys();
-            const today = new Date().toDateString();
-            const lastWorkout = localStorage.getItem(keys.lastWorkoutDate);
-            let currentStreak = parseInt(localStorage.getItem(keys.streak) || '0');
-            const btn = document.getElementById('completeBtn');
-            let streakIncreased = false;
-
-            // 1. Immediate Updates
-            // Update Data (mode-specific)
-            if (lastWorkout !== today) {
-                currentStreak++;
-                localStorage.setItem(keys.streak, currentStreak);
-                localStorage.setItem(keys.lastWorkoutDate, today);
-                streakIncreased = true;
+            // Verify critical elements
+            if (!generateBtn) {
+                console.error('CRITICAL: generateBtn is null!');
+                return;
             }
 
-            // Update Button State Immediately
-            btn.innerText = "Session Complete";
-            btn.classList.add('btn-success-state');
+            console.log('All DOM elements successfully loaded');
+            document.getElementById('db-count').innerText = `Database: ${exercises.length} Exercises`;
 
-            // 2. Delay 700ms
-            setTimeout(() => {
-                // 3. Scroll to Top
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
+            // Event Listeners
+            generateBtn.addEventListener('click', generateWorkout);
+            completeBtn.addEventListener('click', completeWorkout);
+            shareBtn.addEventListener('click', shareWorkout);
+            tabGenerator.addEventListener('click', () => switchView('generator'));
+            tabBenchmarks.addEventListener('click', () => switchView('benchmarks'));
+
+            // Add mousemove event for benchmark cards hover effect
+            benchmarksView.addEventListener('mousemove', (e) => {
+                if (e.target.closest('.benchmark-card')) {
+                    const card = e.target.closest('.benchmark-card');
+                    const rect = card.getBoundingClientRect();
+                    card.style.setProperty('--x', `${e.clientX - rect.left}px`);
+                    card.style.setProperty('--y', `${e.clientY - rect.top}px`);
+                }
+            });
+
+            function switchView(view) {
+                if (view === 'generator') {
+                    generatorView.classList.remove('hidden');
+                    benchmarksView.classList.remove('active');
+                    tabGenerator.classList.add('active');
+                    tabBenchmarks.classList.remove('active');
+                    resultsContainer.style.display = 'grid';
+                    resultsHeader.style.display = 'block';
+                } else {
+                    generatorView.classList.add('hidden');
+                    benchmarksView.classList.add('active');
+                    tabGenerator.classList.remove('active');
+                    tabBenchmarks.classList.add('active');
+                    resultsContainer.style.display = 'none';
+                    resultsHeader.style.display = 'none';
+                    actionBar.style.display = 'none';
+                }
+            }
+
+            function initStreak() {
+                const lastWorkout = localStorage.getItem('lastWorkoutDate');
+                const currentStreak = parseInt(localStorage.getItem('streak') || '0');
+                const today = new Date().toDateString();
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                const yesterdayStr = yesterday.toDateString();
+
+                if (lastWorkout && lastWorkout !== today && lastWorkout !== yesterdayStr) {
+                    localStorage.setItem('streak', '0');
+                    streakCounter.innerText = '🔥 0';
+                } else {
+                    streakCounter.innerText = `🔥 ${currentStreak}`;
+                }
+            }
+
+            initStreak();
+
+            function generateWorkout() {
+                workoutManager.setFilters({
+                    goal: goalSelect.value,
+                    equipment: equipmentSelect.value,
+                    finisherEnabled: finisherToggle.checked
                 });
 
-                // 4. Update Streak Visuals & Animate (Conditional)
-                streakCounter.innerText = `🔥 ${currentStreak}`;
-
-                if (streakIncreased) {
-                    streakCounter.classList.add('pulse-animation');
-                    // Remove animation class after 1s
-                    setTimeout(() => {
-                        streakCounter.classList.remove('pulse-animation');
-                    }, 1000);
-                }
-
-                // 5. Clear UI & Show Success Message (Conditional)
-                if (streakIncreased) {
-                    resultsContainer.innerHTML = '<div class="empty-state" style="border-color: var(--success); color: var(--success);">Good job! See you tomorrow.</div>';
-                } else {
-                    resultsContainer.innerHTML = '<div class="empty-state">Select filters above or generate a random circuit.</div>';
-                }
-
-                resultsHeader.innerHTML = '';
-                actionBar.style.display = 'none';
-
-                // 6. Reset Button for next time (hidden)
-                btn.innerText = "Complete Workout";
-                btn.classList.remove('btn-success-state');
-
-            }, 700);
-        }
-        // Get mode-specific sets/reps/rest based on exercise properties
-        function getExerciseProtocol(exercise, mode) {
-            const priority = exercise.priority || 'secondary';
-            const equipment = exercise.equipment || 'None';
-            const target = exercise.target || '';
-
-            // Check for special exercise types
-            const isBodyweight = ['None', 'Pull-Up Bar'].includes(equipment) &&
-                ['Pull-Ups', 'Dips', 'Push-Ups', 'Push-Up Variations'].some(n => exercise.name.includes(n));
-            const isMachine = equipment.toLowerCase().includes('machine');
-            const isPlyometric = exercise.tags?.includes('power') || target === 'Power';
-            const isCardioFinisher = ['Burpees', 'Mountain Climbers', 'Jump Rope'].some(n => exercise.name.includes(n));
-            const isCore = target === 'Core' || target.includes('Core');
-            const isTimeHold = exercise.reps?.includes('s') || exercise.name.includes('Plank') || exercise.name.includes('Hold');
-
-            // Default protocol structure
-            let protocol = { sets: 3, reps: '8-12', rest: 60 };
-
-            if (mode === 'vTaper' || mode === 'v-taper') {
-                // V-TAPER MODE: Strength + Hypertrophy focus
-                if (isPlyometric) {
-                    protocol = { sets: 4, reps: '5-8', rest: 90 };
-                } else if (isCardioFinisher) {
-                    protocol = { sets: 3, reps: '15-20', rest: 45 };
-                } else if (isTimeHold) {
-                    protocol = { sets: 3, reps: exercise.reps || '30-45s', rest: 60 };
-                } else if (priority === 'core') {
-                    // Heavy compounds: 4 sets, lower reps
-                    if (isBodyweight) {
-                        protocol = { sets: 4, reps: '6-10', rest: 90 };
-                    } else {
-                        protocol = { sets: 4, reps: '6-8', rest: 120 };
-                    }
-                } else if (priority === 'secondary') {
-                    // Moderate accessory: 3-4 sets, moderate reps
-                    if (isMachine) {
-                        protocol = { sets: 3, reps: '10-12', rest: 60 };
-                    } else {
-                        protocol = { sets: 4, reps: '8-12', rest: 75 };
-                    }
-                } else {
-                    // Tertiary/isolation: 3 sets, higher reps
-                    protocol = { sets: 3, reps: '12-15', rest: 60 };
-                }
-            } else {
-                // SWIMMER MODE: Endurance + Conditioning focus
-                if (isPlyometric) {
-                    protocol = { sets: 3, reps: '6-10', rest: 60 };
-                } else if (isCardioFinisher) {
-                    protocol = { sets: 3, reps: '20-30', rest: 30 };
-                } else if (isTimeHold) {
-                    protocol = { sets: 3, reps: exercise.reps || '45-60s', rest: 45 };
-                } else if (priority === 'core') {
-                    // Controlled compounds: moderate sets/reps
-                    if (isBodyweight) {
-                        protocol = { sets: 4, reps: '8-12', rest: 60 };
-                    } else {
-                        protocol = { sets: 3, reps: '8-10', rest: 75 };
-                    }
-                } else if (priority === 'secondary') {
-                    // Conditioning focus: higher reps
-                    protocol = { sets: 3, reps: '12-15', rest: 45 };
-                } else {
-                    // Finishers: high reps, short rest
-                    protocol = { sets: 3, reps: '15-20', rest: 30 };
-                }
+                workoutManager.clearLocks();
+                const workout = workoutManager.generateWorkout();
+                const slotCount = finisherToggle.checked ? 6 : 5;
+                resultsHeader.innerHTML = `<div class="section-title">Smart ${slotCount}-Slot Workout</div>`;
+                displayExercises(workout);
             }
 
-            return protocol;
-        }
+            function displayExercises(list) {
+                resultsContainer.innerHTML = '';
 
-        function displayExercises(list, isRandom = false) {
-            resultsContainer.innerHTML = '';
+                if (list.length === 0) {
+                    resultsContainer.innerHTML = '<div class="empty-state">No exercises found. Try different filters.</div>';
+                    resultsHeader.innerHTML = '';
+                    actionBar.style.display = 'none';
+                    return;
+                }
 
-            // Get current mode
-            const currentMode = document.documentElement.getAttribute('data-mode') || 'swimmer';
-
-            // Handle Empty State
-            if (list.length === 0) {
-                resultsContainer.innerHTML = '<div class="empty-state">No exercises found for this specific combo.<br>Try setting one filter to "Any".</div>';
-                resultsHeader.innerHTML = '';
-                actionBar.style.display = 'none';
-                return;
-            }
-
-            // Show Action Bar only for Random Circuit
-            if (isRandom) {
                 actionBar.style.display = 'flex';
-                // Reset button state
-                const btn = document.getElementById('completeBtn');
-                btn.innerText = "Complete Workout";
-                btn.classList.remove('btn-success-state');
-                btn.disabled = true; // Lock initially
-            } else {
-                actionBar.style.display = 'none';
+                completeBtn.innerText = "Complete Workout";
+                completeBtn.classList.remove('btn-success-state');
+                completeBtn.disabled = true;
+
+                list.forEach((ex, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'exercise-card interactive-card';
+                    card.dataset.index = index;
+
+                    card.addEventListener('click', (e) => handleCardClick(e, card));
+                    card.addEventListener('mousemove', (e) => {
+                        const rect = card.getBoundingClientRect();
+                        card.style.setProperty('--x', `${e.clientX - rect.left}px`);
+                        card.style.setProperty('--y', `${e.clientY - rect.top}px`);
+                    });
+
+                    const isLocked = workoutManager.isLocked(index);
+
+                    // FIX 2: Vector Icons - Replace emojis with Lucide icons
+                    card.innerHTML = `
+                        <div class="card-actions">
+                            <button class="card-action-btn lock-btn ${isLocked ? 'locked' : ''}" data-index="${index}">
+                                <i data-lucide="${isLocked ? 'lock' : 'unlock'}" class="w-4 h-4"></i>
+                            </button>
+                            <button class="card-action-btn swap-btn" data-index="${index}">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="slot-category">${ex.slotCategory || 'Exercise'}</div>
+                        <div class="card-header">
+                            <input type="checkbox" class="exercise-checkbox">
+                            <h3>${ex.name}</h3>
+                            <span class="rep-scheme-badge">${ex.repScheme || ''}</span>
+                        </div>
+                        <div class="exercise-desc">${ex.swimmerNote || ex.desc}</div>
+                        <div class="meta-container">
+                            <div class="meta-group">
+                                <span class="meta-label">Equipment</span>
+                                <span class="tag">${ex.equipment}</span>
+                            </div>
+                            <div class="meta-group">
+                                <span class="meta-label">Target</span>
+                                <span class="tag">${ex.target}</span>
+                            </div>
+                        </div>
+                    `;
+
+                    const checkbox = card.querySelector('.exercise-checkbox');
+                    checkbox.addEventListener('change', () => toggleCard(checkbox));
+                    resultsContainer.appendChild(card);
+                });
+
+                // FIX 2: Crucial - Call lucide.createIcons() to render the icons
+                lucide.createIcons();
+
+                // FIX 3: Re-attach animation event listeners after re-render
+                // When displayExercises() re-renders, it destroys old event listeners
+                document.querySelectorAll('.lock-btn').forEach(btn => {
+                    const index = parseInt(btn.dataset.index);
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isNowLocked = workoutManager.toggleLock(index);
+
+                        // Add appropriate animation
+                        if (isNowLocked) {
+                            btn.classList.add('animate-lock');
+                        } else {
+                            btn.classList.add('animate-unlock');
+                        }
+
+                        // Update icon
+                        btn.classList.toggle('locked', isNowLocked);
+                        btn.querySelector('i').setAttribute('data-lucide', isNowLocked ? 'lock' : 'unlock');
+                        lucide.createIcons();
+
+                        // Remove animation class after animation completes
+                        setTimeout(() => {
+                            btn.classList.remove('animate-lock', 'animate-unlock');
+                        }, 300);
+                    });
+                });
+
+                document.querySelectorAll('.swap-btn').forEach(btn => {
+                    const index = parseInt(btn.dataset.index);
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        btn.classList.add('animate-swap');
+
+                        // Wait for animation to complete before swapping
+                        setTimeout(() => {
+                            const newExercise = workoutManager.swapExercise(index);
+                            if (newExercise) {
+                                displayExercises(workoutManager.getCurrentWorkout());
+                            }
+                        }, 250); // Swap midway through the 500ms animation
+                    });
+                });
             }
 
-            list.forEach(ex => {
-                const card = document.createElement('div');
-                // Add interactive class only if random
-                card.className = isRandom ? 'exercise-card random-card interactive-card' : 'exercise-card';
+            function toggleLock(index, btn) {
+                const isNowLocked = workoutManager.toggleLock(index);
 
-                if (isRandom) {
-                    card.onclick = (e) => handleCardClick(e, card);
-                }
-
-                // Add Flashlight Effect Listener
-                card.onmousemove = (e) => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    card.style.setProperty('--x', `${x}px`);
-                    card.style.setProperty('--y', `${y}px`);
-                };
-
-                // Get mode-specific protocol
-                const protocol = getExerciseProtocol(ex, currentMode);
-                const restDisplay = protocol.rest >= 60 ? `${Math.floor(protocol.rest / 60)}:${(protocol.rest % 60).toString().padStart(2, '0')}` : `${protocol.rest}s`;
-
-                let headerHTML = `<h3>${ex.name}</h3>`;
-                if (isRandom) {
-                    headerHTML = `
-                    <div class="card-header">
-                        <input type="checkbox" class="exercise-checkbox" onchange="toggleCard(this)">
-                        <h3>${ex.name}</h3>
-                    </div>`;
+                // Add animation class before updating icon
+                if (isNowLocked) {
+                    btn.classList.add('animate-lock');
+                    btn.classList.add('locked');
+                    btn.querySelector('i').setAttribute('data-lucide', 'lock');
                 } else {
-                    headerHTML = `<h3>${ex.name}</h3>`;
+                    btn.classList.add('animate-unlock');
+                    btn.classList.remove('locked');
+                    btn.querySelector('i').setAttribute('data-lucide', 'unlock');
                 }
 
-                card.innerHTML = `
-                    ${headerHTML}
-                    
-                    <div class="exercise-desc">
-                        ${ex.desc}
-                    </div>
+                // Re-render the icon after changing the data-lucide attribute
+                lucide.createIcons();
 
-                    <div class="meta-container">
-                        <div class="meta-group">
-                            <div class="meta-label">EQUIPMENT</div>
-                            <span class="tag">${ex.equipment}</span>
-                        </div>
-                        <div class="meta-group">
-                            <div class="meta-label">TARGET</div>
-                            <span class="tag">${ex.target}</span>
-                        </div>
-                        <div class="meta-group">
-                            <div class="meta-label">SETS × REPS</div>
-                            <span class="tag">${protocol.sets} × ${protocol.reps}</span>
-                        </div>
-                        <div class="meta-group">
-                            <div class="meta-label">REST</div>
-                            <span class="tag">${restDisplay}</span>
-                        </div>
-                    </div>
-                `;
-                resultsContainer.appendChild(card);
-            });
-        }
-
-        function findExercises() {
-            const equip = equipSelect.value;
-            const target = targetSelect.value;
-            const currentMode = document.documentElement.getAttribute('data-mode') || 'swimmer';
-
-            resultsHeader.innerHTML = '<div class="section-title">Specific Exercises</div>';
-
-            // First apply equipment/target filters
-            let filtered = exercises.filter(ex => {
-                const matchEquip = equip === 'all' || ex.equipment === equip;
-                const matchTarget = target === 'all' || ex.target.includes(target);
-                return matchEquip && matchTarget;
-            });
-
-            // Then filter by mode (removes swimmer_only in V-TAPER mode)
-            filtered = filterByMode(filtered, currentMode);
-
-            displayExercises(filtered);
-        }
-
-        function generateRandomCircuit() {
-            // IGNORE filters for random circuit - purely random biased by mode
-            const circuit = generateBiasedCircuit(userMode, 5);
-
-            // Get current mode label
-            const modeLabel = userMode === 'swimmer' ? 'SWIMMER' : 'V-TAPER';
-
-            // Display structured header: title only
-            resultsHeader.innerHTML = `
-                <div class="section-title">${circuit.length}-Exercise Circuit • ${modeLabel}</div>
-            `;
-            displayExercises(circuit, true);
-        }
-
-
-
-        // === MODE-AWARE FILTERING HELPERS ===
-        function filterByMode(exerciseList, mode) {
-            if (mode === 'v-taper' || mode === 'vTaper') {
-                // Filter out swimmer_only exercises in V-TAPER mode
-                return exerciseList.filter(ex => !ex.tags || !ex.tags.includes('swimmer_only'));
-            }
-            // SWIMMER mode: return all exercises
-            return exerciseList;
-        }
-
-        function getRandomItems(array, count) {
-            const shuffled = [...array].sort(() => Math.random() - 0.5);
-            return shuffled.slice(0, count);
-        }
-
-        // Super-core exercises that should appear more frequently in V-TAPER
-        const SUPER_CORE_EXERCISES = ['Incline Dumbbell Press', 'Pull-Ups', 'Barbell Bent-Over Rows', 'Dumbbell Shoulder Press'];
-        // Featured exercise with higher guarantee rate
-        const FEATURED_EXERCISE = 'Incline Dumbbell Press';
-
-        function selectWeightedByPriority(exerciseList, count, mode = 'vTaper') {
-            // Separate by priority
-            let core = exerciseList.filter(ex => ex.priority === 'core');
-            let secondary = exerciseList.filter(ex => ex.priority === 'secondary');
-            let tertiary = exerciseList.filter(ex => ex.priority === 'tertiary');
-
-            // For V-TAPER mode, boost shoulder exercises by adding 1.4x weight (add twice)
-            if (mode === 'vTaper' || mode === 'v-taper') {
-                const shoulderCore = exerciseList.filter(ex => ex.target === 'Shoulders' && ex.priority === 'core');
-                const shoulderSecondary = exerciseList.filter(ex => ex.target === 'Shoulders' && ex.priority === 'secondary');
-                // Add shoulder exercises twice more for ~1.4x probability boost
-                core = [...core, ...shoulderCore, ...shoulderCore];
-                secondary = [...secondary, ...shoulderSecondary, ...shoulderSecondary];
+                // Remove animation class after animation completes
+                setTimeout(() => {
+                    btn.classList.remove('animate-lock', 'animate-unlock');
+                }, 300);
             }
 
-            // NEW WEIGHTING: 50% core, 30% secondary, 20% tertiary
-            const coreCount = Math.min(Math.round(count * 0.5), core.length); // 2-3 for 5 exercises
-            const secondaryCount = Math.min(Math.round(count * 0.3), secondary.length); // 1-2
-            const tertiaryCount = Math.min(Math.max(1, count - coreCount - secondaryCount), tertiary.length); // At least 1
+            function swapExercise(index) {
+                // Find the swap button and add animation
+                const swapBtn = document.querySelector(`.swap-btn[data-index="${index}"]`);
+                if (swapBtn) {
+                    swapBtn.classList.add('animate-swap');
 
-            // Track used targets to ensure unique target areas
-            let selected = [];
-            let usedTargets = new Set();
-
-            // Helper to select exercise with unique target
-            function selectWithUniqueTarget(pool, maxCount) {
-                const result = [];
-                const shuffled = [...pool].sort(() => Math.random() - 0.5);
-                for (const ex of shuffled) {
-                    if (result.length >= maxCount) break;
-                    if (!usedTargets.has(ex.target)) {
-                        result.push(ex);
-                        usedTargets.add(ex.target);
+                    // Wait for animation to complete before swapping
+                    setTimeout(() => {
+                        const newExercise = workoutManager.swapExercise(index);
+                        if (newExercise) {
+                            displayExercises(workoutManager.getCurrentWorkout());
+                        }
+                    }, 250); // Swap midway through the 500ms animation
+                } else {
+                    // Fallback if button not found
+                    const newExercise = workoutManager.swapExercise(index);
+                    if (newExercise) {
+                        displayExercises(workoutManager.getCurrentWorkout());
                     }
                 }
-                return result;
             }
 
-            // FEATURED EXERCISE GUARANTEE: 28% chance (1 in 3.5 circuits)
-            if (mode === 'vTaper' || mode === 'v-taper') {
-                const featuredEx = core.find(ex => ex.name === FEATURED_EXERCISE);
-                if (featuredEx && Math.random() < 0.28 && !usedTargets.has(featuredEx.target)) {
-                    selected.push(featuredEx);
-                    usedTargets.add(featuredEx.target);
-                    core = core.filter(ex => ex.name !== FEATURED_EXERCISE);
+            function completeWorkout() {
+                const today = new Date().toDateString();
+                const lastWorkout = localStorage.getItem('lastWorkoutDate');
+                let currentStreak = parseInt(localStorage.getItem('streak') || '0');
+                let streakIncreased = false;
+
+                if (lastWorkout !== today) {
+                    currentStreak++;
+                    localStorage.setItem('streak', currentStreak);
+                    localStorage.setItem('lastWorkoutDate', today);
+                    streakIncreased = true;
                 }
-            }
 
-            // SUPER-CORE GUARANTEE: 50% chance if no featured already selected
-            if ((mode === 'vTaper' || mode === 'v-taper') && selected.length === 0) {
-                const superCorePool = core.filter(ex => SUPER_CORE_EXERCISES.includes(ex.name) && !usedTargets.has(ex.target));
-                if (superCorePool.length > 0 && Math.random() < 0.5) {
-                    const guaranteed = getRandomItems(superCorePool, 1);
-                    selected.push(...guaranteed);
-                    usedTargets.add(guaranteed[0].target);
-                    core = core.filter(ex => ex.name !== guaranteed[0].name);
-                }
-            }
-
-            // Fill remaining slots with unique targets
-            const remainingCore = Math.max(0, coreCount - selected.length);
-            const coreFiltered = core.filter(ex => !usedTargets.has(ex.target));
-            selected.push(...selectWithUniqueTarget(coreFiltered, remainingCore));
-
-            const secondaryFiltered = secondary.filter(ex => !usedTargets.has(ex.target));
-            selected.push(...selectWithUniqueTarget(secondaryFiltered, secondaryCount));
-
-            const tertiaryFiltered = tertiary.filter(ex => !usedTargets.has(ex.target));
-            selected.push(...selectWithUniqueTarget(tertiaryFiltered, tertiaryCount));
-
-            // If we still need more (relaxed mode - allow any remaining)
-            if (selected.length < count) {
-                const remaining = exerciseList.filter(ex =>
-                    !selected.some(s => s.name === ex.name) && !usedTargets.has(ex.target)
-                );
-                selected.push(...selectWithUniqueTarget(remaining, count - selected.length));
-            }
-
-            // Final fallback: if still short, allow duplicate targets
-            if (selected.length < count) {
-                const remaining = exerciseList.filter(ex => !selected.some(s => s.name === ex.name));
-                const shuffled = [...remaining].sort(() => Math.random() - 0.5);
-                selected.push(...shuffled.slice(0, count - selected.length));
-            }
-
-            // Deduplicate by name
-            selected = [...new Map(selected.map(ex => [ex.name, ex])).values()];
-
-            // Shuffle to mix tiers
-            return selected.sort(() => Math.random() - 0.5);
-        }
-
-        // === BIASED CIRCUIT GENERATOR ===
-        function generateBiasedCircuit(mode, circuitSize = 5, filters = {}) {
-            // First, filter by mode to exclude swimmer_only exercises in V-TAPER
-            let basePool = filterByMode(exercises, mode);
-
-            // Apply equipment/target filters if provided
-            let filteredPool = basePool.filter(exercise => {
-                const matchesEquipment = !filters.equipment || exercise.equipment === filters.equipment;
-                const matchesTarget = !filters.target || exercise.target.includes(filters.target);
-                return matchesEquipment && matchesTarget;
-            });
-
-            // For V-TAPER mode, use priority-weighted selection with shoulder boost
-            if (mode === 'vTaper') {
-                return selectWeightedByPriority(filteredPool, circuitSize, mode);
-            }
-
-            // For SWIMMER mode, use existing tier-based biasing
-            const BIAS_PERCENTAGE = 0.6;
-            const tierPriority = {
-                swimmer: [
-                    "TIER_1_STRENGTH_FOUNDATION",
-                    "TIER_2_POWER_DEVELOPMENT",
-                    "TIER_4_MOBILITY_ANTI_ROTATION"
-                ]
-            };
-
-            const prioritizedTiers = tierPriority.swimmer;
-
-            let biasedPool = [];
-            let generalPool = [];
-
-            filteredPool.forEach(exercise => {
-                const isPrioritizedTier = prioritizedTiers.includes(exercise.tier);
-                const hasModeSpecificStrength = exercise.swimmerNote?.toLowerCase().includes("swimmer") ||
-                    exercise.name.toLowerCase().includes("streamline");
-
-                if (isPrioritizedTier && hasModeSpecificStrength) {
-                    biasedPool.push(exercise);
-                } else {
-                    generalPool.push(exercise);
-                }
-            });
-
-            const biasedCount = Math.round(circuitSize * BIAS_PERCENTAGE);
-
-            const shuffle = (array) => {
-                const shuffled = [...array];
-                for (let i = shuffled.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-                }
-                return shuffled;
-            };
-
-            const shuffledBiased = shuffle(biasedPool);
-            const shuffledGeneral = shuffle(generalPool);
-
-            let selectedExercises = [];
-            selectedExercises.push(...shuffledBiased.slice(0, biasedCount));
-
-            const remainingSlots = circuitSize - selectedExercises.length;
-            selectedExercises.push(...shuffledGeneral.slice(0, remainingSlots));
-
-            if (selectedExercises.length < circuitSize) {
-                const stillNeeded = circuitSize - selectedExercises.length;
-                const remainingBiased = shuffledBiased.slice(biasedCount);
-                selectedExercises.push(...remainingBiased.slice(0, stillNeeded));
-            }
-
-            return selectedExercises;
-        }
-
-        // --- SHARE FUNCTIONALITY ---
-        function shareWorkout() {
-            const cards = document.querySelectorAll('.exercise-card h3');
-            if (cards.length === 0) return;
-
-            let textToCopy = "Dryland Pro Workout\n\n";
-
-            cards.forEach((card, index) => {
-                textToCopy += `${index + 1}. ${card.innerText}\n`;
-            });
-
-            textToCopy += "\nGenerated at: dryland-pro.netlify.app";
-
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = shareBtn.innerText;
-                shareBtn.innerText = "Copied!";
-                shareBtn.style.borderColor = "var(--success)";
-                shareBtn.style.color = "var(--success)";
+                completeBtn.innerText = "Session Complete";
+                completeBtn.classList.add('btn-success-state');
 
                 setTimeout(() => {
-                    shareBtn.innerText = originalText;
-                    shareBtn.style.borderColor = "var(--text-muted)";
-                    shareBtn.style.color = "var(--text-muted)";
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-            });
-        }
-        function toggleCard(checkbox) {
-            const card = checkbox.closest('.exercise-card');
-            if (checkbox.checked) {
-                card.classList.add('checked');
-            } else {
-                card.classList.remove('checked');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    streakCounter.innerText = `🔥 ${currentStreak}`;
+
+                    if (streakIncreased) {
+                        streakCounter.classList.add('pulse-animation');
+                        setTimeout(() => streakCounter.classList.remove('pulse-animation'), 1000);
+                    }
+
+                    if (streakIncreased) {
+                        resultsContainer.innerHTML = '<div class="empty-state" style="border-color: var(--success); color: var(--success);">Good job! See you tomorrow.</div>';
+                    } else {
+                        resultsContainer.innerHTML = '<div class="empty-state">Select your session goal and generate a smart workout.</div>';
+                    }
+
+                    resultsHeader.innerHTML = '';
+                    actionBar.style.display = 'none';
+                    completeBtn.innerText = "Complete Workout";
+                    completeBtn.classList.remove('btn-success-state');
+                    workoutManager.reset();
+                }, 700);
             }
-            checkCompletion();
-        }
 
-        function handleCardClick(e, card) {
-            const checkbox = card.querySelector('.exercise-checkbox');
-            if (!checkbox) return;
+            function shareWorkout() {
+                const workout = workoutManager.getCurrentWorkout();
+                if (workout.length === 0) return;
 
-            // If clicked directly on the checkbox, let the default behavior happen (it fires onchange)
-            if (e.target === checkbox) return;
+                let textToCopy = "🏊 Dryland Pro Workout 🏊\n\n";
+                workout.forEach((ex, index) => {
+                    textToCopy += `${index + 1}. ${ex.name} - ${ex.repScheme}\n`;
+                });
+                textToCopy += "\nGenerated at: dryland-pro.netlify.app";
 
-            // Otherwise toggle manually
-            checkbox.checked = !checkbox.checked;
-            toggleCard(checkbox);
-        }
-
-        function checkCompletion() {
-            const checkboxes = document.querySelectorAll('.exercise-checkbox');
-            const btn = document.getElementById('completeBtn');
-
-            // If no checkboxes exist (e.g. search mode), exit
-            if (checkboxes.length === 0) return;
-
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-
-            if (allChecked) {
-                btn.disabled = false;
-                btn.style.opacity = '1';
-            } else {
-                btn.disabled = true;
-                btn.style.opacity = '0.5';
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalText = shareBtn.innerText;
+                    shareBtn.innerText = "Copied!";
+                    shareBtn.style.borderColor = "var(--success)";
+                    shareBtn.style.color = "var(--success)";
+                    setTimeout(() => {
+                        shareBtn.innerText = originalText;
+                        shareBtn.style.borderColor = "var(--text-muted)";
+                        shareBtn.style.color = "var(--text-muted)";
+                    }, 2000);
+                }).catch(err => console.error('Failed to copy: ', err));
             }
-        }
 
-        // === EXPOSE FUNCTIONS GLOBALLY FOR ONCLICK HANDLERS ===
-        window.findExercises = findExercises;
-        window.generateRandomCircuit = generateRandomCircuit;
-        window.completeWorkout = completeWorkout;
-        window.shareWorkout = shareWorkout;
-        window.toggleCard = toggleCard;
-        window.handleCardClick = handleCardClick;
-        window.setMode = setMode;
-        window.cancelModeSwitch = cancelModeSwitch;
-        window.confirmModeSwitch = confirmModeSwitch;
-
-        // === WHY MODAL FUNCTIONS ===
-        function openWhyModal() {
-            document.getElementById('whyModal').classList.add('active');
-        }
-
-        function closeWhyModal(event) {
-            // If called from overlay click, only close if clicking the overlay itself
-            if (event && event.target !== document.getElementById('whyModal')) {
-                return;
+            function toggleCard(checkbox) {
+                const card = checkbox.closest('.exercise-card');
+                if (checkbox.checked) {
+                    card.classList.add('checked');
+                } else {
+                    card.classList.remove('checked');
+                }
+                checkCompletion();
             }
-            document.getElementById('whyModal').classList.remove('active');
-        }
 
-        window.openWhyModal = openWhyModal;
-        window.closeWhyModal = closeWhyModal;
+            function handleCardClick(e, card) {
+                const checkbox = card.querySelector('.exercise-checkbox');
+                if (!checkbox || e.target === checkbox || e.target.closest('.card-action-btn')) return;
+                checkbox.checked = !checkbox.checked;
+                toggleCard(checkbox);
+            }
+
+            function checkCompletion() {
+                const checkboxes = document.querySelectorAll('.exercise-checkbox');
+                if (checkboxes.length === 0) return;
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                completeBtn.disabled = !allChecked;
+                completeBtn.style.opacity = allChecked ? '1' : '0.5';
+            }
+        });
     </script>
 </body>
 
