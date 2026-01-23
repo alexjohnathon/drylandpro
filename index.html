@@ -351,6 +351,14 @@
             padding: 12px;
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .verified-badge {
+            flex-shrink: 0;
+            margin-top: 2px;
         }
 
         .meta-container {
@@ -382,10 +390,11 @@
             width: fit-content;
         }
 
-        .rep-scheme-badge {
-            font-size: 0.9rem;
+        .tag.reps {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
             font-weight: 800;
-            color: var(--accent);
         }
 
         .card-actions {
@@ -433,6 +442,38 @@
         .card-action-btn.locked {
             background: rgba(56, 189, 248, 0.15);
             border-color: var(--accent);
+        }
+
+        /* Lock icon styles */
+        .lock-icon {
+            color: rgba(148, 163, 184, 0.6);
+            transition: color 0.2s;
+        }
+
+        .card-action-btn.locked .lock-icon {
+            color: var(--accent);
+        }
+
+        /* Disabled swap button */
+        .swap-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .swap-btn.disabled svg {
+            color: rgba(148, 163, 184, 0.3);
+        }
+
+        /* Disabled lock button */
+        .lock-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .lock-btn.disabled .lock-icon {
+            color: rgba(148, 163, 184, 0.3);
         }
 
         /* Micro-animations */
@@ -640,10 +681,12 @@
 
         .benchmarks-view {
             display: none;
+            flex-direction: column;
+            gap: 24px;
         }
 
         .benchmarks-view.active {
-            display: block;
+            display: flex;
         }
 
         .generator-view.hidden {
@@ -655,7 +698,7 @@
             padding: 24px;
             border-radius: var(--radius);
             border-left: 4px solid var(--accent);
-            margin-bottom: 16px;
+            margin: 0;
             position: relative;
             overflow: hidden;
             animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -700,10 +743,15 @@
 
         .benchmark-card ul {
             margin: 12px 0 0 0;
-            padding-left: 20px;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .benchmark-card li {
+            padding: 8px 0;
             color: #cbd5e1;
             font-size: 0.9rem;
-            line-height: 1.8;
+            line-height: 1.5;
         }
 
         footer {
@@ -739,12 +787,40 @@
             }
 
             .game-bar {
-                flex-direction: column;
+                gap: 10px;
+                /* Space between button and counter */
             }
 
-            .btn-generate,
+            .btn-generate {
+                flex: 1;
+                /* Takes available space */
+                min-height: 56px;
+                /* Thicker button for touch */
+                font-size: 1rem;
+                /* Slightly larger text */
+                padding: 0 20px;
+                /* Horizontal padding */
+            }
+
             .streak-counter {
-                width: 100%;
+                min-width: 80px;
+                /* Compact but readable */
+                padding: 12px 16px;
+                /* Balanced padding */
+                font-size: 1.1rem;
+                /* Readable streak number */
+            }
+
+            .finisher-main-label {
+                font-size: 0.9rem;
+                /* Slightly smaller title */
+            }
+
+            .finisher-subtext {
+                font-size: 0.75rem;
+                /* Smaller on mobile */
+                line-height: 1.3;
+                margin-top: 2px;
             }
         }
     </style>
@@ -768,9 +844,10 @@
                     <div>
                         <label>Session Goal</label>
                         <select id="goalSelect">
-                            <option value="Power">Explosive Power</option>
-                            <option value="Strength" selected>Strength</option>
-                            <option value="Endurance">Endurance</option>
+                            <option value="STRENGTH" selected>Strength</option>
+                            <option value="POWER">Power</option>
+                            <option value="HYPERTROPHY">Endurance</option>
+                            <option value="MOBILITY">Mobility & Core</option>
                         </select>
                     </div>
                     <div>
@@ -781,7 +858,7 @@
                             <option value="Dumbbells">Dumbbells</option>
                             <option value="Barbell">Barbell</option>
                             <option value="Cable Machine">Cable Machine</option>
-                            <option value="Band">Resistance Band</option>
+                            <option value="Resistance Band">Resistance Band</option>
                             <option value="Medicine Ball">Medicine Ball</option>
                             <option value="Plyo Box">Plyo Box</option>
                             <option value="Swiss Ball">Swiss Ball</option>
@@ -793,7 +870,7 @@
                 <div class="finisher-control-card">
                     <div class="finisher-text-group">
                         <div class="finisher-main-label">Add Metabolic Finisher (Slot 6)</div>
-                        <div class="finisher-subtext">High-intensity burnout to simulate race fatigue.</div>
+                        <div class="finisher-subtext">Race fatigue simulator.</div>
                     </div>
                     <label class="toggle-switch">
                         <input type="checkbox" id="finisherToggle">
@@ -807,40 +884,40 @@
                 </div>
             </div>
 
-            <div class="benchmarks-view" id="benchmarksView">
-                <div class="benchmark-card">
-                    <div class="workout-type">Core Focus</div>
-                    <h3>💪 The Iron Streamline</h3>
-                    <ul>
-                        <li>Plank Hold — 3 x 45s</li>
-                        <li>Dead Bug — 3 x 12 each side</li>
-                        <li>Swiss Ball Jackknife — 3 x 10</li>
-                        <li>Hanging Leg Raises — 3 x 8</li>
-                        <li>Streamline Flutter Kick — 3 x 30s</li>
-                    </ul>
-                </div>
-                <div class="benchmark-card">
-                    <div class="workout-type">Power Focus</div>
-                    <h3>⚡ The 50m Sprint Prep</h3>
-                    <ul>
-                        <li>Box Jumps — 4 x 5</li>
-                        <li>Medicine Ball Slams — 4 x 8</li>
-                        <li>Broad Jumps — 4 x 5</li>
-                        <li>Power Clean — 4 x 3</li>
-                        <li>Plyo Push-Ups — 3 x 8</li>
-                    </ul>
-                </div>
-                <div class="benchmark-card">
-                    <div class="workout-type">Mobility Focus</div>
-                    <h3>🛡️ The Shoulder Shield</h3>
-                    <ul>
-                        <li>Shoulder Dislocates — 2 x 15</li>
-                        <li>Prone Y-T-W Raises — 2 x 10 each</li>
-                        <li>Cable Face Pulls — 3 x 15</li>
-                        <li>Thoracic Spine Rotation — 2 x 10 each</li>
-                        <li>World's Greatest Stretch — 2 x 5 each</li>
-                    </ul>
-                </div>
+        </div>
+        <div class="benchmarks-view" id="benchmarksView">
+            <div class="benchmark-card">
+                <div class="workout-type">Core Focus</div>
+                <h3>💪 The Iron Streamline</h3>
+                <ul>
+                    <li>Plank Hold — 3 x 45s</li>
+                    <li>Dead Bug — 3 x 12 each side</li>
+                    <li>Swiss Ball Jackknife — 3 x 10</li>
+                    <li>Hanging Leg Raises — 3 x 8</li>
+                    <li>Streamline Flutter Kick — 3 x 30s</li>
+                </ul>
+            </div>
+            <div class="benchmark-card">
+                <div class="workout-type">Power Focus</div>
+                <h3>⚡ The 50m Sprint Prep</h3>
+                <ul>
+                    <li>Box Jumps — 4 x 5</li>
+                    <li>Medicine Ball Slams — 4 x 8</li>
+                    <li>Broad Jumps — 4 x 5</li>
+                    <li>Power Clean — 4 x 3</li>
+                    <li>Plyo Push-Ups — 3 x 8</li>
+                </ul>
+            </div>
+            <div class="benchmark-card">
+                <div class="workout-type">Mobility Focus</div>
+                <h3>🛡️ The Shoulder Shield</h3>
+                <ul>
+                    <li>Shoulder Dislocates — 2 x 15</li>
+                    <li>Prone Y-T-W Raises — 2 x 10 each</li>
+                    <li>Cable Face Pulls — 3 x 15</li>
+                    <li>Thoracic Spine Rotation — 2 x 10 each</li>
+                    <li>World's Greatest Stretch — 2 x 5 each</li>
+                </ul>
             </div>
         </div>
 
@@ -981,7 +1058,7 @@
             constructor() {
                 this.currentWorkout = [];
                 this.lockedIndices = new Set();
-                this.filters = { goal: 'Strength', equipment: 'All', finisherEnabled: false };
+                this.filters = { goal: 'STRENGTH', equipment: 'All', finisherEnabled: false };
                 this.slotConfig = [
                     { slot: 1, category: 'Mobility', tier: exerciseTiers.MOBILITY, isCore: false },
                     { slot: 2, category: 'Power', tier: exerciseTiers.POWER, isCore: false },
@@ -1001,6 +1078,21 @@
                 const newWorkout = [];
                 const slotsToFill = this.filters.finisherEnabled ? 6 : 5;
 
+                // Define goal-specific slot configurations
+                let goalSlots = this.slotConfig; // Default (STRENGTH/POWER/HYPERTROPHY)
+
+                if (this.filters.goal === 'MOBILITY') {
+                    // Mobility & Core structure
+                    goalSlots = [
+                        { slot: 1, category: 'Warm-Up', tier: exerciseTiers.MOBILITY, isCore: false },
+                        { slot: 2, category: 'Shoulders', tier: exerciseTiers.MOBILITY, isCore: false },
+                        { slot: 3, category: 'Hips', tier: exerciseTiers.MOBILITY, isCore: false },
+                        { slot: 4, category: 'Thoracic', tier: exerciseTiers.MOBILITY, isCore: false },
+                        { slot: 5, category: 'Core Integration', tier: exerciseTiers.MOBILITY, isCore: true },
+                        { slot: 6, category: 'Flow', tier: exerciseTiers.MOBILITY, isCore: false, optional: true }
+                    ];
+                }
+
                 for (let i = 0; i < slotsToFill; i++) {
                     if (this.lockedIndices.has(i) && this.currentWorkout[i]) {
                         const lockedExercise = this.currentWorkout[i];
@@ -1009,7 +1101,12 @@
                         continue;
                     }
 
-                    const slotDef = this.slotConfig[i];
+                    // Use goalSlots instead of this.slotConfig
+                    const slotDef = goalSlots[i] || this.slotConfig[i]; // Fallback if goalSlots is shorter (shouldn't be)
+
+                    // Special handling for Core goal to force Core matches even if tier doesn't strictly match? 
+                    // No, existing tiers match well (Mobility tier has Core).
+
                     const exercise = this._findExerciseForSlot(slotDef, usedExerciseNames);
 
                     if (exercise) {
@@ -1021,6 +1118,8 @@
                         };
                         newWorkout.push(workoutExercise);
                     }
+
+
                 }
 
                 this.currentWorkout = newWorkout;
@@ -1114,11 +1213,11 @@
 
             getRepScheme(tier, sessionGoal) {
                 const repSchemes = {
-                    [exerciseTiers.STRENGTH]: { 'Strength': '4x5', 'Power': '5x3', 'Endurance': '3x12' },
-                    [exerciseTiers.POWER]: { 'Strength': '4x6', 'Power': '5x3', 'Endurance': '3x10' },
-                    [exerciseTiers.HYPERTROPHY]: { 'Strength': '3x8', 'Power': '4x6', 'Endurance': '3x15' },
-                    [exerciseTiers.MOBILITY]: { 'Strength': '2x30s', 'Power': '2x30s', 'Endurance': '3x45s' },
-                    [exerciseTiers.METABOLIC]: { 'Strength': '3x30s', 'Power': '4x20s', 'Endurance': '3x45s' }
+                    [exerciseTiers.STRENGTH]: { 'STRENGTH': '4x5', 'POWER': '5x3', 'HYPERTROPHY': '3x12', 'MOBILITY': '2x10' },
+                    [exerciseTiers.POWER]: { 'STRENGTH': '4x6', 'POWER': '5x3', 'HYPERTROPHY': '3x10', 'MOBILITY': '2x8' },
+                    [exerciseTiers.HYPERTROPHY]: { 'STRENGTH': '3x8', 'POWER': '4x6', 'HYPERTROPHY': '3x15', 'MOBILITY': '2x12' },
+                    [exerciseTiers.MOBILITY]: { 'STRENGTH': '2x30s', 'POWER': '2x30s', 'HYPERTROPHY': '3x45s', 'MOBILITY': '3x60s' },
+                    [exerciseTiers.METABOLIC]: { 'STRENGTH': '3x30s', 'POWER': '4x20s', 'HYPERTROPHY': '3x45s', 'MOBILITY': '2x60s' }
                 };
                 return repSchemes[tier]?.[sessionGoal] || '3x10';
             }
@@ -1220,17 +1319,40 @@
             initStreak();
 
             function generateWorkout() {
+                // Store completion state of locked exercises
+                const lockedCompletionState = {};
+                document.querySelectorAll('.exercise-card').forEach((card, index) => {
+                    const lockBtn = card.querySelector('.lock-btn');
+                    const checkbox = card.querySelector('.exercise-checkbox');
+                    if (lockBtn && lockBtn.classList.contains('locked') && checkbox && checkbox.checked) {
+                        lockedCompletionState[index] = true;
+                    }
+                });
+
                 workoutManager.setFilters({
                     goal: goalSelect.value,
                     equipment: equipmentSelect.value,
                     finisherEnabled: finisherToggle.checked
                 });
 
-                workoutManager.clearLocks();
                 const workout = workoutManager.generateWorkout();
                 const slotCount = finisherToggle.checked ? 6 : 5;
                 resultsHeader.innerHTML = `<div class="section-title">Smart ${slotCount}-Slot Workout</div>`;
                 displayExercises(workout);
+
+                // Restore completion state
+                setTimeout(() => {
+                    document.querySelectorAll('.exercise-card').forEach((card, index) => {
+                        if (lockedCompletionState[index]) {
+                            const checkbox = card.querySelector('.exercise-checkbox');
+                            if (checkbox) {
+                                checkbox.checked = true;
+                                // Trigger change event to update UI (disable buttons)
+                                checkbox.dispatchEvent(new Event('change'));
+                            }
+                        }
+                    });
+                }, 50);
             }
 
             function displayExercises(list) {
@@ -1262,13 +1384,31 @@
 
                     const isLocked = workoutManager.isLocked(index);
 
-                    // FIX 2: Vector Icons - Replace emojis with Lucide icons
+                    // SVG lock icons for clean visual feedback
+                    const unlockedSVG = `<svg class="lock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="5" y="11" width="14" height="11" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>`;
+                    const lockedSVG = `<svg class="lock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="5" y="11" width="14" height="11" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>`;
+
+                    // Prepare badge and clean description
+                    const rawDesc = ex.swimmerNote || ex.desc || '';
+                    const cleanDesc = rawDesc.replace(/^Verified:\s*/i, '');
+                    const verifiedBadge = `<svg class="verified-badge" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" fill="var(--accent)" opacity="0.2"/>
+                        <circle cx="12" cy="12" r="10" stroke="var(--accent)" stroke-width="2"/>
+                        <path d="M8 12L11 15L16 9" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>`;
+
                     card.innerHTML = `
                         <div class="card-actions">
                             <button class="card-action-btn lock-btn ${isLocked ? 'locked' : ''}" data-index="${index}">
-                                <i data-lucide="${isLocked ? 'lock' : 'unlock'}" class="w-4 h-4"></i>
+                                ${isLocked ? lockedSVG : unlockedSVG}
                             </button>
-                            <button class="card-action-btn swap-btn" data-index="${index}">
+                            <button class="card-action-btn swap-btn ${isLocked ? 'disabled' : ''}" data-index="${index}" ${isLocked ? 'disabled' : ''}>
                                 <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -1276,10 +1416,13 @@
                         <div class="card-header">
                             <input type="checkbox" class="exercise-checkbox">
                             <h3>${ex.name}</h3>
-                            <span class="rep-scheme-badge">${ex.repScheme || ''}</span>
                         </div>
-                        <div class="exercise-desc">${ex.swimmerNote || ex.desc}</div>
+                        <div class="exercise-desc">${verifiedBadge}${cleanDesc}</div>
                         <div class="meta-container">
+                            <div class="meta-group">
+                                <span class="meta-label">Reps</span>
+                                <span class="tag reps">${ex.repScheme || ''}</span>
+                            </div>
                             <div class="meta-group">
                                 <span class="meta-label">Equipment</span>
                                 <span class="tag">${ex.equipment}</span>
@@ -1299,13 +1442,44 @@
                 // FIX 2: Crucial - Call lucide.createIcons() to render the icons
                 lucide.createIcons();
 
-                // FIX 3: Re-attach animation event listeners after re-render
-                // When displayExercises() re-renders, it destroys old event listeners
+                // Attach lock button event listeners
+                // Attach lock button event listeners
                 document.querySelectorAll('.lock-btn').forEach(btn => {
                     const index = parseInt(btn.dataset.index);
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
+
+                        // Guard: Do nothing if disabled (completed)
+                        if (btn.disabled || btn.classList.contains('disabled')) {
+                            return;
+                        }
+
                         const isNowLocked = workoutManager.toggleLock(index);
+
+                        // Update SVG path IMMEDIATELY for instant visual feedback
+                        const svg = btn.querySelector('.lock-icon');
+                        const path = svg.querySelector('path');
+
+                        if (isNowLocked) {
+                            // Close the shackle (locked state)
+                            path.setAttribute('d', 'M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11');
+                        } else {
+                            // Open the shackle (unlocked state - clearer gap)
+                            path.setAttribute('d', 'M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V5');
+                        }
+
+                        // Update locked class for styling
+                        btn.classList.toggle('locked', isNowLocked);
+
+                        // Disable/enable swap button
+                        const swapBtn = btn.closest('.exercise-card').querySelector('.swap-btn');
+                        if (isNowLocked) {
+                            swapBtn.disabled = true;
+                            swapBtn.classList.add('disabled');
+                        } else {
+                            swapBtn.disabled = false;
+                            swapBtn.classList.remove('disabled');
+                        }
 
                         // Add appropriate animation
                         if (isNowLocked) {
@@ -1313,11 +1487,6 @@
                         } else {
                             btn.classList.add('animate-unlock');
                         }
-
-                        // Update icon
-                        btn.classList.toggle('locked', isNowLocked);
-                        btn.querySelector('i').setAttribute('data-lucide', isNowLocked ? 'lock' : 'unlock');
-                        lucide.createIcons();
 
                         // Remove animation class after animation completes
                         setTimeout(() => {
@@ -1330,6 +1499,12 @@
                     const index = parseInt(btn.dataset.index);
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
+
+                        // Guard: Do nothing if disabled (locked)
+                        if (btn.disabled || btn.classList.contains('disabled')) {
+                            return;
+                        }
+
                         btn.classList.add('animate-swap');
 
                         // Wait for animation to complete before swapping
@@ -1346,19 +1521,29 @@
             function toggleLock(index, btn) {
                 const isNowLocked = workoutManager.toggleLock(index);
 
-                // Add animation class before updating icon
+                // Update SVG path IMMEDIATELY for instant visual feedback
+                const svg = btn.querySelector('.lock-icon');
+                const path = svg.querySelector('path');
+
                 if (isNowLocked) {
+                    path.setAttribute('d', 'M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11');
                     btn.classList.add('animate-lock');
                     btn.classList.add('locked');
-                    btn.querySelector('i').setAttribute('data-lucide', 'lock');
                 } else {
+                    path.setAttribute('d', 'M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V5');
                     btn.classList.add('animate-unlock');
                     btn.classList.remove('locked');
-                    btn.querySelector('i').setAttribute('data-lucide', 'unlock');
                 }
 
-                // Re-render the icon after changing the data-lucide attribute
-                lucide.createIcons();
+                // Disable/enable swap button
+                const swapBtn = btn.closest('.exercise-card').querySelector('.swap-btn');
+                if (isNowLocked) {
+                    swapBtn.disabled = true;
+                    swapBtn.classList.add('disabled');
+                } else {
+                    swapBtn.disabled = false;
+                    swapBtn.classList.remove('disabled');
+                }
 
                 // Remove animation class after animation completes
                 setTimeout(() => {
@@ -1452,10 +1637,31 @@
 
             function toggleCard(checkbox) {
                 const card = checkbox.closest('.exercise-card');
+                const lockBtn = card.querySelector('.lock-btn');
+                const swapBtn = card.querySelector('.swap-btn');
+
                 if (checkbox.checked) {
                     card.classList.add('checked');
+
+                    // Exercise completed - disable controls
+                    lockBtn.disabled = true;
+                    lockBtn.classList.add('disabled');
+
+                    swapBtn.disabled = true;
+                    swapBtn.classList.add('disabled');
                 } else {
                     card.classList.remove('checked');
+
+                    // Exercise uncompleted - re-enable controls
+                    lockBtn.disabled = false;
+                    lockBtn.classList.remove('disabled');
+
+                    // Only enable swap if not locked
+                    const isLocked = lockBtn.classList.contains('locked');
+                    if (!isLocked) {
+                        swapBtn.disabled = false;
+                        swapBtn.classList.remove('disabled');
+                    }
                 }
                 checkCompletion();
             }
