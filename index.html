@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dryland Pro - Stop Guessing. Start Building.</title>
+    <meta name="description"
+        content="Your pocket coach. Smart dryland workouts generated in seconds. Built for swimmers who demand excellence.">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Strict App Palette */
+            --bg-color: #0f172a;
+            /* slate-900 */
+            --card-bg: #1e293b;
+            /* slate-800 */
+            --accent: #38bdf8;
+            /* sky-400 */
+            --success: #22c55e;
+            /* emerald-500 */
+            --text-main: #f8fafc;
+            /* slate-50 */
+            --text-muted: #94a3b8;
+            /* slate-400 */
+            --border-subtle: rgba(255, 255, 255, 0.05);
+
+            /* Typography */
+            --font-main: 'Inter', -apple-system, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --- Components --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn-launch {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-launch:hover {
+            background: var(--accent);
+            color: var(--bg-color);
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.25);
+        }
+
+        .section-spacer {
+            padding: 6rem 0;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            padding-top: 120px;
+            padding-bottom: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            /* Living Glow System - Subtle & Atmospheric */
+            background: radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.12), transparent 60%);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+            color: var(--text-main);
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            color: var(--text-muted);
+            margin-bottom: 48px;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+        }
+
+        .highlight-text {
+            color: var(--accent);
+        }
+
+        /* --- Product Hero Section --- */
+        .product-hero {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 120px 0;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+
+        .product-screenshot {
+            display: block;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(56, 189, 248, 0.08);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: floatUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s;
+        }
+
+        /* --- Stats Strip (Replaces Icons) --- */
+        .stats-strip {
+            padding: 80px 0;
+            background: transparent;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            color: var(--text-main);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-item p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* --- Social Proof --- */
+        .social-proof {
+            text-align: center;
+        }
+
+        .proof-stat {
+            color: #64748b;
+            font-size: 0.75rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .proof-text {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .check-icon {
+            color: var(--success);
+            width: 20px;
+            height: 20px;
+        }
+
+        /* --- Final CTA --- */
+        .final-cta {
+            text-align: center;
+            padding-bottom: 15vh;
+        }
+
+        .final-cta h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 40px;
+            letter-spacing: -1px;
+            color: var(--text-main);
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes floatUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 768px) {
+            .hero {
+                padding-top: 100px;
+                padding-bottom: 60px;
+            }
+
+            .product-hero {
+                padding: 60px 0;
+            }
+
+            .product-screenshot {
+                width: 100%;
+                border-radius: 8px;
+                /* Slightly smaller radius on mobile */
+            }
+
+            .stats-strip {
+                padding: 60px 0;
+            }
+
+            .stats-grid {
+                gap: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Stop Guessing.<br>Start Building.</h1>
+            <p>Your pocket coach. Smart dryland workouts. Generated in seconds. <span class="highlight-text">Built for
+                    swimmers who demand excellence.</span></p>
+            <a href="app.html" class="btn-launch">Launch App &rarr;</a>
+        </div>
+    </section>
+
+    <!-- Product Hero Section -->
+    <section class="product-hero">
+        <div class="container">
+            <img src="hero-product-shot.png" alt="DrylandPro Workout Generator Interface" class="product-screenshot">
+        </div>
+    </section>
+
+    <!-- Stats Strip -->
+    <section class="stats-strip">
+        <div class="container">
+            <div class="stats-grid">
+                <!-- Column 1 -->
+                <div class="stat-item">
+                    <h3>77 Exercise Database</h3>
+                    <p>Curated movements verified by competitive swimmers</p>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="stat-item">
+                    <h3>Equipment Smart Filtering</h3>
+                    <p>Only shows exercises you can actually do right now</p>
+                </div>
+
+                <!-- Column 3 -->
+                <div class="stat-item">
+                    <h3>Daily Streak Tracking</h3>
+                    <p>Build momentum with fire icons showing your consistency</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="social-proof section-spacer">
+        <div class="container">
+            <p class="proof-stat">Database: 77 Exercises</p>
+            <p class="proof-text">
+                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Built by a 14-year competitive swimmer. Tested by athletes.
+            </p>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta section-spacer">
+        <div class="container">
+            <h2>Join the 1%.</h2>
+            <a href="app.html" class="btn-launch">Launch Dryland Pro &rarr;</a>
+        </div>
+    </section>
+
+</body>
+
+</html>
