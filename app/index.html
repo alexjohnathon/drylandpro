@@ -10,7 +10,7 @@
     <meta property="og:url" content="https://dryland-pro.netlify.app/">
     <meta property="og:type" content="website">
     <title>Dryland Pro - Swimmer's Generator</title>
-    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
         :root {
             --bg-color: #0f172a;
@@ -18,6 +18,7 @@
             --input-bg: #0f172a;
             --accent: #38bdf8;
             --success: #22c55e;
+            --danger: #ef4444;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --radius: 12px;
@@ -102,13 +103,14 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .view-toggle-btn.active {
             background: var(--accent);
             border-color: var(--accent);
             color: #0f172a;
+            box-shadow: 0 2px 8px rgba(56, 189, 248, 0.25);
         }
 
         .view-toggle-btn:hover:not(.active) {
@@ -153,6 +155,11 @@
         select:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+        }
+
+        .finisher-control-card.disabled {
+            opacity: 0.4;
+            pointer-events: none;
         }
 
         .finisher-control-card {
@@ -270,12 +277,83 @@
             height: 52px;
             min-width: 70px;
             padding: 0 15px;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Streak levels */
+        .streak-counter.streak-warm {
+            border-color: rgba(251, 146, 60, 0.3);
+            background: rgba(251, 146, 60, 0.08);
+        }
+        .streak-counter.streak-hot {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.08);
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.1);
+        }
+        .streak-counter.streak-fire {
+            border-color: rgba(239, 68, 68, 0.4);
+            background: rgba(239, 68, 68, 0.12);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.15);
+        }
+        .streak-counter.streak-legendary {
+            border-color: rgba(168, 85, 247, 0.4);
+            background: rgba(168, 85, 247, 0.1);
+            box-shadow: 0 0 24px rgba(168, 85, 247, 0.15);
+        }
+
+        /* Celebration screen */
+        .celebration-card {
+            text-align: center;
+            padding: 48px 24px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            animation: celebrationIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        @keyframes celebrationIn {
+            from { opacity: 0; transform: scale(0.9) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .celebration-fire {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 12px;
+            animation: fireFloat 1.5s ease-in-out infinite;
+        }
+        @keyframes fireFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-4px) scale(1.05); }
+        }
+        .celebration-streak {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+        .celebration-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .celebration-message {
+            font-size: 0.95rem;
+            color: var(--success);
+            font-weight: 700;
+            line-height: 1.5;
+        }
+        .celebration-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 8px;
         }
 
         .results-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 16px;
+            gap: 20px;
         }
 
         .section-title {
@@ -295,24 +373,26 @@
             padding: 22px;
             border-radius: var(--radius);
             border-left: 5px solid var(--accent);
-            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: cardSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
             display: flex;
             flex-direction: column;
             gap: 12px;
             position: relative;
             overflow: hidden;
+            transition: opacity 0.3s, border-left-color 0.3s, transform 0.2s;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
+        /* Staggered entrance — each card delays slightly */
+        .exercise-card:nth-child(1) { animation-delay: 0s; }
+        .exercise-card:nth-child(2) { animation-delay: 0.06s; }
+        .exercise-card:nth-child(3) { animation-delay: 0.12s; }
+        .exercise-card:nth-child(4) { animation-delay: 0.18s; }
+        .exercise-card:nth-child(5) { animation-delay: 0.24s; }
+        .exercise-card:nth-child(6) { animation-delay: 0.30s; }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes cardSlideIn {
+            from { opacity: 0; transform: translateY(16px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         @media (hover: hover) {
@@ -326,22 +406,11 @@
                 opacity: 0;
                 transition: opacity 0.5s;
             }
-
-            .exercise-card:hover::before {
-                opacity: 1;
-            }
-
-            .exercise-card>* {
-                position: relative;
-                z-index: 2;
-            }
+            .exercise-card:hover::before { opacity: 1; }
+            .exercise-card>* { position: relative; z-index: 2; }
         }
 
-        .exercise-card h3 {
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 800;
-        }
+        .exercise-card h3 { margin: 0; font-size: 1.2rem; font-weight: 800; }
 
         .exercise-desc {
             font-size: 0.9rem;
@@ -356,22 +425,11 @@
             gap: 10px;
         }
 
-        .verified-badge {
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
+        .verified-badge { flex-shrink: 0; margin-top: 2px; }
 
-        .meta-container {
-            display: flex;
-            gap: 25px;
-            flex-wrap: wrap;
-        }
+        .meta-container { display: flex; gap: 25px; flex-wrap: wrap; }
 
-        .meta-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+        .meta-group { display: flex; flex-direction: column; gap: 6px; }
 
         .meta-label {
             font-size: 0.6rem;
@@ -410,126 +468,36 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 6px;
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Remove focus outline */
-        .card-action-btn:focus {
-            outline: none;
-        }
+        .card-action-btn:active { transform: scale(0.9); }
 
-        /* Icon color - cyan-400 */
-        .card-action-btn svg {
-            color: #38bdf8;
-            transition: color 0.2s ease, transform 0.2s ease;
-        }
+        .card-action-btn:focus { outline: none; }
+        .card-action-btn svg { color: #38bdf8; transition: color 0.2s ease, transform 0.2s ease; }
+        .card-action-btn:hover svg { color: #67e8f9; }
+        .card-action-btn.swap-btn:hover svg { transform: scale(1.05); }
+        .card-action-btn.locked { background: rgba(56, 189, 248, 0.15); border-color: var(--accent); }
+        .lock-icon { color: rgba(148, 163, 184, 0.6); transition: color 0.2s; }
+        .card-action-btn.locked .lock-icon { color: var(--accent); }
+        .swap-btn.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+        .swap-btn.disabled svg { color: rgba(148, 163, 184, 0.3); }
+        .lock-btn.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+        .lock-btn.disabled .lock-icon { color: rgba(148, 163, 184, 0.3); }
 
-        /* Hover state - cyan-300 with slight scale */
-        .card-action-btn:hover svg {
-            color: #67e8f9;
-        }
+        @keyframes bounce-lock { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+        @keyframes shake-unlock { 0% { transform: rotate(0deg); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } 100% { transform: rotate(0deg); } }
+        @keyframes spin-swap { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        .card-action-btn.swap-btn:hover svg {
-            transform: scale(1.05);
-        }
-
-        .card-action-btn.locked {
-            background: rgba(56, 189, 248, 0.15);
-            border-color: var(--accent);
-        }
-
-        /* Lock icon styles */
-        .lock-icon {
-            color: rgba(148, 163, 184, 0.6);
-            transition: color 0.2s;
-        }
-
-        .card-action-btn.locked .lock-icon {
-            color: var(--accent);
-        }
-
-        /* Disabled swap button */
-        .swap-btn.disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        .swap-btn.disabled svg {
-            color: rgba(148, 163, 184, 0.3);
-        }
-
-        /* Disabled lock button */
-        .lock-btn.disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        .lock-btn.disabled .lock-icon {
-            color: rgba(148, 163, 184, 0.3);
-        }
-
-        /* Micro-animations */
-        @keyframes bounce-lock {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.15);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        @keyframes shake-unlock {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            25% {
-                transform: rotate(-8deg);
-            }
-
-            75% {
-                transform: rotate(8deg);
-            }
-
-            100% {
-                transform: rotate(0deg);
-            }
-        }
-
-        @keyframes spin-swap {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .card-action-btn.animate-lock svg {
-            animation: bounce-lock 0.3s ease-out;
-        }
-
-        .card-action-btn.animate-unlock svg {
-            animation: shake-unlock 0.3s ease-in-out;
-        }
-
-        .card-action-btn.animate-swap svg {
-            animation: spin-swap 0.5s ease-in-out;
-        }
+        .card-action-btn.animate-lock svg { animation: bounce-lock 0.3s ease-out; }
+        .card-action-btn.animate-unlock svg { animation: shake-unlock 0.3s ease-in-out; }
+        .card-action-btn.animate-swap svg { animation: spin-swap 0.5s ease-in-out; }
 
         .slot-category {
             font-size: 0.65rem;
@@ -543,12 +511,40 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             padding-right: 80px;
         }
 
-        .interactive-card {
+        .details-toggle-row {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .details-toggle {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--accent);
+            font-weight: 700;
             cursor: pointer;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            background: rgba(56, 189, 248, 0.05);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .details-toggle:hover {
+            background: rgba(56, 189, 248, 0.12);
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+        .details-toggle svg {
+            transition: transform 0.3s ease;
+        }
+        .exercise-card.expanded .details-toggle svg {
+            transform: rotate(180deg);
         }
 
         .exercise-checkbox {
@@ -575,22 +571,131 @@
             clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
         }
 
-        .exercise-checkbox:checked {
-            background-color: var(--accent);
-        }
-
-        .exercise-checkbox:checked::before {
-            transform: scale(1);
-        }
+        .exercise-checkbox:checked { background-color: var(--success); border-color: var(--success); }
+        .exercise-checkbox:checked::before { transform: scale(1); }
 
         .exercise-card.checked {
-            opacity: 0.6;
-            border-left-color: var(--text-muted);
+            opacity: 0.5;
+            border-left-color: var(--success);
+            transform: scale(0.99);
+        }
+        .exercise-card.checked h3 {
+            color: var(--text-muted);
         }
 
-        .exercise-card.checked h3 {
-            text-decoration: line-through;
-            color: var(--text-muted);
+        .exercise-details {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            padding-top: 0;
+            margin-top: 0;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease 0.05s, padding-top 0.3s ease, margin-top 0.3s ease;
+        }
+
+        .exercise-card.expanded .exercise-details {
+            max-height: 800px;
+            opacity: 1;
+            padding-top: 16px;
+            margin-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .details-grid {
+            display: grid;
+            gap: 16px;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .exercise-media img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: block;
+        }
+
+        .detail-group { display: flex; flex-direction: column; gap: 6px; }
+
+        .detail-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            font-weight: 700;
+            opacity: 0.7;
+        }
+
+        .detail-text { font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; }
+
+        .difficulty-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .difficulty-badge.beginner { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+        .difficulty-badge.intermediate { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+        .difficulty-badge.advanced { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+        .muscles-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .muscle-tag {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        .muscle-tag.primary {
+            background: rgba(56, 189, 248, 0.08);
+            color: var(--accent);
+        }
+        .muscles-legend {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--accent);
+            font-weight: 700;
+            width: 100%;
+            margin-top: 2px;
+        }
+        .muscles-legend.secondary {
+            color: #64748b;
+            margin-top: 6px;
+        }
+
+        .detail-list {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        .detail-list li {
+            padding: 4px 0 4px 20px;
+            position: relative;
+        }
+        .detail-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.5;
         }
 
         .empty-state {
@@ -623,10 +728,23 @@
             text-transform: uppercase;
         }
 
-        .btn-share-ghost:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+        .btn-share-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+        .btn-cancel-ghost {
+            flex: 1;
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            height: 52px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
         }
+
+        .btn-cancel-ghost:hover { background: rgba(239, 68, 68, 0.1); }
 
         .btn-complete {
             flex: 2;
@@ -643,10 +761,7 @@
             text-transform: uppercase;
         }
 
-        .btn-complete:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
+        .btn-complete:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
         .btn-complete:disabled {
             opacity: 0.5;
@@ -658,54 +773,178 @@
         .btn-success-state {
             background: var(--success) !important;
             cursor: default;
-            transform: none !important;
+            transform: scale(1.02) !important;
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4) !important;
         }
 
         @keyframes streak-pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.2);
-            }
+            0%, 100% { transform: scale(1); }
+            30% { transform: scale(1.25); }
+            60% { transform: scale(0.95); }
         }
 
         .pulse-animation {
-            animation: streak-pulse 0.5s ease-in-out;
+            animation: streak-pulse 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             color: var(--success);
             border-color: var(--success);
         }
 
-        .benchmarks-view {
+        .btn-generate:active {
+            transform: scale(0.97);
+            filter: brightness(0.95);
+        }
+
+        .btn-complete:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        /* --- Guide View --- */
+        .guide-view { display: none; flex-direction: column; gap: 12px; }
+        .guide-view.active { display: flex; }
+        .generator-view.hidden { display: none; }
+
+        .guide-section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        /* FAQ Accordion */
+        .faq-item {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .faq-item:hover { border-color: rgba(56, 189, 248, 0.15); }
+
+        .faq-question {
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 18px 20px;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+        .faq-question:focus { outline: none; }
+
+        .faq-chevron {
+            flex-shrink: 0;
+            color: var(--text-muted);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .faq-item.open .faq-chevron { transform: rotate(180deg); }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s;
+            padding: 0 20px;
+        }
+        .faq-item.open .faq-answer {
+            max-height: 400px;
+            padding: 0 20px 18px;
+        }
+        .faq-answer p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin: 0 0 10px;
+        }
+        .faq-answer p:last-child { margin-bottom: 0; }
+
+        /* --- Challenge Cards --- */
+        .challenges-section {
             display: none;
             flex-direction: column;
-            gap: 24px;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .challenges-section.active { display: flex; }
+
+        .challenges-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin: -4px 0 8px;
+            line-height: 1.5;
         }
 
-        .benchmarks-view.active {
-            display: flex;
-        }
-
-        .generator-view.hidden {
-            display: none;
-        }
-
-        .benchmark-card {
+        .challenge-card {
             background: var(--card-bg);
             padding: 24px;
             border-radius: var(--radius);
             border-left: 4px solid var(--accent);
-            margin: 0;
             position: relative;
             overflow: hidden;
-            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: cardSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        .challenge-card:nth-child(3) { animation-delay: 0s; }
+        .challenge-card:nth-child(4) { animation-delay: 0.08s; }
+        .challenge-card:nth-child(5) { animation-delay: 0.16s; }
+
+        .challenge-card h3 {
+            margin: 0 0 8px;
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+        .challenge-difficulty {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .challenge-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0 0 16px;
+        }
+        .challenge-workout-list {
+            display: flex;
+            flex-direction: column;
+        }
+        .challenge-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+        .challenge-row:last-child { border-bottom: none; }
+        .challenge-reps {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--success);
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            padding: 4px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
         }
 
         @media (hover: hover) {
-            .benchmark-card::before {
+            .challenge-card::before {
                 content: "";
                 position: absolute;
                 inset: 0;
@@ -715,43 +954,8 @@
                 opacity: 0;
                 transition: opacity 0.5s;
             }
-
-            .benchmark-card:hover::before {
-                opacity: 1;
-            }
-
-            .benchmark-card>* {
-                position: relative;
-                z-index: 2;
-            }
-        }
-
-        .benchmark-card h3 {
-            margin: 0 0 8px 0;
-            font-size: 1.2rem;
-            font-weight: 800;
-        }
-
-        .benchmark-card .workout-type {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .benchmark-card ul {
-            margin: 12px 0 0 0;
-            padding-left: 0;
-            list-style: none;
-        }
-
-        .benchmark-card li {
-            padding: 8px 0;
-            color: #cbd5e1;
-            font-size: 0.9rem;
-            line-height: 1.5;
+            .challenge-card:hover::before { opacity: 1; }
+            .challenge-card > * { position: relative; z-index: 2; }
         }
 
         footer {
@@ -763,11 +967,7 @@
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             width: 100%;
         }
-
-        footer p {
-            margin: 5px 0;
-        }
-
+        footer p { margin: 5px 0; }
         .footer-link {
             color: var(--accent);
             text-decoration: none;
@@ -775,53 +975,15 @@
             border-bottom: 1px dashed var(--accent);
             transition: all 0.2s;
         }
-
-        .footer-link:hover {
-            opacity: 0.8;
-            border-bottom-style: solid;
-        }
+        .footer-link:hover { opacity: 0.8; border-bottom-style: solid; }
 
         @media (max-width: 600px) {
-            .search-section {
-                grid-template-columns: 1fr;
-            }
-
-            .game-bar {
-                gap: 10px;
-                /* Space between button and counter */
-            }
-
-            .btn-generate {
-                flex: 1;
-                /* Takes available space */
-                min-height: 56px;
-                /* Thicker button for touch */
-                font-size: 1rem;
-                /* Slightly larger text */
-                padding: 0 20px;
-                /* Horizontal padding */
-            }
-
-            .streak-counter {
-                min-width: 80px;
-                /* Compact but readable */
-                padding: 12px 16px;
-                /* Balanced padding */
-                font-size: 1.1rem;
-                /* Readable streak number */
-            }
-
-            .finisher-main-label {
-                font-size: 0.9rem;
-                /* Slightly smaller title */
-            }
-
-            .finisher-subtext {
-                font-size: 0.75rem;
-                /* Smaller on mobile */
-                line-height: 1.3;
-                margin-top: 2px;
-            }
+            .search-section { grid-template-columns: 1fr; }
+            .game-bar { gap: 10px; }
+            .btn-generate { flex: 1; min-height: 56px; font-size: 1rem; padding: 0 20px; }
+            .streak-counter { min-width: 80px; padding: 12px 16px; font-size: 1.1rem; }
+            .finisher-main-label { font-size: 0.9rem; }
+            .finisher-subtext { font-size: 0.75rem; line-height: 1.3; margin-top: 2px; }
         }
     </style>
 </head>
@@ -836,18 +998,18 @@
         <div class="controls">
             <div class="view-toggle">
                 <button class="view-toggle-btn active" id="tabGenerator">Generator</button>
-                <button class="view-toggle-btn" id="tabBenchmarks">Benchmarks</button>
+                <button class="view-toggle-btn" id="tabGuide">Guide</button>
             </div>
 
             <div class="generator-view" id="generatorView">
                 <div class="search-section">
                     <div>
-                        <label>Session Goal</label>
-                        <select id="goalSelect">
-                            <option value="STRENGTH" selected>Strength</option>
-                            <option value="POWER">Power</option>
-                            <option value="HYPERTROPHY">Endurance</option>
-                            <option value="MOBILITY">Mobility & Core</option>
+                        <label>Training Phase</label>
+                        <select id="phaseSelect">
+                            <option value="PRE_SEASON" selected>Pre-Season</option>
+                            <option value="IN_SEASON">In-Season</option>
+                            <option value="TAPER">Taper</option>
+                            <option value="OFF_SEASON">Off-Season</option>
                         </select>
                     </div>
                     <div>
@@ -855,7 +1017,7 @@
                         <select id="equipmentSelect">
                             <option value="All">Any Equipment</option>
                             <option value="Bodyweight">Bodyweight Only</option>
-                            <option value="Dumbbells">Dumbbells</option>
+                            <option value="Dumbbell">Dumbbells</option>
                             <option value="Barbell">Barbell</option>
                             <option value="Cable Machine">Cable Machine</option>
                             <option value="Resistance Band">Resistance Band</option>
@@ -867,10 +1029,10 @@
                     </div>
                 </div>
 
-                <div class="finisher-control-card">
+                <div class="finisher-control-card" id="finisherCard">
                     <div class="finisher-text-group">
-                        <div class="finisher-main-label">Add Metabolic Finisher (Slot 6)</div>
-                        <div class="finisher-subtext">Race fatigue simulator.</div>
+                        <div class="finisher-main-label" id="finisherLabel">Add Metabolic Finisher (Slot 6)</div>
+                        <div class="finisher-subtext" id="finisherSubtext">Race fatigue simulator.</div>
                     </div>
                     <label class="toggle-switch">
                         <input type="checkbox" id="finisherToggle">
@@ -884,50 +1046,109 @@
                 </div>
             </div>
 
+            <!-- Guide View - FAQ inside controls box -->
+            <div class="guide-view" id="guideView">
+                <div class="faq-item">
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                        What do the training phases mean?
+                        <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p><strong style="color:var(--accent);">Pre-Season</strong> — You're weeks out from competition. Heavy compound lifts, explosive plyometrics, maximum power. Build the engine.</p>
+                        <p><strong style="color:var(--accent);">In-Season</strong> — Training and racing regularly. Maintain strength without creating fatigue. Leave the gym activated, not wrecked.</p>
+                        <p><strong style="color:var(--accent);">Taper</strong> — Race week. Light mobility, activation, core only. No fatigue. The finisher auto-disables.</p>
+                        <p><strong style="color:var(--accent);">Off-Season</strong> — No meets. Higher volume, more muscle. This is where the V-taper comes from.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                        What do the blue and grey muscle tags mean?
+                        <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p><strong style="color:var(--accent);">Blue tags</strong> = primary muscles. The main targets the exercise is designed to work.</p>
+                        <p><strong style="color:var(--text-muted);">Grey tags</strong> = secondary muscles. These assist during the movement but aren't the main focus.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                        How does the workout generator work?
+                        <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Each phase has a specific 5-slot structure designed for that period of training. The generator picks a random exercise for each slot from a curated database of 98 movements, filtered by your equipment selection.</p>
+                        <p>Lock exercises you like, swap ones you don't. Rep schemes automatically adjust to match your training phase.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                        What does the streak counter track?
+                        <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Complete a workout each day to build your streak. Check all exercises, hit "Complete Workout" — that logs the day. Miss a day and the streak resets to zero. Consistency wins.</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <div class="benchmarks-view" id="benchmarksView">
-            <div class="benchmark-card">
-                <div class="workout-type">Core Focus</div>
+
+        <!-- Challenges Section (visible on Guide tab) -->
+        <div class="challenges-section" id="challengesSection">
+            <div class="guide-section-label">Community Challenges</div>
+            <p class="challenges-subtitle">Complete one honestly. DM <strong>@drylandpro</strong> with a video for a shoutout.</p>
+
+            <div class="challenge-card">
+                <div class="challenge-difficulty">🟢 Beginner</div>
                 <h3>💪 The Iron Streamline</h3>
-                <ul>
-                    <li>Plank Hold — 3 x 45s</li>
-                    <li>Dead Bug — 3 x 12 each side</li>
-                    <li>Swiss Ball Jackknife — 3 x 10</li>
-                    <li>Hanging Leg Raises — 3 x 8</li>
-                    <li>Streamline Flutter Kick — 3 x 30s</li>
-                </ul>
+                <p class="challenge-desc">Core endurance test. No rest between exercises. Hold the streamline.</p>
+                <div class="challenge-workout-list">
+                    <div class="challenge-row"><span>Front Plank</span><span class="challenge-reps">3 × 45s</span></div>
+                    <div class="challenge-row"><span>Dead Bug</span><span class="challenge-reps">3 × 12 each</span></div>
+                    <div class="challenge-row"><span>Hollow Hold</span><span class="challenge-reps">3 × 30s</span></div>
+                    <div class="challenge-row"><span>V-Up</span><span class="challenge-reps">3 × 10</span></div>
+                    <div class="challenge-row"><span>Superman Rocks</span><span class="challenge-reps">3 × 30s</span></div>
+                </div>
             </div>
-            <div class="benchmark-card">
-                <div class="workout-type">Power Focus</div>
-                <h3>⚡ The 50m Sprint Prep</h3>
-                <ul>
-                    <li>Box Jumps — 4 x 5</li>
-                    <li>Medicine Ball Slams — 4 x 8</li>
-                    <li>Broad Jumps — 4 x 5</li>
-                    <li>Power Clean — 4 x 3</li>
-                    <li>Plyo Push-Ups — 3 x 8</li>
-                </ul>
+
+            <div class="challenge-card">
+                <div class="challenge-difficulty">🟡 Intermediate</div>
+                <h3>⚡ The 50 Free Starter</h3>
+                <p class="challenge-desc">Explosive power circuit. 90 seconds rest between exercises. Race-start intensity.</p>
+                <div class="challenge-workout-list">
+                    <div class="challenge-row"><span>Box Jump</span><span class="challenge-reps">5 × 5</span></div>
+                    <div class="challenge-row"><span>Medicine Ball Slam</span><span class="challenge-reps">4 × 8</span></div>
+                    <div class="challenge-row"><span>Broad Jump</span><span class="challenge-reps">4 × 5</span></div>
+                    <div class="challenge-row"><span>Clap Push-Up</span><span class="challenge-reps">4 × 6</span></div>
+                    <div class="challenge-row"><span>Squat Jump</span><span class="challenge-reps">5 × 5</span></div>
+                </div>
             </div>
-            <div class="benchmark-card">
-                <div class="workout-type">Mobility Focus</div>
-                <h3>🛡️ The Shoulder Shield</h3>
-                <ul>
-                    <li>Shoulder Dislocates — 2 x 15</li>
-                    <li>Prone Y-T-W Raises — 2 x 10 each</li>
-                    <li>Cable Face Pulls — 3 x 15</li>
-                    <li>Thoracic Spine Rotation — 2 x 10 each</li>
-                    <li>World's Greatest Stretch — 2 x 5 each</li>
-                </ul>
+
+            <div class="challenge-card">
+                <div class="challenge-difficulty">🔴 Advanced</div>
+                <h3>🛡️ The Shoulder Armoury</h3>
+                <p class="challenge-desc">Full shoulder health protocol. Slow and controlled. If you swim 5+ days a week, you need this.</p>
+                <div class="challenge-workout-list">
+                    <div class="challenge-row"><span>Shoulder Dislocate</span><span class="challenge-reps">3 × 15</span></div>
+                    <div class="challenge-row"><span>Prone Y-T-W Raises</span><span class="challenge-reps">3 × 10 each</span></div>
+                    <div class="challenge-row"><span>Cable Face Pull</span><span class="challenge-reps">3 × 15</span></div>
+                    <div class="challenge-row"><span>Scapular Wall Slides</span><span class="challenge-reps">3 × 10</span></div>
+                    <div class="challenge-row"><span>Cross-Body Shoulder Stretch</span><span class="challenge-reps">2 × 30s each</span></div>
+                </div>
             </div>
         </div>
 
         <div id="results-header"></div>
         <div id="results" class="results-grid">
-            <div class="empty-state">Select your session goal and generate a smart workout.</div>
+            <div class="empty-state">Pick your training phase and generate a workout.</div>
         </div>
         <div id="action-bar" class="action-bar" style="display: none;">
             <button id="completeBtn" class="btn-complete">Complete Workout</button>
             <button id="shareBtn" class="btn-share-ghost">Share</button>
+            <button id="cancelBtn" class="btn-cancel-ghost">Cancel</button>
         </div>
     </div>
 
@@ -943,7 +1164,7 @@
         console.log("App Started");
 
         // ═══════════════════════════════════════════════════════════════
-        // STEP A: THE DATA (from exercises.js)
+        // STEP A: THE DATA
         // ═══════════════════════════════════════════════════════════════
         const exerciseTiers = {
             STRENGTH: 'STRENGTH',
@@ -954,174 +1175,1480 @@
         };
 
         const exercises = [
-            // STRENGTH TIER - Bodyweight (6)
-            { name: 'Pull-Up', equipment: 'Bodyweight', target: 'Back & Lats', desc: 'Vertical pulling movement, chest to bar.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Explosive pulling strength for freestyle/butterfly propulsion; mimics catch-to-finish mechanics.' },
-            { name: 'Weighted Pull-Up', equipment: 'Bodyweight', target: 'Back & Lats', desc: 'Pull-up with weight belt added.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Absolute strength in pull pattern essential for sprint starts and underwater power.' },
-            { name: 'Dip', equipment: 'Bodyweight', target: 'Chest & Triceps', desc: 'Parallel bar pressing movement.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Pushing strength for starts, turns, and breaststroke acceleration.' },
-            { name: 'Handstand Push-Up', equipment: 'Bodyweight', target: 'Shoulders & Triceps', desc: 'Inverted push-up against wall.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Shoulder stability and overhead pressing; streamline position core engagement.' },
-            { name: 'Single-Leg Deadlift', equipment: 'Bodyweight', target: 'Legs & Glutes', desc: 'Hip hinge on single leg.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Unilateral leg drive and ankle stability for powerful wall push mechanics.' },
-            { name: 'Pistol Squat', equipment: 'Bodyweight', target: 'Legs & Glutes', desc: 'Full-depth single-leg squat.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Unilateral leg strength; asymmetrical turn mechanics and explosive ankle mobility.' },
-            // STRENGTH TIER - Barbell (4)
-            { name: 'Barbell Back Squat', equipment: 'Barbell', target: 'Legs & Glutes', desc: 'Heavy bilateral lower body press.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Foundation for lower body power; direct translation to wall push velocity.' },
-            { name: 'Barbell Deadlift', equipment: 'Barbell', target: 'Back & Glutes', desc: 'Hip hinge lifting from ground.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Deadlift correlates strongest to sprint swimming performance. Posterior chain integrity critical.' },
-            { name: 'Barbell Bench Press', equipment: 'Barbell', target: 'Chest & Triceps', desc: 'Heavy bilateral pressing.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Bench press explains 50-65% of swim block start power. Essential for starts.' },
-            { name: 'Barbell Bent-Over Row', equipment: 'Barbell', target: 'Back & Lats', desc: 'Horizontal pulling, torso parallel.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Raw back strength; horizontal pulling pattern essential for catch mechanics.' },
-            // STRENGTH TIER - Dumbbell (4)
-            { name: 'Dumbbell Floor Press', equipment: 'Dumbbell', target: 'Chest & Triceps', desc: 'Single-arm pressing movement.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Unilateral chest strength and core stability; alternating arm pattern of freestyle.' },
-            { name: 'Dumbbell Bench Press', equipment: 'Dumbbell', target: 'Chest & Triceps', desc: 'Alternating arm press.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Core ignition during pressing; alternating pattern mimics freestyle/backstroke.' },
-            { name: 'Dumbbell Goblet Squat', equipment: 'Dumbbell', target: 'Legs & Glutes', desc: 'Squat holding dumbbell at chest.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Core-intensive squat; chest-held position emphasizes streamline posture.' },
-            { name: 'Dumbbell Single-Leg Deadlift', equipment: 'Dumbbell', target: 'Legs & Glutes', desc: 'Unilateral hip hinge with dumbbell.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Unilateral posterior chain critical for asymmetrical wall push mechanics.' },
-            // STRENGTH TIER - Resistance Band (5)
-            { name: 'Band Pull-Apart', equipment: 'Resistance Band', target: 'Shoulders & Upper Back', desc: 'Horizontal pull with straight arms.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Scapular activation and rear shoulder strength; foundational prehab for shoulder health.' },
-            { name: 'Band External Rotation', equipment: 'Resistance Band', target: 'Rotator Cuff', desc: 'Band anchored at elbow height, forearm rotates outward.', tier: exerciseTiers.STRENGTH, swimmerNote: "Verified: Swimmer's Shoulder prevention. Strengthens external rotators; essential for rotator cuff integrity." },
-            { name: 'Band Internal Rotation', equipment: 'Resistance Band', target: 'Rotator Cuff', desc: 'Forearm rotates toward body.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Balanced rotator cuff development preventing repetitive overhead imbalance.' },
-            { name: 'Banded Pull-Up', equipment: 'Resistance Band', target: 'Back & Lats', desc: 'Pull-up assisted with band.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Progression toward unassisted pulls; maintains proper pulling mechanics while building strength.' },
-            { name: 'Band Row', equipment: 'Resistance Band', target: 'Back & Lats', desc: 'High anchor point, row with high elbows.', tier: exerciseTiers.STRENGTH, swimmerNote: 'Verified: Rear shoulder and upper back strength; high elbow position mimics catch phase.' },
-            // POWER TIER - Bodyweight (5)
-            { name: 'Box Jump', equipment: 'Plyo Box', target: 'Legs & Glutes', desc: 'Explosive vertical jump onto elevated box.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Elastic lower body power; direct translation to wall push velocity and block acceleration.' },
-            { name: 'Broad Jump', equipment: 'Bodyweight', target: 'Legs & Glutes', desc: 'Explosive horizontal jump for maximum distance.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Broad jump correlates to sprint swimming. Horizontal propulsion mirrors water mechanics.' },
-            { name: 'Squat Jump', equipment: 'Bodyweight', target: 'Legs & Glutes', desc: 'Jump from squat position, explosive bottom-to-top power.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Concentric power isolation; critical for explosive starts and rapid wall push mechanics.' },
-            { name: 'Clap Push-Up', equipment: 'Bodyweight', target: 'Chest & Triceps', desc: 'Explosive push-up generating clap height.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Upper body explosive pressing power; direct transfer to starts and breaststroke acceleration.' },
-            { name: 'Single-Leg Hop', equipment: 'Bodyweight', target: 'Legs & Glutes', desc: 'Rapid sequential hopping on single leg.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Unilateral power development; trains explosive single-leg push critical for asymmetrical turns.' },
-            // POWER TIER - Medicine Ball (4)
-            { name: 'Medicine Ball Chest Pass', equipment: 'Medicine Ball', target: 'Chest & Core', desc: 'Explosive chest pass against wall or to partner.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Upper body power; mimics explosive push pattern from wall and block starts.' },
-            { name: 'Medicine Ball Slam', equipment: 'Medicine Ball', target: 'Core & Legs', desc: 'Overhead slam to ground with full-body power.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Core power and hip extension explosiveness; rapid turning mechanics development.' },
-            { name: 'Medicine Ball Rotational Throw', equipment: 'Medicine Ball', target: 'Core & Shoulders', desc: 'Explosive rotational throw from athletic stance.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Rotational power and core explosion; diagonal power lines critical for freestyle rotation.' },
-            { name: 'Medicine Ball Overhead Slam Single-Leg', equipment: 'Medicine Ball', target: 'Core & Legs', desc: 'Overhead slam on single-leg stance.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Unilateral power with core stability; asymmetrical explosive mechanics for turning.' },
-            // POWER TIER - Plyo Box (3)
-            { name: 'Depth Jump', equipment: 'Plyo Box', target: 'Legs & Glutes', desc: 'Step off box, land and immediately jump vertically.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Rapid eccentric-to-concentric transition; explosive rebound off walls critical for fast turns.' },
-            { name: 'Box Jump Lateral Bound', equipment: 'Plyo Box', target: 'Legs & Glutes', desc: 'Jump onto box, jump down, lateral bound away.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Lateral power development; multi-directional power for turn mechanics and wall push angles.' },
-            { name: 'Split Squat Jump', equipment: 'Plyo Box', target: 'Legs & Glutes', desc: 'Lunge position explosive jump switching leg position.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Unilateral power and rapid leg switching; alternating leg drive mechanics.' },
-            // POWER TIER - Additional (2)
-            { name: 'Tuck Jump', equipment: 'Bodyweight', target: 'Legs & Glutes', desc: 'Vertical jump pulling knees to chest at peak.', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Maximum vertical velocity; elastic leg power for wall push and turn execution.' },
-            { name: 'Jump Rope Double-Unders', equipment: 'Jump Rope', target: 'Legs & Cardiovascular', desc: 'Double-under rope jumps (rope passes twice per jump).', tier: exerciseTiers.POWER, swimmerNote: 'Verified: Rapid leg turnover and ankle power; fast-twitch recruitment patterns of starts and turns.' },
-            // HYPERTROPHY TIER - Bodyweight (5)
-            { name: 'Push-Up', equipment: 'Bodyweight', target: 'Chest & Shoulders', desc: 'Push-up emphasizing scapular protraction at top.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Scapular mobility and chest strength; healthy shoulder position under fatigue.' },
-            { name: 'Plank Hip Dip', equipment: 'Bodyweight', target: 'Core & Obliques', desc: 'Side plank with alternating hip dips.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Unilateral core stability and oblique strength; asymmetrical core control for body roll.' },
-            { name: 'Hollow Body Hold', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Streamlined position on back, entire body arced.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Builds neuromuscular connection to streamline position; essential body awareness.' },
-            { name: 'Glute Bridge', equipment: 'Bodyweight', target: 'Glutes', desc: 'Bridge driving through one leg, opposite extended.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Unilateral glute activation; trains single-leg hip extension critical for wall push mechanics.' },
-            { name: 'Donkey Kick', equipment: 'Bodyweight', target: 'Glutes', desc: 'Quadruped pulsing knee lifts.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Hip extension strength and glute activation; trains dolphin kick muscle contraction pattern.' },
-            // HYPERTROPHY TIER - Dumbbell (4)
-            { name: 'Dumbbell Lateral Raise', equipment: 'Dumbbell', target: 'Shoulders', desc: 'Bilateral lateral shoulder raise.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Shoulder abduction strength; lateral stability critical for overhead pulling.' },
-            { name: 'Dumbbell Reverse Fly', equipment: 'Dumbbell', target: 'Rear Shoulders', desc: 'Bent-over lateral raise emphasizing rear shoulder.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: "Verified: Rear shoulder and scapular strength; prehab essential for Swimmer's Shoulder prevention." },
-            { name: 'Dumbbell Concentration Curl', equipment: 'Dumbbell', target: 'Biceps', desc: 'Seated single-arm curl with peak contraction emphasis.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Isolated bicep strength; supports pulling mechanics and endurance during long sets.' },
-            { name: 'Dumbbell Lying Triceps Extension', equipment: 'Dumbbell', target: 'Triceps', desc: 'Lying bench, single dumbbell overhead extension.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Isolated tricep strength; supports pushing mechanics and breaststroke arm drive.' },
-            // HYPERTROPHY TIER - Cable Machine (3)
-            { name: 'Cable Fly', equipment: 'Cable Machine', target: 'Chest', desc: 'High cable fly bringing hands down and across body.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Chest isolation with full range; develops pressing strength through complete motion arc.' },
-            { name: 'Cable Row', equipment: 'Cable Machine', target: 'Back & Lats', desc: 'Rowing with close grip, high elbow position.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Mid-back and lower lat isolation; supports pulling strength and back endurance.' },
-            { name: 'Cable External Rotation', equipment: 'Cable Machine', target: 'Rotator Cuff', desc: 'Standing cable external rotation, 90° elbow.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Loaded rotator cuff strengthening; advanced shoulder health for injury prevention.' },
-            // HYPERTROPHY TIER - Resistance Band (3)
-            { name: 'Banded Bicep Curl', equipment: 'Resistance Band', target: 'Biceps', desc: 'Bilateral bicep curl standing on band.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Bicep endurance; supports pulling power and strength through full range.' },
-            { name: 'Banded Tricep Extension', equipment: 'Resistance Band', target: 'Triceps', desc: 'Overhead band extension from flexed position.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Tricep endurance and shoulder health; supports breaststroke and pushing mechanics.' },
-            { name: 'Banded Pull-Apart Lateral Raise', equipment: 'Resistance Band', target: 'Shoulders & Upper Back', desc: 'Band pull-apart transitioning into lateral raise.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Shoulder mobility and lateral stability; builds shoulder width and rotator cuff resilience.' },
-            // HYPERTROPHY TIER - Swiss Ball (2)
-            { name: 'Swiss Ball Pike', equipment: 'Swiss Ball', target: 'Core & Shoulders', desc: 'Feet on ball in push-up position, pike hips high.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Core flexion strength and shoulder stability under load.' },
-            { name: 'Swiss Ball Rollout', equipment: 'Swiss Ball', target: 'Core', desc: 'Rollout from knees on ball, extending fully.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Advanced core stability and shoulder health; full-range anterior core essential for streamline.' },
-            // HYPERTROPHY TIER - Medicine Ball (2)
-            { name: 'Medicine Ball Chest Pass Kneeling', equipment: 'Medicine Ball', target: 'Chest & Core', desc: 'Kneeling chest pass emphasizing core stability.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Core stability under explosive loading; core resilience during powerful wall pushes.' },
-            { name: 'Medicine Ball Dead Bug', equipment: 'Medicine Ball', target: 'Core', desc: 'Supine position ball overhead, alternating opposite arm-leg extension.', tier: exerciseTiers.HYPERTROPHY, swimmerNote: 'Verified: Contralateral core strength; essential for diagonal power lines and body roll control.' },
-            // MOBILITY TIER - Core-Specific (10)
-            { name: 'Front Plank', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Push-up position plank, 30-90 second hold.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Streamline position strength and body tension; foundational for efficient streamline.' },
-            { name: 'Side Plank', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Lateral plank on forearm, 30-60 seconds each side.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Unilateral core stability and oblique strength; asymmetrical core control for body roll.' },
-            { name: 'Dead Bug', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Supine position alternating opposite arm-leg extension.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Contralateral stability; diagonal power lines essential for efficient rotation.' },
-            { name: 'Hollow Hold', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Full-body streamline on back, 20-60 second hold.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Single most important exercise for position awareness in all strokes.' },
-            { name: 'Hollow Body Rocks', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Hollow position rocking front-to-back with controlled momentum.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Dynamic streamline stability; core tension maintenance through subtle movement.' },
-            { name: 'Plank Hip Dips', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Plank position lowering hips left-right alternating.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Unilateral core stability and anti-rotation; obliques and deep core stabilizers.' },
-            { name: 'Superman', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Prone simultaneous arm and leg extension hold 2-3 sec.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Posterior core and lower back strength; essential for streamline maintenance.' },
-            { name: 'Superman Rocks', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Superman position with rocking motion.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Dynamic posterior core and hip extension strength; posterior chain muscular endurance.' },
-            { name: 'V-Up', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Lying position explosive sit-up transitioning to pike.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Advanced core flexion and hip flexion strength; explosive core power for dolphin kick.' },
-            { name: 'Streamline Squat', equipment: 'Bodyweight', target: 'Core & Abs', desc: 'Squat maintaining arms overhead in streamline.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Core stability under loading; maintain streamline during dynamic movement and turns.' },
-            // MOBILITY TIER - Shoulder Mobility (5)
-            { name: 'Shoulder Dislocate', equipment: 'Resistance Band', target: 'Shoulders', desc: 'Band overhead mobility drill, overhead to behind body.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Full shoulder mobility through complete range; foundational for shoulder health.' },
-            { name: 'Prone Y-T-W Raises', equipment: 'Bodyweight', target: 'Shoulders', desc: 'Prone position making Y, T, W positions with arms.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Shoulder stability in multiple planes; rotator cuff and scapular stabilizer activation.' },
-            { name: 'Sleeper Stretch', equipment: 'Bodyweight', target: 'Shoulders', desc: 'Side-lying shoulder stretch with active pressure.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Shoulder internal rotation and anterior shoulder flexibility.' },
-            { name: 'Cross-Body Shoulder Stretch', equipment: 'Bodyweight', target: 'Shoulders', desc: 'Arm across body pulling elbow toward opposite shoulder.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Posterior shoulder and upper back flexibility; essential for stroke mechanics.' },
-            { name: 'Scapular Wall Slides', equipment: 'Bodyweight', target: 'Shoulders', desc: 'Back against wall, arms in W position sliding overhead.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Scapular mobility and shoulder stability; foundational for healthy shoulder mechanics.' },
-            // MOBILITY TIER - Hip Mobility (3)
-            { name: '90-90 Stretch', equipment: 'Bodyweight', target: 'Hips & Glutes', desc: 'Seated hip flexor stretch with active forward fold.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Hip flexor and glute flexibility; healthy hip mobility for body roll.' },
-            { name: 'Hip Opening Stretch', equipment: 'Bodyweight', target: 'Hips & Glutes', desc: 'Seated deep hip opener stretching external rotators.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: External hip rotator flexibility; supports rotation mechanics and turn execution.' },
-            { name: 'Lunge Hold', equipment: 'Bodyweight', target: 'Hips & Glutes', desc: 'Deep lunge position holding 20-30 seconds.', tier: exerciseTiers.MOBILITY, swimmerNote: 'Verified: Hip flexor and quad flexibility; healthy hip mechanics for streamline.' },
-            // METABOLIC TIER - Conditioning Finishers (7)
-            { name: 'Burpee', equipment: 'Bodyweight', target: 'Full Body', desc: 'Squat to push-up to standing jump sequence.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Total-body conditioning and lactate tolerance; high metabolic demand of race intensity.' },
-            { name: 'Mountain Climber', equipment: 'Bodyweight', target: 'Core & Legs', desc: 'Push-up position rapid knee drives alternating.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Core endurance and rapid leg recruitment; maintain core tension under fatigue.' },
-            { name: 'Bear Crawl', equipment: 'Bodyweight', target: 'Core & Shoulders', desc: 'Quadruped position moving forward with coordination.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Shoulder stability under endurance loading; maintain shoulder position through fatigue.' },
-            { name: 'High Knees', equipment: 'Bodyweight', target: 'Legs & Core', desc: 'Running in place driving knees to hip height.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Rapid leg recruitment and cardiovascular conditioning; nervous system demands of race pace.' },
-            { name: 'Jumping Jacks', equipment: 'Bodyweight', target: 'Full Body', desc: 'Rhythmic jumping jack sustained 20-60 seconds.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Cardiovascular conditioning and full-body coordination; warm-up and conditioning finisher.' },
-            { name: 'Battle Ropes', equipment: 'Battle Ropes', target: 'Shoulders & Core', desc: 'Dual rope undulating waves with full-body power.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Upper body explosive endurance and core stability under fatigue.' },
-            { name: 'Jump Rope', equipment: 'Jump Rope', target: 'Legs & Cardiovascular', desc: 'Jump rope sustained 3-10 minutes with intensity variation.', tier: exerciseTiers.METABOLIC, swimmerNote: 'Verified: Ankle power and cardiovascular conditioning; essential warm-up and lower body power endurance.' }
+            // ═══════════════════════════════════════════════════════════
+            // STRENGTH TIER — Bodyweight (6)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Pull-Up',
+                equipment: 'Bodyweight',
+                target: 'Back & Lats',
+                desc: 'Vertical pulling movement, chest to bar.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Explosive pulling strength for freestyle/butterfly propulsion; mimics catch-to-finish mechanics.',
+                setup: 'Hang from bar with hands just outside shoulder width, shoulders engaged and packed down.',
+                formCues: ['Lead with the chest, not the chin', 'Drive elbows down and back', 'Full dead hang at bottom, chin over bar at top', 'Keep core braced throughout'],
+                musclesPrimary: ['Lats', 'Upper back'],
+                musclesSecondary: ['Biceps', 'Forearms', 'Core'],
+                difficulty: 'Advanced'
+            },
+            {
+                name: 'Weighted Pull-Up',
+                equipment: 'Bodyweight',
+                target: 'Back & Lats',
+                desc: 'Pull-up with added weight via belt or vest.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Absolute strength in pull pattern essential for sprint starts and underwater power.',
+                setup: 'Attach weight plate to dip belt or wear weighted vest. Hang with full arm extension.',
+                formCues: ['Control the descent — no dropping', 'Same strict form as bodyweight pull-up', 'Start light and add weight gradually', 'Full range of motion every rep'],
+                musclesPrimary: ['Lats', 'Upper back'],
+                musclesSecondary: ['Biceps', 'Forearms', 'Core'],
+                difficulty: 'Advanced'
+            },
+            {
+                name: 'Dip',
+                equipment: 'Bodyweight',
+                target: 'Chest & Triceps',
+                desc: 'Parallel bar pressing movement.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Pushing strength for starts, turns, and breaststroke acceleration.',
+                setup: 'Grip parallel bars with straight arms, shoulders down and back. Slight forward lean.',
+                formCues: ['Lower until upper arms are parallel to floor', 'Keep elbows tracking back, not flaring', 'Press up to full lockout', 'Lean forward slightly for more chest engagement'],
+                musclesPrimary: ['Chest', 'Triceps'],
+                musclesSecondary: ['Shoulders', 'Core'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Handstand Push-Up',
+                equipment: 'Bodyweight',
+                target: 'Shoulders & Triceps',
+                desc: 'Inverted push-up against wall.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Shoulder stability and overhead pressing; streamline position core engagement.',
+                setup: 'Kick up into wall-supported handstand. Hands shoulder width, fingers spread.',
+                formCues: ['Lower head toward floor in controlled tempo', 'Keep core tight — no arching', 'Press through palms evenly', 'Start with partial range if new to this'],
+                musclesPrimary: ['Shoulders', 'Triceps'],
+                musclesSecondary: ['Upper chest', 'Core', 'Traps'],
+                difficulty: 'Advanced'
+            },
+            {
+                name: 'Single-Leg Deadlift',
+                equipment: 'Bodyweight',
+                target: 'Legs & Glutes',
+                desc: 'Hip hinge on single leg.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Unilateral leg drive and ankle stability for powerful wall push mechanics.',
+                setup: 'Stand on one leg with soft knee. Arms at sides for balance.',
+                formCues: ['Hinge at hips, not waist', 'Back leg extends straight behind you', 'Keep hips square — don\'t rotate', 'Touch mid-shin depth then return'],
+                musclesPrimary: ['Hamstrings', 'Glutes'],
+                musclesSecondary: ['Core', 'Lower back', 'Ankles'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Pistol Squat',
+                equipment: 'Bodyweight',
+                target: 'Legs & Glutes',
+                desc: 'Full-depth single-leg squat.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Unilateral leg strength; asymmetrical turn mechanics and explosive ankle mobility.',
+                setup: 'Stand on one leg, extend the other leg straight in front. Arms forward for counterbalance.',
+                formCues: ['Sit all the way down with control', 'Keep heel planted, knee tracking over toes', 'Drive up through full foot', 'Use a box or band for assistance if needed'],
+                musclesPrimary: ['Quads', 'Glutes'],
+                musclesSecondary: ['Core', 'Hamstrings', 'Ankles'],
+                difficulty: 'Advanced'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // STRENGTH TIER — Barbell (4)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Barbell Back Squat',
+                equipment: 'Barbell',
+                target: 'Legs & Glutes',
+                desc: 'Heavy bilateral lower body press.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Foundation for lower body power; direct translation to wall push velocity.',
+                setup: 'Bar rests on upper traps, feet shoulder width, brace your core before unracking.',
+                formCues: ['Sit hips back and down', 'Knees track over toes', 'Chest tall throughout', 'Drive through midfoot to stand'],
+                musclesPrimary: ['Quads', 'Glutes'],
+                musclesSecondary: ['Hamstrings', 'Core', 'Lower back'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Barbell Deadlift',
+                equipment: 'Barbell',
+                target: 'Back & Glutes',
+                desc: 'Hip hinge lifting from ground.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Deadlift correlates strongest to sprint swimming performance. Posterior chain integrity critical.',
+                setup: 'Feet hip width, bar over midfoot, hands just outside legs with overhand or mixed grip.',
+                formCues: ['Brace core and pull slack from bar', 'Drive the floor away with legs', 'Keep bar close to body at all times', 'Lock out with glutes at top'],
+                musclesPrimary: ['Glutes', 'Hamstrings', 'Back'],
+                musclesSecondary: ['Core', 'Grip', 'Traps'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Barbell Bench Press',
+                equipment: 'Barbell',
+                target: 'Chest & Triceps',
+                desc: 'Heavy bilateral pressing.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Bench press explains 50-65% of swim block start power. Essential for starts.',
+                setup: 'Eyes under bar, feet flat on floor, shoulder blades squeezed together and down.',
+                formCues: ['Lower bar to mid-chest with control', 'Elbows at roughly 45 degrees', 'Press evenly through both hands', 'Maintain slight natural arch in lower back'],
+                musclesPrimary: ['Chest', 'Triceps'],
+                musclesSecondary: ['Shoulders'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Barbell Bent-Over Row',
+                equipment: 'Barbell',
+                target: 'Back & Lats',
+                desc: 'Horizontal pulling, torso parallel.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Raw back strength; horizontal pulling pattern essential for catch mechanics.',
+                setup: 'Hinge at hips until torso is near parallel. Grip bar just outside knees.',
+                formCues: ['Pull bar to lower ribcage', 'Squeeze shoulder blades at top', 'Keep torso angle fixed — no rocking', 'Control the lowering phase'],
+                musclesPrimary: ['Lats', 'Rhomboids', 'Mid-back'],
+                musclesSecondary: ['Biceps', 'Rear delts', 'Core'],
+                difficulty: 'Intermediate'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // STRENGTH TIER — Barbell Extended
+            {
+                name: 'Barbell Overhead Press',
+                equipment: 'Barbell',
+                target: 'Shoulders & Triceps',
+                desc: 'Standing strict press from shoulders to overhead.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Overhead pressing strength for streamline position and wall push-off stability.',
+                setup: 'Unrack bar at collarbone. Feet hip width, grip just outside shoulders.',
+                formCues: ['Press straight up, moving head back slightly', 'Lock out fully overhead', 'Keep core braced — no arching back', 'Lower with control to collarbone'],
+                musclesPrimary: ['Shoulders', 'Triceps'],
+                musclesSecondary: ['Upper chest', 'Core', 'Traps'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Barbell Front Squat',
+                equipment: 'Barbell',
+                target: 'Legs & Glutes',
+                desc: 'Squat with bar racked on front deltoids.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Forces upright torso — directly trains the posture needed for streamline.',
+                setup: 'Bar rests on front delts with clean grip or cross grip. Elbows high.',
+                formCues: ['Keep elbows pointing forward and high', 'Sit straight down between hips', 'Chest stays vertical throughout', 'Drive through midfoot to stand'],
+                musclesPrimary: ['Quads', 'Core'],
+                musclesSecondary: ['Glutes', 'Upper back'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Barbell Romanian Deadlift',
+                equipment: 'Barbell',
+                target: 'Hamstrings & Glutes',
+                desc: 'Hip hinge with slight knee bend, bar stays close.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Posterior chain length and strength for streamline body position and kick power.',
+                setup: 'Hold bar at hip height with overhand grip. Feet hip width, knees slightly bent.',
+                formCues: ['Push hips back while keeping bar on thighs', 'Feel deep hamstring stretch', 'Stop at mid-shin or when back starts rounding', 'Squeeze glutes to return to standing'],
+                musclesPrimary: ['Hamstrings', 'Glutes'],
+                musclesSecondary: ['Lower back', 'Core', 'Grip'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Barbell Hip Thrust',
+                equipment: 'Barbell',
+                target: 'Glutes & Hamstrings',
+                desc: 'Loaded hip extension with upper back on bench.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Isolated glute power for explosive starts, dolphin kicks, and wall push-offs.',
+                setup: 'Upper back against bench edge. Bar across hip crease with pad. Feet flat, shoulder width.',
+                formCues: ['Drive through heels to lift hips', 'Squeeze glutes hard at lockout', 'Chin slightly tucked — don\'t hyperextend neck', 'Lower with 2-count control'],
+                musclesPrimary: ['Glutes'],
+                musclesSecondary: ['Hamstrings', 'Core'],
+                difficulty: 'Intermediate'
+            },
+
+            // STRENGTH TIER — Dumbbell (4+3)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Dumbbell Floor Press',
+                equipment: 'Dumbbell',
+                target: 'Chest & Triceps',
+                desc: 'Single-arm pressing from floor.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Unilateral chest strength and core stability; alternating arm pattern of freestyle.',
+                setup: 'Lie on floor with knees bent. Hold one dumbbell at chest level, other arm bracing floor.',
+                formCues: ['Lower until tricep touches floor', 'Press straight up over chest', 'Keep opposite shoulder pinned to floor', 'Alternate arms each set or superset'],
+                musclesPrimary: ['Chest', 'Triceps'],
+                musclesSecondary: ['Shoulders', 'Core'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Dumbbell Bench Press',
+                equipment: 'Dumbbell',
+                target: 'Chest & Triceps',
+                desc: 'Alternating arm press on bench.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Core ignition during pressing; alternating pattern mimics freestyle/backstroke.',
+                setup: 'Lie on bench with feet flat. Hold dumbbells at chest level, palms forward.',
+                formCues: ['Lower both dumbbells to chest level', 'Press evenly without letting them drift', 'Keep shoulder blades squeezed together', 'Full lockout at top each rep'],
+                musclesPrimary: ['Chest', 'Triceps'],
+                musclesSecondary: ['Shoulders', 'Core'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Dumbbell Goblet Squat',
+                equipment: 'Dumbbell',
+                target: 'Legs & Glutes',
+                desc: 'Squat holding dumbbell at chest.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Core-intensive squat; chest-held position emphasizes streamline posture.',
+                setup: 'Hold dumbbell vertically at chest, elbows pointing down. Feet shoulder width.',
+                formCues: ['Sit between your hips, not back', 'Keep torso as vertical as possible', 'Heels stay flat on ground', 'Drive up with glutes from bottom'],
+                musclesPrimary: ['Quads', 'Glutes'],
+                musclesSecondary: ['Core', 'Upper back'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Dumbbell Single-Leg Deadlift',
+                equipment: 'Dumbbell',
+                target: 'Legs & Glutes',
+                desc: 'Unilateral hip hinge with dumbbell.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Unilateral posterior chain critical for asymmetrical wall push mechanics.',
+                setup: 'Hold dumbbell in opposite hand to standing leg. Soft knee on planted foot.',
+                formCues: ['Hinge at hips keeping back flat', 'Rear leg extends straight behind', 'Lower dumbbell toward mid-shin', 'Squeeze glute of standing leg to return'],
+                musclesPrimary: ['Hamstrings', 'Glutes'],
+                musclesSecondary: ['Core', 'Lower back', 'Grip'],
+                difficulty: 'Intermediate'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // STRENGTH TIER — Dumbbell Extended
+            {
+                name: 'Dumbbell Bulgarian Split Squat',
+                equipment: 'Dumbbell',
+                target: 'Legs & Glutes',
+                desc: 'Single-leg squat with rear foot elevated.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Unilateral leg strength bridging the gap between gym and pool wall push power.',
+                setup: 'Hold dumbbells at sides. Rear foot on bench behind you, front foot 2 feet forward.',
+                formCues: ['Lower until front thigh is parallel', 'Keep front knee tracking over toes', 'Torso upright — slight forward lean is fine', 'Drive through front heel to stand'],
+                musclesPrimary: ['Quads', 'Glutes'],
+                musclesSecondary: ['Hamstrings', 'Core'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Dumbbell Row',
+                equipment: 'Dumbbell',
+                target: 'Back & Lats',
+                desc: 'Single-arm row with bench support.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Unilateral pulling corrects stroke imbalances and builds catch-phase strength.',
+                setup: 'One hand and knee on bench. Opposite foot on floor. Dumbbell hanging at full extension.',
+                formCues: ['Pull dumbbell to lower ribcage', 'Drive elbow straight back, not flaring', 'Squeeze shoulder blade at top for 1 second', 'Lower slowly for 2-count'],
+                musclesPrimary: ['Lats', 'Rhomboids'],
+                musclesSecondary: ['Biceps', 'Rear delts', 'Core'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Dumbbell Overhead Press',
+                equipment: 'Dumbbell',
+                target: 'Shoulders & Triceps',
+                desc: 'Bilateral dumbbell press from shoulders to overhead.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Symmetrical shoulder strength for high-elbow catch and overhead streamline stability.',
+                setup: 'Sit or stand with dumbbells at shoulder height, palms forward.',
+                formCues: ['Press straight up until arms are fully extended', 'Don\'t let dumbbells drift forward', 'Control the descent to shoulder level', 'Keep core braced throughout'],
+                musclesPrimary: ['Shoulders', 'Triceps'],
+                musclesSecondary: ['Upper chest', 'Core'],
+                difficulty: 'Beginner'
+            },
+
+            // STRENGTH TIER — Resistance Band (5)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Band Pull-Apart',
+                equipment: 'Resistance Band',
+                target: 'Shoulders & Upper Back',
+                desc: 'Horizontal pull with straight arms.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Scapular activation and rear shoulder strength; foundational prehab for shoulder health.',
+                setup: 'Hold band at shoulder width with arms straight in front at chest height.',
+                formCues: ['Pull band apart by squeezing shoulder blades', 'Keep arms straight throughout', 'Pause at full stretch for 1 second', 'Return with control — don\'t snap back'],
+                musclesPrimary: ['Rear delts', 'Rhomboids'],
+                musclesSecondary: ['Traps', 'Rotator cuff'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Band External Rotation',
+                equipment: 'Resistance Band',
+                target: 'Rotator Cuff',
+                desc: 'Band anchored at elbow height, forearm rotates outward.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: "Verified: Swimmer's Shoulder prevention. Strengthens external rotators; essential for rotator cuff integrity.",
+                setup: 'Anchor band at elbow height. Stand sideways, elbow bent 90 degrees tucked to side.',
+                formCues: ['Rotate forearm outward away from body', 'Keep elbow glued to your side', 'Slow and controlled — no momentum', 'Pause at end range for 2 seconds'],
+                musclesPrimary: ['Infraspinatus', 'Teres minor'],
+                musclesSecondary: ['Rear delts'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Band Internal Rotation',
+                equipment: 'Resistance Band',
+                target: 'Rotator Cuff',
+                desc: 'Forearm rotates toward body against band resistance.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Balanced rotator cuff development preventing repetitive overhead imbalance.',
+                setup: 'Anchor band at elbow height. Stand sideways with working arm closest to anchor, elbow bent 90 degrees.',
+                formCues: ['Rotate forearm inward across body', 'Keep elbow pinned to side throughout', 'Control the return — resist the band', 'Match volume with external rotation work'],
+                musclesPrimary: ['Subscapularis', 'Pectoralis minor'],
+                musclesSecondary: ['Anterior delt'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Banded Pull-Up',
+                equipment: 'Resistance Band',
+                target: 'Back & Lats',
+                desc: 'Pull-up assisted with band looped over bar.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Progression toward unassisted pulls; maintains proper pulling mechanics while building strength.',
+                setup: 'Loop band over pull-up bar. Step one or both feet into band and hang at full extension.',
+                formCues: ['Same form as standard pull-up', 'Don\'t bounce off the band', 'Progress to thinner bands over time', 'Full range — dead hang to chin over bar'],
+                musclesPrimary: ['Lats', 'Upper back'],
+                musclesSecondary: ['Biceps', 'Core'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Band Row',
+                equipment: 'Resistance Band',
+                target: 'Back & Lats',
+                desc: 'Standing horizontal row with high elbows.',
+                tier: exerciseTiers.STRENGTH,
+                swimmerNote: 'Verified: Rear shoulder and upper back strength; high elbow position mimics catch phase.',
+                setup: 'Anchor band at chest height. Face anchor with arms extended, gripping band ends.',
+                formCues: ['Pull elbows back and high', 'Squeeze shoulder blades together', 'Keep wrists neutral — don\'t curl', 'Return slowly for 2-count eccentric'],
+                musclesPrimary: ['Lats', 'Rhomboids'],
+                musclesSecondary: ['Rear delts', 'Biceps', 'Core'],
+                difficulty: 'Beginner'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // POWER TIER — Bodyweight (5)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Box Jump',
+                equipment: 'Plyo Box',
+                target: 'Legs & Glutes',
+                desc: 'Explosive vertical jump onto elevated box.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Elastic lower body power; direct translation to wall push velocity and block acceleration.',
+                setup: 'Stand arm\'s length from box. Feet hip width, arms back.',
+                formCues: ['Swing arms and explode upward', 'Land softly with full foot on box', 'Stand to full extension on top', 'Step down — don\'t jump down'],
+                musclesPrimary: ['Glutes', 'Quads'],
+                musclesSecondary: ['Calves', 'Core'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Broad Jump',
+                equipment: 'Bodyweight',
+                target: 'Legs & Glutes',
+                desc: 'Explosive horizontal jump for maximum distance.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Broad jump correlates to sprint swimming. Horizontal propulsion mirrors water mechanics.',
+                setup: 'Stand with feet hip width. Arms back, hinge slightly at hips.',
+                formCues: ['Drive arms forward as you jump', 'Extend hips fully at takeoff', 'Land softly with bent knees', 'Stick the landing before resetting'],
+                musclesPrimary: ['Glutes', 'Quads'],
+                musclesSecondary: ['Hamstrings', 'Calves', 'Core'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Squat Jump',
+                equipment: 'Bodyweight',
+                target: 'Legs & Glutes',
+                desc: 'Jump from squat position, explosive bottom-to-top power.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Concentric power isolation; critical for explosive starts and rapid wall push mechanics.',
+                setup: 'Stand feet shoulder width. Lower into quarter squat position.',
+                formCues: ['Explode straight up from bottom', 'Fully extend hips and ankles', 'Land soft and absorb through legs', 'Reset completely between each rep'],
+                musclesPrimary: ['Quads', 'Glutes'],
+                musclesSecondary: ['Calves', 'Core'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Clap Push-Up',
+                equipment: 'Bodyweight',
+                target: 'Chest & Triceps',
+                desc: 'Explosive push-up generating clap height.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Upper body explosive pressing power; direct transfer to starts and breaststroke acceleration.',
+                setup: 'Standard push-up position. Hands slightly wider than shoulders.',
+                formCues: ['Lower with control then explode up', 'Clap at peak height', 'Land with soft elbows — never locked', 'Keep core tight throughout flight'],
+                musclesPrimary: ['Chest', 'Triceps'],
+                musclesSecondary: ['Shoulders', 'Core'],
+                difficulty: 'Advanced'
+            },
+            {
+                name: 'Single-Leg Hop',
+                equipment: 'Bodyweight',
+                target: 'Legs & Glutes',
+                desc: 'Rapid sequential hopping on single leg.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Unilateral power development; trains explosive single-leg push critical for asymmetrical turns.',
+                setup: 'Stand on one leg with slight knee bend. Arms ready at sides.',
+                formCues: ['Drive knee up and hop for height', 'Land on ball of foot with soft knee', 'Minimize ground contact time', 'Equal reps on both sides'],
+                musclesPrimary: ['Quads', 'Calves'],
+                musclesSecondary: ['Glutes', 'Ankles', 'Core'],
+                difficulty: 'Intermediate'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // POWER TIER — Medicine Ball (4)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Medicine Ball Chest Pass',
+                equipment: 'Medicine Ball',
+                target: 'Chest & Core',
+                desc: 'Explosive chest pass against wall or to partner.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Upper body power; mimics explosive push pattern from wall and block starts.',
+                setup: 'Stand 3-4 feet from wall. Hold ball at chest with elbows out.',
+                formCues: ['Step forward as you pass for power', 'Follow through with arms fully extended', 'Catch the rebound at chest', 'Reset stance between reps'],
+                musclesPrimary: ['Chest', 'Triceps'],
+                musclesSecondary: ['Shoulders', 'Core'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Medicine Ball Slam',
+                equipment: 'Medicine Ball',
+                target: 'Core & Lats',
+                desc: 'Overhead slam to ground with full-body power.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Core power and hip extension explosiveness; rapid turning mechanics development.',
+                setup: 'Stand with feet shoulder width. Hold ball overhead with arms extended.',
+                formCues: ['Reach tall then slam through your core', 'Drive hips back as ball goes down', 'Catch ball on bounce if using dead ball', 'Full reset to overhead each rep'],
+                musclesPrimary: ['Core', 'Lats'],
+                musclesSecondary: ['Shoulders', 'Glutes', 'Triceps'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Medicine Ball Rotational Throw',
+                equipment: 'Medicine Ball',
+                target: 'Core & Shoulders',
+                desc: 'Explosive rotational throw from athletic stance.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Rotational power and core explosion; diagonal power lines critical for freestyle rotation.',
+                setup: 'Stand sideways to wall, 4-5 feet away. Ball at far hip.',
+                formCues: ['Rotate through hips first, then torso', 'Release ball at chest height into wall', 'Follow through with back hand', 'Equal reps both directions'],
+                musclesPrimary: ['Obliques', 'Core'],
+                musclesSecondary: ['Shoulders', 'Hips', 'Lats'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Medicine Ball Overhead Slam Single-Leg',
+                equipment: 'Medicine Ball',
+                target: 'Core & Legs',
+                desc: 'Overhead slam on single-leg stance.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Unilateral power with core stability; asymmetrical explosive mechanics for turning.',
+                setup: 'Stand on one leg. Hold ball overhead with both hands.',
+                formCues: ['Maintain balance on standing leg', 'Slam with same intensity as bilateral version', 'Keep planted knee soft, not locked', 'Alternate legs each set'],
+                musclesPrimary: ['Core', 'Lats'],
+                musclesSecondary: ['Glutes', 'Ankles', 'Shoulders'],
+                difficulty: 'Advanced'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // POWER TIER — Barbell & Dumbbell
+            {
+                name: 'Power Clean',
+                equipment: 'Barbell',
+                target: 'Full Body',
+                desc: 'Explosive pull from floor to front rack position.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: The gold standard for coordinated explosive power — directly predicts elite start velocity.',
+                setup: 'Bar on floor, feet hip width. Grip just outside knees, hips higher than knees.',
+                formCues: ['First pull: bar to knees with flat back', 'Second pull: explosive hip drive and shrug', 'Catch bar on front delts with fast elbows', 'Stand to full extension then lower'],
+                musclesPrimary: ['Glutes', 'Hamstrings', 'Traps'],
+                musclesSecondary: ['Quads', 'Core', 'Shoulders'],
+                difficulty: 'Advanced'
+            },
+            {
+                name: 'Push Press',
+                equipment: 'Barbell',
+                target: 'Shoulders & Legs',
+                desc: 'Overhead press using leg drive for momentum.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Coordinates lower body drive with upper body pressing — mimics the whole-body push off the wall.',
+                setup: 'Bar at collarbone in front rack. Feet shoulder width.',
+                formCues: ['Quick shallow dip at knees', 'Drive legs and press simultaneously', 'Lock out overhead aggressively', 'Lower bar back to shoulders with control'],
+                musclesPrimary: ['Shoulders', 'Triceps'],
+                musclesSecondary: ['Quads', 'Glutes', 'Core'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Dumbbell Snatch',
+                equipment: 'Dumbbell',
+                target: 'Full Body',
+                desc: 'Single-arm explosive pull from floor to overhead.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Unilateral explosive power through full range — builds the single-arm power of each stroke.',
+                setup: 'Dumbbell on floor between feet. Hinge down with flat back, one hand on dumbbell.',
+                formCues: ['Explode through hips to pull weight', 'Guide dumbbell close to body', 'Punch straight up to lockout', 'Control the lower back down'],
+                musclesPrimary: ['Shoulders', 'Glutes', 'Traps'],
+                musclesSecondary: ['Core', 'Hamstrings', 'Triceps'],
+                difficulty: 'Advanced'
+            },
+            {
+                name: 'Dumbbell Thruster',
+                equipment: 'Dumbbell',
+                target: 'Full Body',
+                desc: 'Front squat into overhead press in one fluid motion.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Total-body power chain from legs to arms — mirrors the force transfer in starts and turns.',
+                setup: 'Hold dumbbells at shoulder height. Feet shoulder width.',
+                formCues: ['Squat to parallel depth', 'Drive up explosively from bottom', 'Use leg momentum to press overhead', 'Lock out at top, then lower and repeat'],
+                musclesPrimary: ['Quads', 'Shoulders'],
+                musclesSecondary: ['Glutes', 'Triceps', 'Core'],
+                difficulty: 'Intermediate'
+            },
+
+            // POWER TIER — Plyo Box (3)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Depth Jump',
+                equipment: 'Plyo Box',
+                target: 'Legs & Glutes',
+                desc: 'Step off box, land and immediately jump vertically.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Rapid eccentric-to-concentric transition; explosive rebound off walls critical for fast turns.',
+                setup: 'Stand on box edge (12-24 inches). Step off — don\'t jump off.',
+                formCues: ['Land on both feet simultaneously', 'Spend minimum time on ground', 'Explode vertically immediately on contact', 'Land the final jump softly with bent knees'],
+                musclesPrimary: ['Quads', 'Glutes'],
+                musclesSecondary: ['Calves', 'Hamstrings', 'Core'],
+                difficulty: 'Advanced'
+            },
+            {
+                name: 'Box Jump Lateral Bound',
+                equipment: 'Plyo Box',
+                target: 'Legs & Glutes',
+                desc: 'Jump onto box, jump down, lateral bound away.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Lateral power development; multi-directional power for turn mechanics and wall push angles.',
+                setup: 'Stand beside box. Face forward, box to your side.',
+                formCues: ['Jump laterally onto box', 'Step off other side', 'Immediately bound laterally away', 'Control each landing before next rep'],
+                musclesPrimary: ['Glutes', 'Quads'],
+                musclesSecondary: ['Adductors', 'Calves', 'Core'],
+                difficulty: 'Advanced'
+            },
+            {
+                name: 'Split Squat Jump',
+                equipment: 'Plyo Box',
+                target: 'Legs & Glutes',
+                desc: 'Lunge position explosive jump switching leg position.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Unilateral power and rapid leg switching; alternating leg drive mechanics.',
+                setup: 'Start in split stance lunge position. Back foot elevated on low box optional.',
+                formCues: ['Drop into deep lunge then explode up', 'Switch legs in the air', 'Land softly in opposite lunge', 'Keep torso upright throughout'],
+                musclesPrimary: ['Quads', 'Glutes'],
+                musclesSecondary: ['Hamstrings', 'Calves', 'Core'],
+                difficulty: 'Intermediate'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // POWER TIER — Additional (2)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Tuck Jump',
+                equipment: 'Bodyweight',
+                target: 'Legs & Glutes',
+                desc: 'Vertical jump pulling knees to chest at peak.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Maximum vertical velocity; elastic leg power for wall push and turn execution.',
+                setup: 'Stand with feet hip width, arms at sides.',
+                formCues: ['Jump as high as possible', 'Pull knees to chest at peak', 'Land softly with bent knees', 'Reset fully between reps — quality over speed'],
+                musclesPrimary: ['Quads', 'Hip flexors'],
+                musclesSecondary: ['Glutes', 'Calves', 'Core'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Jump Rope Double-Unders',
+                equipment: 'Jump Rope',
+                target: 'Legs & Cardiovascular',
+                desc: 'Rope passes twice per jump.',
+                tier: exerciseTiers.POWER,
+                swimmerNote: 'Verified: Rapid leg turnover and ankle power; fast-twitch recruitment patterns of starts and turns.',
+                setup: 'Hold rope handles at hip height. Elbows close to body.',
+                formCues: ['Jump higher than single-unders', 'Spin rope with wrists, not arms', 'Stay on balls of feet', 'Keep core tight and body vertical'],
+                musclesPrimary: ['Calves', 'Quads'],
+                musclesSecondary: ['Shoulders', 'Forearms', 'Core'],
+                difficulty: 'Advanced'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // HYPERTROPHY TIER — Bodyweight (5)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Push-Up',
+                equipment: 'Bodyweight',
+                target: 'Chest & Shoulders',
+                desc: 'Standard push-up with scapular protraction at top.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Scapular mobility and chest strength; healthy shoulder position under fatigue.',
+                setup: 'Hands under shoulders, body in a straight line from head to heels.',
+                formCues: ['Brace core — no sagging hips', 'Lower chest between hands', 'Elbows at roughly 45 degrees', 'Push through palms and protract at top'],
+                musclesPrimary: ['Chest', 'Triceps'],
+                musclesSecondary: ['Shoulders', 'Core'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Plank Hip Dip',
+                equipment: 'Bodyweight',
+                target: 'Core & Obliques',
+                desc: 'Side plank with alternating hip dips.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Unilateral core stability and oblique strength; asymmetrical core control for body roll.',
+                setup: 'Start in forearm plank position. Feet hip width for stability.',
+                formCues: ['Rotate hips to dip toward one side', 'Tap hip lightly then return to center', 'Alternate sides with control', 'Keep shoulders stacked over elbows'],
+                musclesPrimary: ['Obliques', 'Core'],
+                musclesSecondary: ['Shoulders', 'Glutes'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Hollow Body Hold',
+                equipment: 'Bodyweight',
+                target: 'Core & Abs',
+                desc: 'Streamlined position on back, entire body arced.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Builds neuromuscular connection to streamline position; essential body awareness.',
+                setup: 'Lie on back. Arms overhead, legs extended, lower back pressed into floor.',
+                formCues: ['Press lower back firmly into ground', 'Lift shoulders and feet off floor', 'Arms straight by ears', 'If back lifts, raise legs higher to scale'],
+                musclesPrimary: ['Core', 'Hip flexors'],
+                musclesSecondary: ['Quads', 'Shoulders'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Glute Bridge',
+                equipment: 'Bodyweight',
+                target: 'Glutes',
+                desc: 'Hip bridge driving through heels.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Unilateral glute activation; trains single-leg hip extension critical for wall push mechanics.',
+                setup: 'Lie on back, knees bent, feet flat on floor hip width apart.',
+                formCues: ['Drive through heels to lift hips', 'Squeeze glutes hard at top', 'Keep core braced — no arching lower back', 'Lower with control for 2-count'],
+                musclesPrimary: ['Glutes'],
+                musclesSecondary: ['Hamstrings', 'Core'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Donkey Kick',
+                equipment: 'Bodyweight',
+                target: 'Glutes',
+                desc: 'Quadruped pulsing knee lifts.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Hip extension strength and glute activation; trains dolphin kick muscle contraction pattern.',
+                setup: 'Start on all fours. Hands under shoulders, knees under hips.',
+                formCues: ['Drive one heel toward ceiling', 'Keep knee bent at 90 degrees', 'Squeeze glute at top', 'Don\'t rotate hips — keep them square'],
+                musclesPrimary: ['Glutes'],
+                musclesSecondary: ['Hamstrings', 'Core'],
+                difficulty: 'Beginner'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // HYPERTROPHY TIER — Lower Body
+            {
+                name: 'Walking Lunge',
+                equipment: 'Bodyweight',
+                target: 'Legs & Glutes',
+                desc: 'Alternating forward lunges covering distance.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Unilateral leg endurance under fatigue — builds the sustained kick power for distance events.',
+                setup: 'Stand tall with feet together. Arms at sides or on hips.',
+                formCues: ['Step forward into deep lunge', 'Front knee tracks over toes', 'Push through front heel to step forward', 'Keep torso upright throughout'],
+                musclesPrimary: ['Quads', 'Glutes'],
+                musclesSecondary: ['Hamstrings', 'Core'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Step-Up',
+                equipment: 'Bodyweight',
+                target: 'Legs & Glutes',
+                desc: 'Single-leg step onto elevated surface.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Unilateral leg strength with balance demand — trains the single-leg drive of turn push-offs.',
+                setup: 'Stand facing bench or box at knee height. One foot on top.',
+                formCues: ['Drive through top foot to stand', 'Don\'t push off back foot', 'Stand to full extension on top', 'Lower with control on same leg'],
+                musclesPrimary: ['Quads', 'Glutes'],
+                musclesSecondary: ['Hamstrings', 'Calves', 'Core'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Bodyweight Hip Thrust',
+                equipment: 'Bodyweight',
+                target: 'Glutes & Hamstrings',
+                desc: 'Hip extension with upper back on bench.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Glute activation and hip extension power for dolphin kicks and starts — no equipment needed.',
+                setup: 'Upper back against bench edge. Feet flat on floor, shoulder width.',
+                formCues: ['Drive hips to full extension', 'Squeeze glutes hard for 2 seconds at top', 'Keep chin slightly tucked', 'Lower with 3-count control'],
+                musclesPrimary: ['Glutes'],
+                musclesSecondary: ['Hamstrings', 'Core'],
+                difficulty: 'Beginner'
+            },
+
+            // HYPERTROPHY TIER — Dumbbell (4)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Dumbbell Lateral Raise',
+                equipment: 'Dumbbell',
+                target: 'Shoulders',
+                desc: 'Bilateral lateral shoulder raise.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Shoulder abduction strength; lateral stability critical for overhead pulling.',
+                setup: 'Stand with dumbbells at sides, slight bend in elbows.',
+                formCues: ['Raise arms out to sides to shoulder height', 'Lead with elbows, not hands', 'Control the descent — no dropping', 'Keep slight forward lean to protect shoulders'],
+                musclesPrimary: ['Lateral delts'],
+                musclesSecondary: ['Traps', 'Supraspinatus'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Dumbbell Reverse Fly',
+                equipment: 'Dumbbell',
+                target: 'Rear Shoulders',
+                desc: 'Bent-over lateral raise for rear delts.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: "Verified: Rear shoulder and scapular strength; prehab essential for Swimmer's Shoulder prevention.",
+                setup: 'Hinge at hips, chest nearly parallel to floor. Dumbbells hanging below.',
+                formCues: ['Raise arms out to sides with slight elbow bend', 'Squeeze shoulder blades together at top', 'Lower slowly for 2-count', 'Keep torso angle fixed — no swinging'],
+                musclesPrimary: ['Rear delts', 'Rhomboids'],
+                musclesSecondary: ['Traps', 'Rotator cuff'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Dumbbell Concentration Curl',
+                equipment: 'Dumbbell',
+                target: 'Biceps',
+                desc: 'Seated single-arm curl with peak contraction.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Isolated bicep strength; supports pulling mechanics and endurance during long sets.',
+                setup: 'Sit on bench, elbow braced against inner thigh. Dumbbell hanging at full extension.',
+                formCues: ['Curl dumbbell toward shoulder', 'Squeeze bicep hard at top for 1 second', 'Lower slowly with full control', 'Don\'t swing or use momentum'],
+                musclesPrimary: ['Biceps'],
+                musclesSecondary: ['Forearms'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Dumbbell Lying Triceps Extension',
+                equipment: 'Dumbbell',
+                target: 'Triceps',
+                desc: 'Lying overhead extension targeting triceps.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Isolated tricep strength; supports pushing mechanics and breaststroke arm drive.',
+                setup: 'Lie on bench. Hold dumbbells with arms extended straight above chest.',
+                formCues: ['Bend only at elbows to lower weights beside head', 'Keep upper arms stationary and vertical', 'Extend back to lockout', 'Control the lowering — 2 seconds down'],
+                musclesPrimary: ['Triceps'],
+                musclesSecondary: ['Shoulders'],
+                difficulty: 'Beginner'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // HYPERTROPHY TIER — Cable Machine (3)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Cable Fly',
+                equipment: 'Cable Machine',
+                target: 'Chest',
+                desc: 'High cable fly bringing hands down and across body.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Chest isolation with full range; develops pressing strength through complete motion arc.',
+                setup: 'Set cables high. Step forward into split stance, arms wide.',
+                formCues: ['Bring hands together in arc motion', 'Slight bend in elbows throughout', 'Squeeze chest at bottom of movement', 'Return slowly with stretch in chest'],
+                musclesPrimary: ['Chest'],
+                musclesSecondary: ['Shoulders', 'Biceps'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Cable Row',
+                equipment: 'Cable Machine',
+                target: 'Back & Lats',
+                desc: 'Seated or standing cable row.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Mid-back and lower lat isolation; supports pulling strength and back endurance.',
+                setup: 'Sit at cable row station or stand facing low cable. Grip handle with both hands.',
+                formCues: ['Pull handle to lower ribcage', 'Drive elbows straight back', 'Squeeze shoulder blades for 1 second', 'Return with control — don\'t let weight stack crash'],
+                musclesPrimary: ['Lats', 'Mid-back'],
+                musclesSecondary: ['Biceps', 'Rear delts', 'Core'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Cable External Rotation',
+                equipment: 'Cable Machine',
+                target: 'Rotator Cuff',
+                desc: 'Standing cable external rotation at 90° elbow.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Loaded rotator cuff strengthening; advanced shoulder health for injury prevention.',
+                setup: 'Set cable at elbow height. Stand sideways, elbow bent 90 degrees at side.',
+                formCues: ['Rotate forearm away from cable', 'Keep elbow pinned to body', 'Slow and deliberate — 3 seconds each way', 'Light weight only — this is prehab not strength'],
+                musclesPrimary: ['Infraspinatus', 'Teres minor'],
+                musclesSecondary: ['Rear delts'],
+                difficulty: 'Beginner'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // HYPERTROPHY TIER — Shoulder Prehab
+            {
+                name: 'Cable Face Pull',
+                equipment: 'Cable Machine',
+                target: 'Rear Shoulders & Rotator Cuff',
+                desc: 'High cable pull to face with external rotation.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: The single most important prehab exercise for swimmers — balances the internal rotation dominance of every stroke.',
+                setup: 'Set cable at face height with rope attachment. Step back for tension.',
+                formCues: ['Pull rope toward face, elbows high', 'Rotate hands outward at end position', 'Squeeze shoulder blades for 2 seconds', 'Return slowly — don\'t let weight snap back'],
+                musclesPrimary: ['Rear delts', 'Rotator cuff'],
+                musclesSecondary: ['Traps', 'Rhomboids'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Dumbbell Arnold Press',
+                equipment: 'Dumbbell',
+                target: 'Shoulders',
+                desc: 'Rotating press from palms-in to palms-forward overhead.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Works all three delt heads through rotation — builds the complete shoulder armor swimmers need.',
+                setup: 'Seated or standing. Hold dumbbells at chin height, palms facing you.',
+                formCues: ['Rotate palms outward as you press up', 'Full lockout overhead with palms forward', 'Reverse the rotation on the way down', 'Smooth continuous motion — no pausing'],
+                musclesPrimary: ['Shoulders'],
+                musclesSecondary: ['Triceps', 'Upper chest'],
+                difficulty: 'Intermediate'
+            },
+
+            // HYPERTROPHY TIER — Resistance Band (3)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Banded Bicep Curl',
+                equipment: 'Resistance Band',
+                target: 'Biceps',
+                desc: 'Bilateral bicep curl standing on band.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Bicep endurance; supports pulling power and strength through full range.',
+                setup: 'Stand on center of band, feet hip width. Hold ends with palms forward.',
+                formCues: ['Curl both hands toward shoulders', 'Keep elbows pinned at sides', 'Squeeze at top, lower for 2-count', 'Don\'t lean back — stay upright'],
+                musclesPrimary: ['Biceps'],
+                musclesSecondary: ['Forearms'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Banded Tricep Extension',
+                equipment: 'Resistance Band',
+                target: 'Triceps',
+                desc: 'Overhead band extension.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Tricep endurance and shoulder health; supports breaststroke and pushing mechanics.',
+                setup: 'Anchor band overhead or step on one end. Hold other end behind head, elbows bent.',
+                formCues: ['Extend arms overhead to full lockout', 'Keep upper arms close to ears', 'Lower slowly behind head', 'Don\'t flare elbows out wide'],
+                musclesPrimary: ['Triceps'],
+                musclesSecondary: ['Shoulders'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Banded Pull-Apart Lateral Raise',
+                equipment: 'Resistance Band',
+                target: 'Shoulders & Upper Back',
+                desc: 'Band pull-apart transitioning into lateral raise.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Shoulder mobility and lateral stability; builds rotator cuff resilience.',
+                setup: 'Hold band at chest width with straight arms in front.',
+                formCues: ['Pull apart to full stretch', 'Continue raising arms to shoulder height', 'Reverse the movement with control', 'Keep arms straight throughout'],
+                musclesPrimary: ['Lateral delts', 'Rear delts'],
+                musclesSecondary: ['Traps', 'Rhomboids'],
+                difficulty: 'Beginner'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // HYPERTROPHY TIER — Swiss Ball (2)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Swiss Ball Pike',
+                equipment: 'Swiss Ball',
+                target: 'Core & Shoulders',
+                desc: 'Feet on ball in push-up position, pike hips high.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Core flexion strength and shoulder stability under load.',
+                setup: 'Start in push-up position with shins on Swiss ball.',
+                formCues: ['Drive hips straight up toward ceiling', 'Keep legs as straight as possible', 'Lower hips with control back to plank', 'Keep shoulders stacked over wrists'],
+                musclesPrimary: ['Core', 'Shoulders'],
+                musclesSecondary: ['Hip flexors', 'Chest'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Swiss Ball Rollout',
+                equipment: 'Swiss Ball',
+                target: 'Core',
+                desc: 'Kneeling rollout extending arms on ball.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Advanced core stability and shoulder health; full-range anterior core essential for streamline.',
+                setup: 'Kneel behind ball with forearms resting on top.',
+                formCues: ['Roll ball forward extending arms', 'Keep core braced — no sagging', 'Go only as far as you can control', 'Pull back using core, not arms'],
+                musclesPrimary: ['Core'],
+                musclesSecondary: ['Shoulders', 'Lats'],
+                difficulty: 'Intermediate'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // HYPERTROPHY TIER — Medicine Ball (2)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Medicine Ball Chest Pass Kneeling',
+                equipment: 'Medicine Ball',
+                target: 'Chest & Core',
+                desc: 'Kneeling chest pass emphasizing core stability.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Core stability under explosive loading; core resilience during powerful wall pushes.',
+                setup: 'Kneel 3-4 feet from wall. Hold ball at chest.',
+                formCues: ['Pass ball explosively from chest', 'Keep hips forward — don\'t sit back', 'Catch rebound and absorb at chest', 'Core stays braced throughout'],
+                musclesPrimary: ['Chest', 'Core'],
+                musclesSecondary: ['Triceps', 'Shoulders'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Medicine Ball Dead Bug',
+                equipment: 'Medicine Ball',
+                target: 'Core',
+                desc: 'Supine with ball, alternating opposite arm-leg extension.',
+                tier: exerciseTiers.HYPERTROPHY,
+                swimmerNote: 'Verified: Contralateral core strength; essential for diagonal power lines and body roll control.',
+                setup: 'Lie on back. Hold medicine ball between opposite hand and knee at 90 degrees.',
+                formCues: ['Extend opposite arm and leg simultaneously', 'Keep lower back pressed into floor', 'Move slowly — 3 seconds out, 3 seconds back', 'Switch ball to other hand-knee and repeat'],
+                musclesPrimary: ['Core', 'Hip flexors'],
+                musclesSecondary: ['Shoulders', 'Quads'],
+                difficulty: 'Intermediate'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // MOBILITY TIER — Core-Specific (10)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Front Plank',
+                equipment: 'Bodyweight',
+                target: 'Core & Abs',
+                desc: 'Forearm plank hold, 30-90 seconds.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Streamline position strength and body tension; foundational for efficient streamline.',
+                setup: 'Forearms on floor, elbows under shoulders. Body in straight line.',
+                formCues: ['Squeeze glutes and brace core', 'Neutral neck — look at floor', 'Ribs pulled down, not flaring', 'Breathe slowly and steadily'],
+                musclesPrimary: ['Core'],
+                musclesSecondary: ['Glutes', 'Shoulders'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Side Plank',
+                equipment: 'Bodyweight',
+                target: 'Core & Abs',
+                desc: 'Lateral plank on forearm, 30-60 seconds each side.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Unilateral core stability and oblique strength; asymmetrical core control for body roll.',
+                setup: 'Lie on side with forearm on floor, elbow under shoulder. Stack feet.',
+                formCues: ['Lift hips to form straight line', 'Top hip stacked directly over bottom', 'Don\'t let hips sag forward or back', 'Equal time both sides'],
+                musclesPrimary: ['Obliques', 'Core'],
+                musclesSecondary: ['Glutes', 'Shoulders'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Dead Bug',
+                equipment: 'Bodyweight',
+                target: 'Core & Abs',
+                desc: 'Supine alternating opposite arm-leg extension.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Contralateral stability; diagonal power lines essential for efficient rotation.',
+                setup: 'Lie on back. Arms straight up, knees bent 90 degrees over hips.',
+                formCues: ['Extend opposite arm and leg simultaneously', 'Press lower back into floor the entire time', 'Move slowly and with control', 'Exhale as you extend, inhale as you return'],
+                musclesPrimary: ['Core', 'Hip flexors'],
+                musclesSecondary: ['Shoulders'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Hollow Hold',
+                equipment: 'Bodyweight',
+                target: 'Core & Abs',
+                desc: 'Full-body streamline on back, 20-60 seconds.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Single most important exercise for position awareness in all strokes.',
+                setup: 'Lie flat on back. Arms overhead, legs extended, everything lifted off floor.',
+                formCues: ['Lower back must stay pressed to floor', 'Point toes and squeeze legs together', 'Biceps by ears', 'Scale by bending knees or lowering arms if needed'],
+                musclesPrimary: ['Core', 'Hip flexors'],
+                musclesSecondary: ['Quads', 'Shoulders'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Hollow Body Rocks',
+                equipment: 'Bodyweight',
+                target: 'Core & Abs',
+                desc: 'Hollow position rocking front-to-back.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Dynamic streamline stability; core tension maintenance through subtle movement.',
+                setup: 'Get into hollow hold position. Arms by ears, legs together and lifted.',
+                formCues: ['Rock gently like a banana', 'Maintain same body shape throughout', 'Don\'t break at the hips', 'Keep lower back pressed to floor'],
+                musclesPrimary: ['Core'],
+                musclesSecondary: ['Hip flexors', 'Shoulders'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Plank Hip Dips',
+                equipment: 'Bodyweight',
+                target: 'Core & Abs',
+                desc: 'Forearm plank with alternating hip dips.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Unilateral core stability and anti-rotation; obliques and deep core stabilizers.',
+                setup: 'Start in forearm plank. Feet hip width.',
+                formCues: ['Dip hips to one side, tap lightly', 'Return to center then dip other side', 'Keep shoulders still — movement is in hips', 'Controlled tempo throughout'],
+                musclesPrimary: ['Obliques', 'Core'],
+                musclesSecondary: ['Shoulders', 'Glutes'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Superman',
+                equipment: 'Bodyweight',
+                target: 'Core & Abs',
+                desc: 'Prone simultaneous arm and leg extension hold.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Posterior core and lower back strength; essential for streamline maintenance.',
+                setup: 'Lie face down. Arms extended overhead, legs straight.',
+                formCues: ['Lift arms and legs simultaneously', 'Hold at top for 2-3 seconds', 'Squeeze glutes and upper back', 'Lower with control — don\'t just drop'],
+                musclesPrimary: ['Lower back', 'Glutes'],
+                musclesSecondary: ['Upper back', 'Hamstrings'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Superman Rocks',
+                equipment: 'Bodyweight',
+                target: 'Core & Abs',
+                desc: 'Superman position with rocking motion.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Dynamic posterior core and hip extension strength; posterior chain muscular endurance.',
+                setup: 'Get into superman hold position — arms and legs lifted.',
+                formCues: ['Rock gently forward and back', 'Maintain lifted position throughout', 'Keep arms and legs straight', 'Breathe steadily — don\'t hold breath'],
+                musclesPrimary: ['Lower back', 'Glutes'],
+                musclesSecondary: ['Upper back', 'Hamstrings'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'V-Up',
+                equipment: 'Bodyweight',
+                target: 'Core & Abs',
+                desc: 'Lying position explosive sit-up into pike.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Advanced core flexion and hip flexion strength; explosive core power for dolphin kick.',
+                setup: 'Lie flat on back. Arms overhead, legs straight.',
+                formCues: ['Simultaneously lift arms and legs to meet', 'Touch toes at the top', 'Lower both back down with control', 'Keep legs as straight as possible'],
+                musclesPrimary: ['Core', 'Hip flexors'],
+                musclesSecondary: ['Quads'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Streamline Squat',
+                equipment: 'Bodyweight',
+                target: 'Core & Abs',
+                desc: 'Squat maintaining arms overhead in streamline position.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Core stability under loading; maintain streamline during dynamic movement and turns.',
+                setup: 'Stand with arms overhead in streamline (hands stacked, biceps by ears). Feet shoulder width.',
+                formCues: ['Squat while keeping arms locked overhead', 'Don\'t let arms drop forward', 'Keep chest tall and core braced', 'Full depth if mobility allows'],
+                musclesPrimary: ['Core', 'Quads'],
+                musclesSecondary: ['Shoulders', 'Glutes', 'Upper back'],
+                difficulty: 'Intermediate'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // MOBILITY TIER — Shoulder Mobility (5)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Shoulder Dislocate',
+                equipment: 'Resistance Band',
+                target: 'Shoulders',
+                desc: 'Band overhead mobility drill, overhead to behind body.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Full shoulder mobility through complete range; foundational for shoulder health.',
+                setup: 'Hold band wide with straight arms at hip level. Stand tall.',
+                formCues: ['Move arms overhead and behind body', 'Keep arms completely straight', 'Go only through pain-free range', 'Narrow grip over time as mobility improves'],
+                musclesPrimary: ['Shoulders'],
+                musclesSecondary: ['Upper back', 'Chest'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Prone Y-T-W Raises',
+                equipment: 'Bodyweight',
+                target: 'Shoulders',
+                desc: 'Prone making Y, T, W positions with arms.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Shoulder stability in multiple planes; rotator cuff and scapular stabilizer activation.',
+                setup: 'Lie face down on floor or bench. Arms hanging down.',
+                formCues: ['Y: raise arms overhead at 45 degree angle', 'T: raise arms straight out to sides', 'W: pull elbows back and rotate palms up', 'Hold each position 2-3 seconds'],
+                musclesPrimary: ['Rotator cuff', 'Lower traps'],
+                musclesSecondary: ['Rear delts', 'Rhomboids'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Sleeper Stretch',
+                equipment: 'Bodyweight',
+                target: 'Shoulders',
+                desc: 'Side-lying shoulder internal rotation stretch.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Shoulder internal rotation and anterior shoulder flexibility.',
+                setup: 'Lie on side with bottom arm at 90 degrees, elbow in front of shoulder.',
+                formCues: ['Use top hand to gently push bottom forearm toward floor', 'Stop at mild stretch — never force', 'Hold 20-30 seconds', 'Keep shoulder blade flat against floor'],
+                musclesPrimary: ['Posterior shoulder'],
+                musclesSecondary: ['Rotator cuff'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Cross-Body Shoulder Stretch',
+                equipment: 'Bodyweight',
+                target: 'Shoulders',
+                desc: 'Arm across body pulling toward opposite shoulder.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Posterior shoulder and upper back flexibility; essential for stroke mechanics.',
+                setup: 'Stand or sit tall. Bring one arm across chest at shoulder height.',
+                formCues: ['Use opposite hand to pull at upper arm, not forearm', 'Keep stretching shoulder down — don\'t shrug', 'Hold 20-30 seconds each side', 'Breathe into the stretch'],
+                musclesPrimary: ['Posterior delt', 'Upper back'],
+                musclesSecondary: ['Rotator cuff'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Scapular Wall Slides',
+                equipment: 'Bodyweight',
+                target: 'Shoulders',
+                desc: 'Back against wall, arms in W sliding overhead.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Scapular mobility and shoulder stability; foundational for healthy shoulder mechanics.',
+                setup: 'Stand with back flat against wall. Arms in W position (elbows bent 90°, backs of hands on wall).',
+                formCues: ['Slide arms up into Y position', 'Keep entire back of arms touching wall', 'Slide back down to W with control', 'If hands come off wall, your range needs work'],
+                musclesPrimary: ['Lower traps', 'Serratus anterior'],
+                musclesSecondary: ['Rotator cuff', 'Shoulders'],
+                difficulty: 'Beginner'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // MOBILITY TIER — Spine & General
+            {
+                name: 'Cat-Cow Stretch',
+                equipment: 'Bodyweight',
+                target: 'Shoulders',
+                desc: 'Alternating spinal flexion and extension on all fours.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Spinal mobility through full range — essential warm-up for backstroke rotation and flip turn mechanics.',
+                setup: 'On all fours, hands under shoulders, knees under hips.',
+                formCues: ['Cat: round spine up, tuck chin and pelvis', 'Cow: arch spine down, lift head and tailbone', 'Move slowly through full range', 'Breathe in on cow, out on cat'],
+                musclesPrimary: ['Spine', 'Core'],
+                musclesSecondary: ['Shoulders', 'Hips'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Pigeon Stretch',
+                equipment: 'Bodyweight',
+                target: 'Hips & Glutes',
+                desc: 'Deep hip opener targeting external rotators and hip flexors.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Opens the hip capsule for breaststroke kick width and flip turn tuck position.',
+                setup: 'From all fours, slide one knee forward behind wrist. Extend back leg straight.',
+                formCues: ['Keep hips as square as possible', 'Walk hands forward to deepen stretch', 'Hold 30-45 seconds per side', 'Breathe deeply into the stretch'],
+                musclesPrimary: ['Hip rotators', 'Glutes'],
+                musclesSecondary: ['Hip flexors', 'Lower back'],
+                difficulty: 'Beginner'
+            },
+
+            // MOBILITY TIER — Hip Mobility (3)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: '90-90 Stretch',
+                equipment: 'Bodyweight',
+                target: 'Hips & Glutes',
+                desc: 'Seated hip stretch with 90° angles.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Hip flexor and glute flexibility; healthy hip mobility for body roll.',
+                setup: 'Sit on floor. Front leg bent 90° in front, back leg bent 90° to the side.',
+                formCues: ['Sit tall with both sit bones on floor', 'Lean gently over front shin', 'Hold 30 seconds then switch sides', 'Keep back knee on floor'],
+                musclesPrimary: ['Hip rotators', 'Glutes'],
+                musclesSecondary: ['Adductors', 'Hip flexors'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Hip Opening Stretch',
+                equipment: 'Bodyweight',
+                target: 'Hips & Glutes',
+                desc: 'Deep hip opener for external rotators.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: External hip rotator flexibility; supports rotation mechanics and turn execution.',
+                setup: 'Sit on floor or lie on back. Cross one ankle over opposite knee.',
+                formCues: ['Gently press crossed knee away from body', 'If lying down, pull bottom leg toward chest', 'Hold 30 seconds each side', 'Keep breathing — don\'t tense up'],
+                musclesPrimary: ['Piriformis', 'Glutes'],
+                musclesSecondary: ['Hip rotators'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Lunge Hold',
+                equipment: 'Bodyweight',
+                target: 'Hips & Glutes',
+                desc: 'Deep lunge position held 20-30 seconds.',
+                tier: exerciseTiers.MOBILITY,
+                swimmerNote: 'Verified: Hip flexor and quad flexibility; healthy hip mechanics for streamline.',
+                setup: 'Step into deep lunge. Back knee on floor, front knee over ankle.',
+                formCues: ['Push hips forward gently', 'Keep torso upright — don\'t lean forward', 'Squeeze back glute for deeper stretch', 'Hold 20-30 seconds, switch sides'],
+                musclesPrimary: ['Hip flexors', 'Quads'],
+                musclesSecondary: ['Glutes', 'Hamstrings'],
+                difficulty: 'Beginner'
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // METABOLIC TIER — Conditioning Finishers (7)
+            // ═══════════════════════════════════════════════════════════
+            {
+                name: 'Burpee',
+                equipment: 'Bodyweight',
+                target: 'Full Body',
+                desc: 'Squat to push-up to standing jump.',
+                tier: exerciseTiers.METABOLIC,
+                swimmerNote: 'Verified: Total-body conditioning and lactate tolerance; high metabolic demand of race intensity.',
+                setup: 'Stand with feet shoulder width.',
+                formCues: ['Drop hands to floor and kick feet back', 'Perform push-up at bottom', 'Jump feet to hands and stand', 'Jump with arms overhead at top'],
+                musclesPrimary: ['Full body'],
+                musclesSecondary: ['Core', 'Shoulders', 'Legs'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Mountain Climber',
+                equipment: 'Bodyweight',
+                target: 'Core & Legs',
+                desc: 'Push-up position with rapid alternating knee drives.',
+                tier: exerciseTiers.METABOLIC,
+                swimmerNote: 'Verified: Core endurance and rapid leg recruitment; maintain core tension under fatigue.',
+                setup: 'Start in push-up position. Hands under shoulders, body straight.',
+                formCues: ['Drive one knee toward chest rapidly', 'Alternate legs like running in place', 'Keep hips level — don\'t bounce them', 'Maintain push-up arm position throughout'],
+                musclesPrimary: ['Core', 'Hip flexors'],
+                musclesSecondary: ['Shoulders', 'Quads'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Bear Crawl',
+                equipment: 'Bodyweight',
+                target: 'Core & Shoulders',
+                desc: 'Quadruped position moving forward with coordination.',
+                tier: exerciseTiers.METABOLIC,
+                swimmerNote: 'Verified: Shoulder stability under endurance loading; maintain shoulder position through fatigue.',
+                setup: 'Start on all fours. Lift knees 2 inches off floor.',
+                formCues: ['Move opposite hand and foot together', 'Keep knees hovering just above floor', 'Keep back flat — no hiking hips', 'Move forward, backward, and laterally'],
+                musclesPrimary: ['Core', 'Shoulders'],
+                musclesSecondary: ['Quads', 'Hip flexors', 'Triceps'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'High Knees',
+                equipment: 'Bodyweight',
+                target: 'Legs & Core',
+                desc: 'Running in place driving knees to hip height.',
+                tier: exerciseTiers.METABOLIC,
+                swimmerNote: 'Verified: Rapid leg recruitment and cardiovascular conditioning; nervous system demands of race pace.',
+                setup: 'Stand tall with feet hip width. Arms at sides.',
+                formCues: ['Drive knees to hip height alternately', 'Pump arms opposite to legs', 'Stay on balls of feet', 'Keep chest tall — don\'t lean forward'],
+                musclesPrimary: ['Hip flexors', 'Quads'],
+                musclesSecondary: ['Core', 'Calves'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Jumping Jacks',
+                equipment: 'Bodyweight',
+                target: 'Full Body',
+                desc: 'Rhythmic jumping sustained 20-60 seconds.',
+                tier: exerciseTiers.METABOLIC,
+                swimmerNote: 'Verified: Cardiovascular conditioning and full-body coordination; warm-up and conditioning finisher.',
+                setup: 'Stand with feet together, arms at sides.',
+                formCues: ['Jump feet wide while raising arms overhead', 'Jump feet together while lowering arms', 'Land softly on balls of feet', 'Keep a consistent rhythm'],
+                musclesPrimary: ['Full body'],
+                musclesSecondary: ['Calves', 'Shoulders'],
+                difficulty: 'Beginner'
+            },
+            {
+                name: 'Battle Ropes',
+                equipment: 'Battle Ropes',
+                target: 'Shoulders & Core',
+                desc: 'Dual rope undulating waves with full-body power.',
+                tier: exerciseTiers.METABOLIC,
+                swimmerNote: 'Verified: Upper body explosive endurance and core stability under fatigue.',
+                setup: 'Hold one rope end in each hand. Athletic stance with slight hinge.',
+                formCues: ['Create alternating waves with each arm', 'Drive from shoulders and core', 'Keep slight bend in knees', 'Maintain wave amplitude — don\'t let them die'],
+                musclesPrimary: ['Shoulders', 'Core'],
+                musclesSecondary: ['Arms', 'Legs', 'Grip'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Jump Rope',
+                equipment: 'Jump Rope',
+                target: 'Legs & Cardiovascular',
+                desc: 'Sustained jumping, 3-10 minutes with intensity variation.',
+                tier: exerciseTiers.METABOLIC,
+                swimmerNote: 'Verified: Ankle power and cardiovascular conditioning; essential warm-up and lower body power endurance.',
+                setup: 'Hold handles at hip height. Rope behind heels to start.',
+                formCues: ['Spin with wrists, not shoulders', 'Stay on balls of feet — small jumps', 'Keep elbows close to body', 'Vary speed for interval training'],
+                musclesPrimary: ['Calves', 'Quads'],
+                musclesSecondary: ['Shoulders', 'Core', 'Forearms'],
+                difficulty: 'Beginner'
+            },
+            // METABOLIC TIER — Extended
+            {
+                name: 'Skater Jump',
+                equipment: 'Bodyweight',
+                target: 'Legs & Core',
+                desc: 'Lateral bounding jump mimicking speed skating motion.',
+                tier: exerciseTiers.METABOLIC,
+                swimmerNote: 'Verified: Lateral power with metabolic demand — trains directional change ability and ankle stability under fatigue.',
+                setup: 'Stand on one leg. Arms ready for counterbalance.',
+                formCues: ['Bound laterally to opposite foot', 'Land softly on single leg with knee bent', 'Immediately bound back to other side', 'Swing arms for momentum and balance'],
+                musclesPrimary: ['Glutes', 'Quads'],
+                musclesSecondary: ['Calves', 'Core', 'Adductors'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Plank to Push-Up',
+                equipment: 'Bodyweight',
+                target: 'Core & Shoulders',
+                desc: 'Transition between forearm plank and push-up position.',
+                tier: exerciseTiers.METABOLIC,
+                swimmerNote: 'Verified: Core and shoulder endurance under dynamic loading — maintains streamline integrity during fatigue.',
+                setup: 'Start in forearm plank position. Body straight, core braced.',
+                formCues: ['Push up to one hand, then the other', 'Lower back to one forearm, then the other', 'Alternate which hand leads each rep', 'Minimize hip rotation throughout'],
+                musclesPrimary: ['Core', 'Shoulders', 'Triceps'],
+                musclesSecondary: ['Chest', 'Glutes'],
+                difficulty: 'Intermediate'
+            },
+            {
+                name: 'Squat Thrust',
+                equipment: 'Bodyweight',
+                target: 'Full Body',
+                desc: 'Squat to plank and back without the jump — controlled burpee.',
+                tier: exerciseTiers.METABOLIC,
+                swimmerNote: 'Verified: Full-body metabolic conditioning with lower impact than burpees — sustainable for longer intervals.',
+                setup: 'Stand with feet shoulder width.',
+                formCues: ['Drop hands to floor and kick feet back to plank', 'Jump feet back to hands', 'Stand up with control', 'Keep core tight in plank — no sagging'],
+                musclesPrimary: ['Full body'],
+                musclesSecondary: ['Core', 'Shoulders', 'Legs'],
+                difficulty: 'Beginner'
+            }
         ];
 
         // ═══════════════════════════════════════════════════════════════
-        // STEP B: THE LOGIC (from WorkoutManager.js)
+        // STEP B: THE LOGIC — Phase-Based Training System
         // ═══════════════════════════════════════════════════════════════
         class WorkoutManager {
             constructor() {
                 this.currentWorkout = [];
                 this.lockedIndices = new Set();
-                this.filters = { goal: 'STRENGTH', equipment: 'All', finisherEnabled: false };
-                this.slotConfig = [
-                    { slot: 1, category: 'Mobility', tier: exerciseTiers.MOBILITY, isCore: false },
-                    { slot: 2, category: 'Power', tier: exerciseTiers.POWER, isCore: false },
-                    { slot: 3, category: 'Strength', tier: exerciseTiers.STRENGTH, isCore: false },
-                    { slot: 4, category: 'Accessory', tier: exerciseTiers.HYPERTROPHY, isCore: false },
-                    { slot: 5, category: 'Core', tier: exerciseTiers.MOBILITY, isCore: true },
-                    { slot: 6, category: 'Finisher', tier: exerciseTiers.METABOLIC, isCore: false, optional: true }
-                ];
+                this.filters = { phase: 'PRE_SEASON', equipment: 'All', finisherEnabled: false };
+
+                // Phase-specific slot configurations
+                this.phaseSlots = {
+                    PRE_SEASON: [
+                        { slot: 1, category: 'Warm-Up',   tier: exerciseTiers.MOBILITY,     isCore: false },
+                        { slot: 2, category: 'Power',     tier: exerciseTiers.POWER,         isCore: false },
+                        { slot: 3, category: 'Strength',  tier: exerciseTiers.STRENGTH,      isCore: false },
+                        { slot: 4, category: 'Strength',  tier: exerciseTiers.STRENGTH,      isCore: false },
+                        { slot: 5, category: 'Core',      tier: exerciseTiers.MOBILITY,      isCore: true },
+                        { slot: 6, category: 'Finisher',  tier: exerciseTiers.METABOLIC,     isCore: false, optional: true }
+                    ],
+                    IN_SEASON: [
+                        { slot: 1, category: 'Warm-Up',   tier: exerciseTiers.MOBILITY,      isCore: false },
+                        { slot: 2, category: 'Strength',  tier: exerciseTiers.STRENGTH,      isCore: false },
+                        { slot: 3, category: 'Prehab',    tier: exerciseTiers.HYPERTROPHY,   isCore: false, isShoulder: true },
+                        { slot: 4, category: 'Core',      tier: exerciseTiers.MOBILITY,      isCore: true },
+                        { slot: 5, category: 'Recovery',  tier: exerciseTiers.MOBILITY,      isCore: false },
+                        { slot: 6, category: 'Finisher',  tier: exerciseTiers.METABOLIC,     isCore: false, optional: true }
+                    ],
+                    TAPER: [
+                        { slot: 1, category: 'Mobility',    tier: exerciseTiers.MOBILITY,    isCore: false },
+                        { slot: 2, category: 'Activation',  tier: exerciseTiers.HYPERTROPHY, isCore: false },
+                        { slot: 3, category: 'Shoulders',   tier: exerciseTiers.HYPERTROPHY, isCore: false, isShoulder: true },
+                        { slot: 4, category: 'Core',        tier: exerciseTiers.MOBILITY,    isCore: true },
+                        { slot: 5, category: 'Flow',        tier: exerciseTiers.MOBILITY,    isCore: false }
+                        // No slot 6 — finisher disabled during taper
+                    ],
+                    OFF_SEASON: [
+                        { slot: 1, category: 'Warm-Up',     tier: exerciseTiers.MOBILITY,    isCore: false },
+                        { slot: 2, category: 'Strength',    tier: exerciseTiers.STRENGTH,    isCore: false },
+                        { slot: 3, category: 'Upper Body',  tier: exerciseTiers.HYPERTROPHY, isCore: false },
+                        { slot: 4, category: 'Lower Body',  tier: exerciseTiers.HYPERTROPHY, isCore: false, isLower: true },
+                        { slot: 5, category: 'Core',        tier: exerciseTiers.MOBILITY,    isCore: true },
+                        { slot: 6, category: 'Finisher',    tier: exerciseTiers.METABOLIC,   isCore: false, optional: true }
+                    ]
+                };
+
+                // Phase-specific rep schemes: [phase][tier] → rep string
+                this.phaseRepSchemes = {
+                    PRE_SEASON: {
+                        [exerciseTiers.STRENGTH]:    '4x5',
+                        [exerciseTiers.POWER]:       '5x3',
+                        [exerciseTiers.HYPERTROPHY]: '3x8',
+                        [exerciseTiers.MOBILITY]:    '2x30s',
+                        [exerciseTiers.METABOLIC]:   '4x20s'
+                    },
+                    IN_SEASON: {
+                        [exerciseTiers.STRENGTH]:    '3x6',
+                        [exerciseTiers.POWER]:       '3x5',
+                        [exerciseTiers.HYPERTROPHY]: '3x10',
+                        [exerciseTiers.MOBILITY]:    '2x30s',
+                        [exerciseTiers.METABOLIC]:   '2x30s'
+                    },
+                    TAPER: {
+                        [exerciseTiers.STRENGTH]:    '2x5',
+                        [exerciseTiers.POWER]:       '2x3',
+                        [exerciseTiers.HYPERTROPHY]: '2x8',
+                        [exerciseTiers.MOBILITY]:    '2x45s',
+                        [exerciseTiers.METABOLIC]:   '1x30s'
+                    },
+                    OFF_SEASON: {
+                        [exerciseTiers.STRENGTH]:    '4x8',
+                        [exerciseTiers.POWER]:       '4x6',
+                        [exerciseTiers.HYPERTROPHY]: '3x12',
+                        [exerciseTiers.MOBILITY]:    '2x30s',
+                        [exerciseTiers.METABOLIC]:   '3x45s'
+                    }
+                };
             }
 
             setFilters(newFilters) {
                 this.filters = { ...this.filters, ...newFilters };
             }
 
+            _getActiveSlots() {
+                const slots = this.phaseSlots[this.filters.phase] || this.phaseSlots.PRE_SEASON;
+                // Taper never gets a finisher
+                if (this.filters.phase === 'TAPER') return slots;
+                // Other phases: include slot 6 only if finisher is enabled
+                if (this.filters.finisherEnabled) return slots;
+                return slots.filter(s => !s.optional);
+            }
+
             generateWorkout() {
                 const usedExerciseNames = new Set();
                 const newWorkout = [];
-                const slotsToFill = this.filters.finisherEnabled ? 6 : 5;
+                const activeSlots = this._getActiveSlots();
 
-                // Define goal-specific slot configurations
-                let goalSlots = this.slotConfig; // Default (STRENGTH/POWER/HYPERTROPHY)
-
-                if (this.filters.goal === 'MOBILITY') {
-                    // Mobility & Core structure
-                    goalSlots = [
-                        { slot: 1, category: 'Warm-Up', tier: exerciseTiers.MOBILITY, isCore: false },
-                        { slot: 2, category: 'Shoulders', tier: exerciseTiers.MOBILITY, isCore: false },
-                        { slot: 3, category: 'Hips', tier: exerciseTiers.MOBILITY, isCore: false },
-                        { slot: 4, category: 'Thoracic', tier: exerciseTiers.MOBILITY, isCore: false },
-                        { slot: 5, category: 'Core Integration', tier: exerciseTiers.MOBILITY, isCore: true },
-                        { slot: 6, category: 'Flow', tier: exerciseTiers.MOBILITY, isCore: false, optional: true }
-                    ];
-                }
-
-                for (let i = 0; i < slotsToFill; i++) {
+                for (let i = 0; i < activeSlots.length; i++) {
                     if (this.lockedIndices.has(i) && this.currentWorkout[i]) {
                         const lockedExercise = this.currentWorkout[i];
                         usedExerciseNames.add(lockedExercise.name);
                         newWorkout.push(lockedExercise);
                         continue;
                     }
-
-                    // Use goalSlots instead of this.slotConfig
-                    const slotDef = goalSlots[i] || this.slotConfig[i]; // Fallback if goalSlots is shorter (shouldn't be)
-
-                    // Special handling for Core goal to force Core matches even if tier doesn't strictly match? 
-                    // No, existing tiers match well (Mobility tier has Core).
-
+                    const slotDef = activeSlots[i];
                     const exercise = this._findExerciseForSlot(slotDef, usedExerciseNames);
-
                     if (exercise) {
                         usedExerciseNames.add(exercise.name);
-                        const workoutExercise = {
+                        newWorkout.push({
                             ...exercise,
                             slotCategory: slotDef.category,
-                            repScheme: this.getRepScheme(exercise.tier, this.filters.goal)
-                        };
-                        newWorkout.push(workoutExercise);
+                            repScheme: this._getRepScheme(exercise.tier)
+                        });
                     }
-
-
                 }
-
                 this.currentWorkout = newWorkout;
                 return this.currentWorkout;
             }
@@ -1129,62 +2656,72 @@
             _findExerciseForSlot(slotDef, usedNames) {
                 let candidates = exercises.filter(ex => ex.tier === slotDef.tier);
 
+                // Core slot filter
                 if (slotDef.isCore) {
                     candidates = candidates.filter(ex =>
-                        ex.target.toLowerCase().includes('core') ||
-                        ex.target.toLowerCase().includes('abs')
+                        ex.target.toLowerCase().includes('core') || ex.target.toLowerCase().includes('abs')
                     );
                 }
 
-                // FIX 1: Smart Equipment Cascading - 3-step fallback
+                // Shoulder/prehab slot filter (In-Season prehab, Taper shoulders)
+                if (slotDef.isShoulder) {
+                    const shoulderCandidates = candidates.filter(ex =>
+                        ex.target.toLowerCase().includes('shoulder') ||
+                        ex.target.toLowerCase().includes('rotator') ||
+                        ex.target.toLowerCase().includes('rear')
+                    );
+                    if (shoulderCandidates.length > 0) candidates = shoulderCandidates;
+                }
+
+                // Lower body slot filter (Off-Season lower body hypertrophy)
+                if (slotDef.isLower) {
+                    const lowerCandidates = candidates.filter(ex =>
+                        ex.target.toLowerCase().includes('leg') ||
+                        ex.target.toLowerCase().includes('glute') ||
+                        ex.target.toLowerCase().includes('hamstring') ||
+                        ex.target.toLowerCase().includes('quad')
+                    );
+                    if (lowerCandidates.length > 0) candidates = lowerCandidates;
+                }
+
+                // Equipment filtering with cascading fallback
                 if (this.filters.equipment !== 'All') {
                     const selectedEq = this.filters.equipment.toLowerCase();
-
-                    // Step 1: Try exact equipment match ONLY
-                    let exactMatch = candidates.filter(ex =>
-                        ex.equipment.toLowerCase() === selectedEq
-                    );
-
+                    let exactMatch = candidates.filter(ex => ex.equipment.toLowerCase() === selectedEq);
                     if (exactMatch.length > 0) {
                         candidates = exactMatch;
                     } else {
-                        // Step 2: Fall back to Bodyweight ONLY
                         let bodyweightFallback = candidates.filter(ex =>
-                            ex.equipment.toLowerCase() === 'bodyweight' ||
-                            ex.equipment.toLowerCase() === 'none'
+                            ex.equipment.toLowerCase() === 'bodyweight' || ex.equipment.toLowerCase() === 'none'
                         );
-
-                        if (bodyweightFallback.length > 0) {
-                            candidates = bodyweightFallback;
-                        }
-                        // Step 3: If Bodyweight empty, use full tier (implicit - no change to candidates)
+                        if (bodyweightFallback.length > 0) candidates = bodyweightFallback;
                     }
                 }
 
+                // Exclude used exercises
                 candidates = candidates.filter(ex => !usedNames.has(ex.name));
 
+                // Desperate fallback: any exercise from the tier
                 if (candidates.length === 0) {
                     candidates = exercises.filter(ex => ex.tier === slotDef.tier && !usedNames.has(ex.name));
                 }
                 if (candidates.length === 0) return null;
-
                 return candidates[Math.floor(Math.random() * candidates.length)];
             }
 
             swapExercise(index) {
                 if (index < 0 || index >= this.currentWorkout.length || this.lockedIndices.has(index)) return null;
-
                 const usedNames = new Set(this.currentWorkout.filter((_, i) => i !== index).map(ex => ex.name));
                 usedNames.add(this.currentWorkout[index].name);
-
-                const slotDef = this.slotConfig[index];
+                const activeSlots = this._getActiveSlots();
+                const slotDef = activeSlots[index];
+                if (!slotDef) return null;
                 const newExercise = this._findExerciseForSlot(slotDef, usedNames);
-
                 if (newExercise) {
                     const workoutExercise = {
                         ...newExercise,
                         slotCategory: slotDef.category,
-                        repScheme: this.getRepScheme(newExercise.tier, this.filters.goal)
+                        repScheme: this._getRepScheme(newExercise.tier)
                     };
                     this.currentWorkout[index] = workoutExercise;
                     return workoutExercise;
@@ -1194,87 +2731,88 @@
 
             toggleLock(index) {
                 if (index < 0 || index >= this.currentWorkout.length) return false;
-                if (this.lockedIndices.has(index)) {
-                    this.lockedIndices.delete(index);
-                    return false;
-                } else {
-                    this.lockedIndices.add(index);
-                    return true;
-                }
+                if (this.lockedIndices.has(index)) { this.lockedIndices.delete(index); return false; }
+                else { this.lockedIndices.add(index); return true; }
             }
 
-            isLocked(index) {
-                return this.lockedIndices.has(index);
+            isLocked(index) { return this.lockedIndices.has(index); }
+            clearLocks() { this.lockedIndices.clear(); }
+
+            _getRepScheme(tier) {
+                const phaseSchemes = this.phaseRepSchemes[this.filters.phase];
+                if (!phaseSchemes) return '3x10';
+                return phaseSchemes[tier] || '3x10';
             }
 
-            clearLocks() {
-                this.lockedIndices.clear();
-            }
-
-            getRepScheme(tier, sessionGoal) {
-                const repSchemes = {
-                    [exerciseTiers.STRENGTH]: { 'STRENGTH': '4x5', 'POWER': '5x3', 'HYPERTROPHY': '3x12', 'MOBILITY': '2x10' },
-                    [exerciseTiers.POWER]: { 'STRENGTH': '4x6', 'POWER': '5x3', 'HYPERTROPHY': '3x10', 'MOBILITY': '2x8' },
-                    [exerciseTiers.HYPERTROPHY]: { 'STRENGTH': '3x8', 'POWER': '4x6', 'HYPERTROPHY': '3x15', 'MOBILITY': '2x12' },
-                    [exerciseTiers.MOBILITY]: { 'STRENGTH': '2x30s', 'POWER': '2x30s', 'HYPERTROPHY': '3x45s', 'MOBILITY': '3x60s' },
-                    [exerciseTiers.METABOLIC]: { 'STRENGTH': '3x30s', 'POWER': '4x20s', 'HYPERTROPHY': '3x45s', 'MOBILITY': '2x60s' }
-                };
-                return repSchemes[tier]?.[sessionGoal] || '3x10';
-            }
-
-            getCurrentWorkout() {
-                return [...this.currentWorkout];
-            }
-
-            reset() {
-                this.currentWorkout = [];
-                this.lockedIndices.clear();
-            }
+            getCurrentWorkout() { return [...this.currentWorkout]; }
+            reset() { this.currentWorkout = []; this.lockedIndices.clear(); }
         }
 
         // ═══════════════════════════════════════════════════════════════
         // STEP C: THE UI WIRING
         // ═══════════════════════════════════════════════════════════════
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('App Initialized - DOMContentLoaded fired');
-
             const workoutManager = new WorkoutManager();
 
             const resultsContainer = document.getElementById('results');
             const resultsHeader = document.getElementById('results-header');
-            const goalSelect = document.getElementById('goalSelect');
+            const phaseSelect = document.getElementById('phaseSelect');
             const equipmentSelect = document.getElementById('equipmentSelect');
             const finisherToggle = document.getElementById('finisherToggle');
+            const finisherCard = document.getElementById('finisherCard');
+            const finisherLabel = document.getElementById('finisherLabel');
+            const finisherSubtext = document.getElementById('finisherSubtext');
             const shareBtn = document.getElementById('shareBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
             const actionBar = document.getElementById('action-bar');
             const streakCounter = document.getElementById('streak-counter');
             const generateBtn = document.getElementById('generateBtn');
             const completeBtn = document.getElementById('completeBtn');
             const tabGenerator = document.getElementById('tabGenerator');
-            const tabBenchmarks = document.getElementById('tabBenchmarks');
+            const tabGuide = document.getElementById('tabGuide');
             const generatorView = document.getElementById('generatorView');
-            const benchmarksView = document.getElementById('benchmarksView');
+            const guideView = document.getElementById('guideView');
+            const challengesSection = document.getElementById('challengesSection');
 
-            // Verify critical elements
-            if (!generateBtn) {
-                console.error('CRITICAL: generateBtn is null!');
-                return;
-            }
+            if (!generateBtn) { console.error('CRITICAL: generateBtn is null!'); return; }
 
-            console.log('All DOM elements successfully loaded');
             document.getElementById('db-count').innerText = `Database: ${exercises.length} Exercises`;
+
+            // Phase display names
+            const phaseNames = {
+                PRE_SEASON: 'Pre-Season',
+                IN_SEASON: 'In-Season',
+                TAPER: 'Taper',
+                OFF_SEASON: 'Off-Season'
+            };
 
             // Event Listeners
             generateBtn.addEventListener('click', generateWorkout);
             completeBtn.addEventListener('click', completeWorkout);
             shareBtn.addEventListener('click', shareWorkout);
+            cancelBtn.addEventListener('click', cancelWorkout);
             tabGenerator.addEventListener('click', () => switchView('generator'));
-            tabBenchmarks.addEventListener('click', () => switchView('benchmarks'));
+            tabGuide.addEventListener('click', () => switchView('guide'));
 
-            // Add mousemove event for benchmark cards hover effect
-            benchmarksView.addEventListener('mousemove', (e) => {
-                if (e.target.closest('.benchmark-card')) {
-                    const card = e.target.closest('.benchmark-card');
+            // Phase selector — handle taper finisher disable
+            phaseSelect.addEventListener('change', () => {
+                const phase = phaseSelect.value;
+                if (phase === 'TAPER') {
+                    finisherToggle.checked = false;
+                    finisherCard.classList.add('disabled');
+                    finisherLabel.textContent = 'Finisher Disabled During Taper';
+                    finisherSubtext.textContent = 'No added fatigue before race day.';
+                } else {
+                    finisherCard.classList.remove('disabled');
+                    finisherLabel.textContent = 'Add Metabolic Finisher (Slot 6)';
+                    finisherSubtext.textContent = 'Race fatigue simulator.';
+                }
+            });
+
+            // Hover effects for challenge cards
+            challengesSection.addEventListener('mousemove', (e) => {
+                if (e.target.closest('.challenge-card')) {
+                    const card = e.target.closest('.challenge-card');
                     const rect = card.getBoundingClientRect();
                     card.style.setProperty('--x', `${e.clientX - rect.left}px`);
                     card.style.setProperty('--y', `${e.clientY - rect.top}px`);
@@ -1284,20 +2822,56 @@
             function switchView(view) {
                 if (view === 'generator') {
                     generatorView.classList.remove('hidden');
-                    benchmarksView.classList.remove('active');
+                    guideView.classList.remove('active');
+                    challengesSection.classList.remove('active');
                     tabGenerator.classList.add('active');
-                    tabBenchmarks.classList.remove('active');
+                    tabGuide.classList.remove('active');
                     resultsContainer.style.display = 'grid';
                     resultsHeader.style.display = 'block';
                 } else {
                     generatorView.classList.add('hidden');
-                    benchmarksView.classList.add('active');
+                    guideView.classList.add('active');
+                    challengesSection.classList.add('active');
                     tabGenerator.classList.remove('active');
-                    tabBenchmarks.classList.add('active');
+                    tabGuide.classList.add('active');
                     resultsContainer.style.display = 'none';
                     resultsHeader.style.display = 'none';
                     actionBar.style.display = 'none';
                 }
+            }
+
+            // Streak level system
+            function getStreakLevel(count) {
+                if (count >= 30) return 'streak-legendary';
+                if (count >= 14) return 'streak-fire';
+                if (count >= 7) return 'streak-hot';
+                if (count >= 3) return 'streak-warm';
+                return '';
+            }
+
+            function getStreakEmoji(count) {
+                if (count >= 30) return '👑';
+                if (count >= 14) return '🔥';
+                if (count >= 7) return '🔥';
+                if (count >= 3) return '🔥';
+                return '🔥';
+            }
+
+            function getMilestoneMessage(count) {
+                if (count === 30) return '30 days. Legendary. You\'re built different.';
+                if (count === 14) return '2 weeks straight. The habit is locked in.';
+                if (count === 7) return '7-day streak! Consistency wins races.';
+                if (count === 3) return '3 days running. Momentum is building.';
+                return null;
+            }
+
+            function updateStreakDisplay(count) {
+                const emoji = getStreakEmoji(count);
+                streakCounter.innerText = `${emoji} ${count}`;
+                // Remove all streak classes
+                streakCounter.classList.remove('streak-warm', 'streak-hot', 'streak-fire', 'streak-legendary');
+                const level = getStreakLevel(count);
+                if (level) streakCounter.classList.add(level);
             }
 
             function initStreak() {
@@ -1307,19 +2881,16 @@
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
                 const yesterdayStr = yesterday.toDateString();
-
                 if (lastWorkout && lastWorkout !== today && lastWorkout !== yesterdayStr) {
                     localStorage.setItem('streak', '0');
-                    streakCounter.innerText = '🔥 0';
+                    updateStreakDisplay(0);
                 } else {
-                    streakCounter.innerText = `🔥 ${currentStreak}`;
+                    updateStreakDisplay(currentStreak);
                 }
             }
-
             initStreak();
 
             function generateWorkout() {
-                // Store completion state of locked exercises
                 const lockedCompletionState = {};
                 document.querySelectorAll('.exercise-card').forEach((card, index) => {
                     const lockBtn = card.querySelector('.lock-btn');
@@ -1329,35 +2900,47 @@
                     }
                 });
 
+                const phase = phaseSelect.value;
+                const isTaper = phase === 'TAPER';
+
                 workoutManager.setFilters({
-                    goal: goalSelect.value,
+                    phase: phase,
                     equipment: equipmentSelect.value,
-                    finisherEnabled: finisherToggle.checked
+                    finisherEnabled: isTaper ? false : finisherToggle.checked
                 });
 
                 const workout = workoutManager.generateWorkout();
-                const slotCount = finisherToggle.checked ? 6 : 5;
-                resultsHeader.innerHTML = `<div class="section-title">Smart ${slotCount}-Slot Workout</div>`;
+                const phaseName = phaseNames[phase] || 'Workout';
+                resultsHeader.innerHTML = `<div class="section-title">${phaseName} · ${workout.length}-Slot Workout</div>`;
                 displayExercises(workout);
 
-                // Restore completion state
+                // Restore locked completion state
                 setTimeout(() => {
                     document.querySelectorAll('.exercise-card').forEach((card, index) => {
                         if (lockedCompletionState[index]) {
                             const checkbox = card.querySelector('.exercise-checkbox');
-                            if (checkbox) {
-                                checkbox.checked = true;
-                                // Trigger change event to update UI (disable buttons)
-                                checkbox.dispatchEvent(new Event('change'));
-                            }
+                            if (checkbox) { checkbox.checked = true; checkbox.dispatchEvent(new Event('change')); }
                         }
                     });
                 }, 50);
+
+                // Auto-scroll to workout
+                setTimeout(() => {
+                    resultsHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+
+            function cancelWorkout() {
+                if (!confirm('Cancel this workout? Your progress will be lost.')) return;
+                workoutManager.reset();
+                resultsContainer.innerHTML = '<div class="empty-state">Pick your training phase and generate a workout.</div>';
+                resultsHeader.innerHTML = '';
+                actionBar.style.display = 'none';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
             function displayExercises(list) {
                 resultsContainer.innerHTML = '';
-
                 if (list.length === 0) {
                     resultsContainer.innerHTML = '<div class="empty-state">No exercises found. Try different filters.</div>';
                     resultsHeader.innerHTML = '';
@@ -1372,10 +2955,8 @@
 
                 list.forEach((ex, index) => {
                     const card = document.createElement('div');
-                    card.className = 'exercise-card interactive-card';
+                    card.className = 'exercise-card';
                     card.dataset.index = index;
-
-                    card.addEventListener('click', (e) => handleCardClick(e, card));
                     card.addEventListener('mousemove', (e) => {
                         const rect = card.getBoundingClientRect();
                         card.style.setProperty('--x', `${e.clientX - rect.left}px`);
@@ -1383,25 +2964,28 @@
                     });
 
                     const isLocked = workoutManager.isLocked(index);
+                    const unlockedSVG = `<svg class="lock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+                    const lockedSVG = `<svg class="lock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
 
-                    // SVG lock icons for clean visual feedback
-                    const unlockedSVG = `<svg class="lock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="5" y="11" width="14" height="11" rx="2" stroke="currentColor" stroke-width="2"/>
-                        <path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>`;
-                    const lockedSVG = `<svg class="lock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="5" y="11" width="14" height="11" rx="2" stroke="currentColor" stroke-width="2"/>
-                        <path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>`;
-
-                    // Prepare badge and clean description
                     const rawDesc = ex.swimmerNote || ex.desc || '';
                     const cleanDesc = rawDesc.replace(/^Verified:\s*/i, '');
-                    const verifiedBadge = `<svg class="verified-badge" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="10" fill="var(--accent)" opacity="0.2"/>
-                        <circle cx="12" cy="12" r="10" stroke="var(--accent)" stroke-width="2"/>
-                        <path d="M8 12L11 15L16 9" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>`;
+                    const verifiedBadge = `<svg class="verified-badge" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="var(--accent)" opacity="0.2"/><circle cx="12" cy="12" r="10" stroke="var(--accent)" stroke-width="2"/><path d="M8 12L11 15L16 9" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+                    // Every exercise now has details
+                    const hasDetails = Boolean(ex.setup || (Array.isArray(ex.formCues) && ex.formCues.length));
+
+                    const difficultyClass = ex.difficulty ? ex.difficulty.toLowerCase() : '';
+                    const detailsHtml = hasDetails ? `
+                        <div class="exercise-details">
+                            <div class="details-grid">
+                                ${ex.image ? `<div class="exercise-media"><img src="${ex.image}" alt="${ex.name} demo"></div>` : ''}
+                                ${ex.difficulty ? `<div class="detail-group"><div class="detail-label">Difficulty</div><span class="difficulty-badge ${difficultyClass}">${ex.difficulty}</span></div>` : ''}
+                                ${ex.setup ? `<div class="detail-group"><div class="detail-label">Setup</div><div class="detail-text">${ex.setup}</div></div>` : ''}
+                                ${Array.isArray(ex.formCues) && ex.formCues.length ? `<div class="detail-group"><div class="detail-label">Form Cues</div><ul class="detail-list">${ex.formCues.map(cue => `<li>${cue}</li>`).join('')}</ul></div>` : ''}
+                                ${(Array.isArray(ex.musclesPrimary) && ex.musclesPrimary.length)
+                                    ? `<div class="detail-group"><div class="detail-label">Muscles</div><div class="muscles-row"><span class="muscles-legend">Primary</span>${(ex.musclesPrimary || []).map(m => `<span class="muscle-tag primary">${m}</span>`).join('')}${(ex.musclesSecondary && ex.musclesSecondary.length) ? `<span class="muscles-legend secondary">Secondary</span>${(ex.musclesSecondary || []).map(m => `<span class="muscle-tag">${m}</span>`).join('')}` : ''}</div></div>` : ''}
+                            </div>
+                        </div>` : '';
 
                     card.innerHTML = `
                         <div class="card-actions">
@@ -1409,7 +2993,7 @@
                                 ${isLocked ? lockedSVG : unlockedSVG}
                             </button>
                             <button class="card-action-btn swap-btn ${isLocked ? 'disabled' : ''}" data-index="${index}" ${isLocked ? 'disabled' : ''}>
-                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
                             </button>
                         </div>
                         <div class="slot-category">${ex.slotCategory || 'Exercise'}</div>
@@ -1419,158 +3003,65 @@
                         </div>
                         <div class="exercise-desc">${verifiedBadge}${cleanDesc}</div>
                         <div class="meta-container">
-                            <div class="meta-group">
-                                <span class="meta-label">Reps</span>
-                                <span class="tag reps">${ex.repScheme || ''}</span>
-                            </div>
-                            <div class="meta-group">
-                                <span class="meta-label">Equipment</span>
-                                <span class="tag">${ex.equipment}</span>
-                            </div>
-                            <div class="meta-group">
-                                <span class="meta-label">Target</span>
-                                <span class="tag">${ex.target}</span>
-                            </div>
+                            <div class="meta-group"><span class="meta-label">Reps</span><span class="tag reps">${ex.repScheme || ''}</span></div>
+                            <div class="meta-group"><span class="meta-label">Equipment</span><span class="tag">${ex.equipment}</span></div>
+                            <div class="meta-group"><span class="meta-label">Target</span><span class="tag">${ex.target}</span></div>
                         </div>
+                        ${hasDetails ? `<div class="details-toggle-row"><span class="details-toggle">How to perform <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>` : ''}
+                        ${detailsHtml}
                     `;
 
                     const checkbox = card.querySelector('.exercise-checkbox');
                     checkbox.addEventListener('change', () => toggleCard(checkbox));
+                    const detailsBtn = card.querySelector('.details-toggle');
+                    if (detailsBtn) {
+                        detailsBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            card.classList.toggle('expanded');
+                        });
+                    }
                     resultsContainer.appendChild(card);
                 });
 
-                // FIX 2: Crucial - Call lucide.createIcons() to render the icons
-                lucide.createIcons();
-
-                // Attach lock button event listeners
-                // Attach lock button event listeners
+                // Lock button listeners
                 document.querySelectorAll('.lock-btn').forEach(btn => {
                     const index = parseInt(btn.dataset.index);
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
-
-                        // Guard: Do nothing if disabled (completed)
-                        if (btn.disabled || btn.classList.contains('disabled')) {
-                            return;
-                        }
+                        if (btn.disabled || btn.classList.contains('disabled')) return;
 
                         const isNowLocked = workoutManager.toggleLock(index);
-
-                        // Update SVG path IMMEDIATELY for instant visual feedback
                         const svg = btn.querySelector('.lock-icon');
                         const path = svg.querySelector('path');
-
                         if (isNowLocked) {
-                            // Close the shackle (locked state)
                             path.setAttribute('d', 'M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11');
                         } else {
-                            // Open the shackle (unlocked state - clearer gap)
                             path.setAttribute('d', 'M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V5');
                         }
-
-                        // Update locked class for styling
                         btn.classList.toggle('locked', isNowLocked);
 
-                        // Disable/enable swap button
                         const swapBtn = btn.closest('.exercise-card').querySelector('.swap-btn');
-                        if (isNowLocked) {
-                            swapBtn.disabled = true;
-                            swapBtn.classList.add('disabled');
-                        } else {
-                            swapBtn.disabled = false;
-                            swapBtn.classList.remove('disabled');
-                        }
+                        if (isNowLocked) { swapBtn.disabled = true; swapBtn.classList.add('disabled'); }
+                        else { swapBtn.disabled = false; swapBtn.classList.remove('disabled'); }
 
-                        // Add appropriate animation
-                        if (isNowLocked) {
-                            btn.classList.add('animate-lock');
-                        } else {
-                            btn.classList.add('animate-unlock');
-                        }
-
-                        // Remove animation class after animation completes
-                        setTimeout(() => {
-                            btn.classList.remove('animate-lock', 'animate-unlock');
-                        }, 300);
+                        btn.classList.add(isNowLocked ? 'animate-lock' : 'animate-unlock');
+                        setTimeout(() => btn.classList.remove('animate-lock', 'animate-unlock'), 300);
                     });
                 });
 
+                // Swap button listeners
                 document.querySelectorAll('.swap-btn').forEach(btn => {
                     const index = parseInt(btn.dataset.index);
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
-
-                        // Guard: Do nothing if disabled (locked)
-                        if (btn.disabled || btn.classList.contains('disabled')) {
-                            return;
-                        }
-
+                        if (btn.disabled || btn.classList.contains('disabled')) return;
                         btn.classList.add('animate-swap');
-
-                        // Wait for animation to complete before swapping
                         setTimeout(() => {
                             const newExercise = workoutManager.swapExercise(index);
-                            if (newExercise) {
-                                displayExercises(workoutManager.getCurrentWorkout());
-                            }
-                        }, 250); // Swap midway through the 500ms animation
+                            if (newExercise) displayExercises(workoutManager.getCurrentWorkout());
+                        }, 250);
                     });
                 });
-            }
-
-            function toggleLock(index, btn) {
-                const isNowLocked = workoutManager.toggleLock(index);
-
-                // Update SVG path IMMEDIATELY for instant visual feedback
-                const svg = btn.querySelector('.lock-icon');
-                const path = svg.querySelector('path');
-
-                if (isNowLocked) {
-                    path.setAttribute('d', 'M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11');
-                    btn.classList.add('animate-lock');
-                    btn.classList.add('locked');
-                } else {
-                    path.setAttribute('d', 'M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V5');
-                    btn.classList.add('animate-unlock');
-                    btn.classList.remove('locked');
-                }
-
-                // Disable/enable swap button
-                const swapBtn = btn.closest('.exercise-card').querySelector('.swap-btn');
-                if (isNowLocked) {
-                    swapBtn.disabled = true;
-                    swapBtn.classList.add('disabled');
-                } else {
-                    swapBtn.disabled = false;
-                    swapBtn.classList.remove('disabled');
-                }
-
-                // Remove animation class after animation completes
-                setTimeout(() => {
-                    btn.classList.remove('animate-lock', 'animate-unlock');
-                }, 300);
-            }
-
-            function swapExercise(index) {
-                // Find the swap button and add animation
-                const swapBtn = document.querySelector(`.swap-btn[data-index="${index}"]`);
-                if (swapBtn) {
-                    swapBtn.classList.add('animate-swap');
-
-                    // Wait for animation to complete before swapping
-                    setTimeout(() => {
-                        const newExercise = workoutManager.swapExercise(index);
-                        if (newExercise) {
-                            displayExercises(workoutManager.getCurrentWorkout());
-                        }
-                    }, 250); // Swap midway through the 500ms animation
-                } else {
-                    // Fallback if button not found
-                    const newExercise = workoutManager.swapExercise(index);
-                    if (newExercise) {
-                        displayExercises(workoutManager.getCurrentWorkout());
-                    }
-                }
             }
 
             function completeWorkout() {
@@ -1591,17 +3082,34 @@
 
                 setTimeout(() => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
-                    streakCounter.innerText = `🔥 ${currentStreak}`;
+                    updateStreakDisplay(currentStreak);
 
                     if (streakIncreased) {
                         streakCounter.classList.add('pulse-animation');
                         setTimeout(() => streakCounter.classList.remove('pulse-animation'), 1000);
                     }
 
+                    // Build celebration screen
+                    const milestone = getMilestoneMessage(currentStreak);
+                    const emoji = getStreakEmoji(currentStreak);
+
                     if (streakIncreased) {
-                        resultsContainer.innerHTML = '<div class="empty-state" style="border-color: var(--success); color: var(--success);">Good job! See you tomorrow.</div>';
+                        resultsContainer.innerHTML = `
+                            <div class="celebration-card">
+                                <span class="celebration-fire">${emoji}</span>
+                                <div class="celebration-streak">${currentStreak}</div>
+                                <div class="celebration-label">Day Streak</div>
+                                <div class="celebration-message">${milestone || 'Session complete. See you tomorrow.'}</div>
+                                ${milestone ? '<div class="celebration-sub">Keep the streak alive.</div>' : ''}
+                            </div>`;
                     } else {
-                        resultsContainer.innerHTML = '<div class="empty-state">Select your session goal and generate a smart workout.</div>';
+                        resultsContainer.innerHTML = `
+                            <div class="celebration-card">
+                                <span class="celebration-fire">${emoji}</span>
+                                <div class="celebration-streak">${currentStreak}</div>
+                                <div class="celebration-label">Day Streak</div>
+                                <div class="celebration-message">Already logged today. Rest up.</div>
+                            </div>`;
                     }
 
                     resultsHeader.innerHTML = '';
@@ -1615,13 +3123,9 @@
             function shareWorkout() {
                 const workout = workoutManager.getCurrentWorkout();
                 if (workout.length === 0) return;
-
                 let textToCopy = "🏊 Dryland Pro Workout 🏊\n\n";
-                workout.forEach((ex, index) => {
-                    textToCopy += `${index + 1}. ${ex.name} - ${ex.repScheme}\n`;
-                });
-                textToCopy += "\nGenerated at: dryland-pro.netlify.app";
-
+                workout.forEach((ex, index) => { textToCopy += `${index + 1}. ${ex.name} - ${ex.repScheme}\n`; });
+                textToCopy += "\nGenerated at: drylandpro.com";
                 navigator.clipboard.writeText(textToCopy).then(() => {
                     const originalText = shareBtn.innerText;
                     shareBtn.innerText = "Copied!";
@@ -1639,38 +3143,17 @@
                 const card = checkbox.closest('.exercise-card');
                 const lockBtn = card.querySelector('.lock-btn');
                 const swapBtn = card.querySelector('.swap-btn');
-
                 if (checkbox.checked) {
                     card.classList.add('checked');
-
-                    // Exercise completed - disable controls
-                    lockBtn.disabled = true;
-                    lockBtn.classList.add('disabled');
-
-                    swapBtn.disabled = true;
-                    swapBtn.classList.add('disabled');
+                    lockBtn.disabled = true; lockBtn.classList.add('disabled');
+                    swapBtn.disabled = true; swapBtn.classList.add('disabled');
                 } else {
                     card.classList.remove('checked');
-
-                    // Exercise uncompleted - re-enable controls
-                    lockBtn.disabled = false;
-                    lockBtn.classList.remove('disabled');
-
-                    // Only enable swap if not locked
+                    lockBtn.disabled = false; lockBtn.classList.remove('disabled');
                     const isLocked = lockBtn.classList.contains('locked');
-                    if (!isLocked) {
-                        swapBtn.disabled = false;
-                        swapBtn.classList.remove('disabled');
-                    }
+                    if (!isLocked) { swapBtn.disabled = false; swapBtn.classList.remove('disabled'); }
                 }
                 checkCompletion();
-            }
-
-            function handleCardClick(e, card) {
-                const checkbox = card.querySelector('.exercise-checkbox');
-                if (!checkbox || e.target === checkbox || e.target.closest('.card-action-btn')) return;
-                checkbox.checked = !checkbox.checked;
-                toggleCard(checkbox);
             }
 
             function checkCompletion() {
