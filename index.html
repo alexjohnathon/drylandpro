@@ -4,343 +4,699 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dryland Pro - Stop Guessing. Start Building.</title>
-    <meta name="description"
-        content="Your pocket coach. Smart dryland workouts generated in seconds. Built for swimmers who demand excellence.">
-    <!-- Fonts -->
+    <title>Dryland Pro - Free Swim Workout Generator</title>
+    <meta name="description" content="Free dryland workout generator built by a competitive swimmer. 98 exercises, 4 training phases, smart equipment filtering. No ads, no account needed.">
+    <meta property="og:title" content="Dryland Pro - Free Swim Workout Generator">
+    <meta property="og:description" content="Don't know what dryland to do? Generate pro-level swim circuits instantly. Free, no ads, built by swimmers.">
+    <meta property="og:url" content="https://www.drylandpro.com">
+    <meta property="og:type" content="website">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Strict App Palette */
-            --bg-color: #0f172a;
-            /* slate-900 */
-            --card-bg: #1e293b;
-            /* slate-800 */
+            --bg: #0f172a;
+            --bg-card: #1e293b;
             --accent: #38bdf8;
-            /* sky-400 */
             --success: #22c55e;
-            /* emerald-500 */
-            --text-main: #f8fafc;
-            /* slate-50 */
+            --text: #f8fafc;
             --text-muted: #94a3b8;
-            /* slate-400 */
-            --border-subtle: rgba(255, 255, 255, 0.05);
-
-            /* Typography */
-            --font-main: 'Inter', -apple-system, sans-serif;
+            --text-dim: #64748b;
+            --border: rgba(255,255,255,0.06);
+            --radius: 12px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: var(--font-main);
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.5;
-            overflow-x: hidden;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
+        a { text-decoration: none; color: inherit; }
 
-        /* --- Components --- */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .btn-launch {
-            display: inline-flex;
+        /* ═══ NAV ═══ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            background: rgba(56, 189, 248, 0.1);
-            color: var(--accent);
-            border: 1px solid var(--accent);
-            padding: 16px 32px;
-            font-size: 1.1rem;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-logo {
+            font-weight: 900;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
+        }
+        .nav-logo span { color: var(--accent); }
+        .nav-cta {
+            background: var(--accent);
+            color: var(--bg);
+            padding: 8px 20px;
+            border-radius: 8px;
             font-weight: 700;
-            border-radius: 50px;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            border: none;
             cursor: pointer;
         }
+        .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(56,189,248,0.3); }
 
-        .btn-launch:hover {
-            background: var(--accent);
-            color: var(--bg-color);
-            transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.25);
-        }
-
-        .section-spacer {
-            padding: 6rem 0;
-        }
-
-        /* --- Hero Section --- */
+        /* ═══ HERO ═══ */
         .hero {
-            padding-top: 120px;
-            padding-bottom: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 160px 24px 60px;
             text-align: center;
             position: relative;
-            z-index: 1;
-            /* Living Glow System - Subtle & Atmospheric */
-            background: radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.12), transparent 60%);
+            background: radial-gradient(ellipse at 50% 0%, rgba(56,189,248,0.08) 0%, transparent 60%);
         }
-
-        .hero-content {
-            max-width: 800px;
-            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .hero h1 {
-            font-size: clamp(3rem, 8vw, 6rem);
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 24px;
-            letter-spacing: -2px;
-            color: var(--text-main);
-        }
-
-        .hero p {
-            font-size: clamp(1.1rem, 3vw, 1.5rem);
-            color: var(--text-muted);
-            margin-bottom: 48px;
-            max-width: 650px;
-            margin-left: auto;
-            margin-right: auto;
-            font-weight: 400;
-        }
-
-        .highlight-text {
-            color: var(--accent);
-        }
-
-        /* --- Product Hero Section --- */
-        .product-hero {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 120px 0;
-            border-top: 1px solid var(--border-subtle);
-            border-bottom: 1px solid var(--border-subtle);
-            text-align: center;
-        }
-
-        .product-screenshot {
-            display: block;
-            max-width: 1000px;
-            width: 100%;
-            margin: 0 auto;
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            box-shadow:
-                0 20px 60px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(56, 189, 248, 0.08);
-            transform: translateY(20px);
-            opacity: 0;
-            animation: floatUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s;
-        }
-
-        /* --- Stats Strip (Replaces Icons) --- */
-        .stats-strip {
-            padding: 80px 0;
-            background: transparent;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            text-align: center;
-        }
-
-        .stat-item h3 {
-            color: var(--text-main);
-            font-size: 1.1rem;
+        .hero-inner { max-width: 720px; margin: 0 auto; }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(34,197,94,0.08);
+            border: 1px solid rgba(34,197,94,0.2);
+            color: var(--success);
+            font-size: 0.7rem;
             font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .stat-item p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        /* --- Social Proof --- */
-        .social-proof {
-            text-align: center;
-        }
-
-        .proof-stat {
-            color: #64748b;
-            font-size: 0.75rem;
-            margin-bottom: 8px;
-            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
+            margin-bottom: 28px;
+            animation: fadeDown 0.6s ease both;
         }
-
-        .proof-text {
-            font-size: 1.1rem;
+        .hero h1 {
+            font-size: clamp(2.8rem, 7vw, 5rem);
+            font-weight: 900;
+            line-height: 1.08;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            animation: fadeDown 0.6s ease both 0.1s;
+        }
+        .hero h1 span { color: var(--accent); }
+        .hero-sub {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
             color: var(--text-muted);
-            letter-spacing: 0.5px;
+            max-width: 540px;
+            margin: 0 auto 40px;
+            animation: fadeDown 0.6s ease both 0.2s;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeDown 0.6s ease both 0.3s;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(56,189,248,0.25); }
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-ghost {
+            background: rgba(255,255,255,0.04);
+            color: var(--text-muted);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 
-        .check-icon {
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ═══ DEMO SECTION ═══ */
+        .demo-section {
+            padding: 40px 24px 80px;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        .demo-label {
+            text-align: center;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* Demo controls */
+        .demo-controls {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 28px;
+            border: 1px solid var(--border);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+        .demo-selects {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .demo-selects label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            font-weight: 700;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .demo-selects select {
+            width: 100%;
+            padding: 0 14px;
+            height: 44px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--bg);
+            color: white;
+            font-size: 0.85rem;
+            font-family: inherit;
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2338bdf8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 10px;
+            transition: border-color 0.2s;
+        }
+        .demo-selects select:focus { border-color: var(--accent); }
+
+        .demo-generate {
+            width: 100%;
+            background: var(--accent);
+            color: var(--bg);
+            font-size: 0.9rem;
+            font-weight: 700;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            border-radius: 8px;
+            height: 48px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .demo-generate:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .demo-generate:active { transform: scale(0.98); }
+
+        /* Demo results */
+        .demo-results {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .demo-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            border-left: 4px solid var(--accent);
+            border-right: 1px solid var(--border);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            animation: cardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        .demo-card:nth-child(1) { animation-delay: 0s; }
+        .demo-card:nth-child(2) { animation-delay: 0.06s; }
+        .demo-card:nth-child(3) { animation-delay: 0.08s; }
+        .demo-card:nth-child(4) { animation-delay: 0.12s; }
+        .demo-card:nth-child(5) { animation-delay: 0.16s; }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .demo-card-slot {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .demo-card-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .demo-card-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .demo-tag {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+        .demo-tag.reps {
+            background: rgba(34,197,94,0.12);
+            border: 1px solid rgba(34,197,94,0.25);
+            color: var(--success);
+        }
+        .demo-tag.equip {
+            background: rgba(56,189,248,0.08);
+            color: var(--accent);
+        }
+        .demo-tag.target {
+            background: rgba(255,255,255,0.04);
+            color: var(--text-muted);
+        }
+
+        .demo-cta {
+            text-align: center;
+            margin-top: 24px;
+            padding: 20px;
+        }
+        .demo-cta-text {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+        }
+
+        /* Demo empty state */
+        .demo-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-dim);
+            font-style: italic;
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius);
+            border: 1px dashed rgba(255,255,255,0.08);
+            font-size: 0.9rem;
+        }
+
+        /* ═══ FEATURES ═══ */
+        .features {
+            padding: 80px 24px;
+            border-top: 1px solid var(--border);
+        }
+        .features-inner { max-width: 900px; margin: 0 auto; }
+        .features-title {
+            text-align: center;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            transition: border-color 0.2s;
+        }
+        .feature-card:hover { border-color: rgba(56,189,248,0.15); }
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+        .feature-card h3 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .feature-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ═══ PROOF ═══ */
+        .proof {
+            padding: 60px 24px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+        .proof-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .proof-check {
             color: var(--success);
             width: 20px;
             height: 20px;
+            flex-shrink: 0;
         }
 
-        /* --- Final CTA --- */
+        /* ═══ FINAL CTA ═══ */
         .final-cta {
+            padding: 100px 24px 140px;
             text-align: center;
-            padding-bottom: 15vh;
         }
-
         .final-cta h2 {
-            font-size: clamp(2rem, 5vw, 4rem);
+            font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 900;
-            margin-bottom: 40px;
             letter-spacing: -1px;
-            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+        .final-cta p {
+            color: var(--text-muted);
+            margin-bottom: 36px;
+            font-size: 1.05rem;
         }
 
-        /* --- Animations --- */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
+        /* ═══ FOOTER ═══ */
+        footer {
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.75rem;
+        }
+        footer a {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        footer a:hover { text-decoration: underline; }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* ═══ MOBILE ═══ */
+        @media (max-width: 640px) {
+            .hero { padding: 120px 20px 40px; }
+            .hero h1 { letter-spacing: -1px; }
+            .hero-actions { flex-direction: column; align-items: center; }
+            .btn-primary, .btn-ghost { width: 100%; max-width: 320px; justify-content: center; }
+            .demo-selects { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
+            .feature-card { padding: 22px 18px; }
         }
 
-        @keyframes floatUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* --- Mobile Responsiveness --- */
-        @media (max-width: 768px) {
-            .hero {
-                padding-top: 100px;
-                padding-bottom: 60px;
-            }
-
-            .product-hero {
-                padding: 60px 0;
-            }
-
-            .product-screenshot {
-                width: 100%;
-                border-radius: 8px;
-                /* Slightly smaller radius on mobile */
-            }
-
-            .stats-strip {
-                padding: 60px 0;
-            }
-
-            .stats-grid {
-                gap: 40px;
-            }
+        @media (hover: none) and (pointer: coarse) {
+            button, a { min-height: 44px; touch-action: manipulation; }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Hero Section -->
+    <!-- Nav -->
+    <nav>
+        <div class="nav-logo">Dryland<span>Pro</span></div>
+        <a href="/app" class="nav-cta">Open App</a>
+    </nav>
+
+    <!-- Hero -->
     <section class="hero">
-        <div class="container hero-content">
-            <h1>Stop Guessing.<br>Start Building.</h1>
-            <p>Your pocket coach. Smart dryland workouts. Generated in seconds. <span class="highlight-text">Built for
-                    swimmers who demand excellence.</span></p>
-            <a href="/app" class="btn-launch">Launch App &rarr;</a>
+        <div class="hero-inner">
+            <div class="hero-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Free · No Account · No Ads
+            </div>
+            <h1>Smart dryland.<br><span>Built for swimmers.</span></h1>
+            <p class="hero-sub">98 exercises across 4 training phases. Generate a workout in seconds. Lock what you like, swap what you don't.</p>
+            <div class="hero-actions">
+                <a href="/app" class="btn-primary">Launch Full App →</a>
+                <a href="#demo" class="btn-ghost">Try the Demo ↓</a>
+            </div>
         </div>
     </section>
 
-    <!-- Product Hero Section -->
-    <section class="product-hero">
-        <div class="container">
-            <img src="hero-product-shot.png" alt="DrylandPro Workout Generator Interface" class="product-screenshot">
+    <!-- Interactive Demo -->
+    <section class="demo-section" id="demo">
+        <div class="demo-label">Try It — Generate a Real Workout</div>
+
+        <div class="demo-controls">
+            <div class="demo-selects">
+                <div>
+                    <label>Training Phase</label>
+                    <select id="demoPhase">
+                        <option value="PRE_SEASON">Pre-Season</option>
+                        <option value="IN_SEASON">In-Season</option>
+                        <option value="TAPER">Taper</option>
+                        <option value="OFF_SEASON">Off-Season</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Equipment</label>
+                    <select id="demoEquip">
+                        <option value="All">Any Equipment</option>
+                        <option value="Bodyweight">Bodyweight Only</option>
+                        <option value="Dumbbell">Dumbbells</option>
+                        <option value="Barbell">Barbell</option>
+                        <option value="Resistance Band">Resistance Band</option>
+                    </select>
+                </div>
+            </div>
+            <button class="demo-generate" id="demoBtn">Generate Workout</button>
+        </div>
+
+        <div id="demoResults">
+            <div class="demo-empty">Pick a phase and hit generate.</div>
+        </div>
+
+        <div class="demo-cta" id="demoCta" style="display:none;">
+            <p class="demo-cta-text">This is the preview. The full app has lock, swap, streak tracking, and form guides for every exercise.</p>
+            <a href="/app" class="btn-primary">Open Full App →</a>
         </div>
     </section>
 
-    <!-- Stats Strip -->
-    <section class="stats-strip">
-        <div class="container">
-            <div class="stats-grid">
-                <!-- Column 1 -->
-                <div class="stat-item">
-                    <h3>77 Exercise Database</h3>
-                    <p>Curated movements verified by competitive swimmers</p>
+    <!-- Features -->
+    <section class="features">
+        <div class="features-inner">
+            <div class="features-title">Why Swimmers Use This</div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🏋️</div>
+                    <h3>98 Verified Exercises</h3>
+                    <p>Every movement has setup instructions, form cues, and muscle targeting. Built for swimmers, not generic fitness.</p>
                 </div>
-
-                <!-- Column 2 -->
-                <div class="stat-item">
-                    <h3>Equipment Smart Filtering</h3>
-                    <p>Only shows exercises you can actually do right now</p>
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <h3>4 Training Phases</h3>
+                    <p>Pre-Season, In-Season, Taper, Off-Season. The algorithm adapts slot structure and rep schemes to where you are.</p>
                 </div>
-
-                <!-- Column 3 -->
-                <div class="stat-item">
-                    <h3>Daily Streak Tracking</h3>
-                    <p>Build momentum with fire icons showing your consistency</p>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Equipment Filtering</h3>
+                    <p>Bodyweight only? Dumbbells? Barbell? Cable machine? You get workouts you can actually do with what you have.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔥</div>
+                    <h3>Streak System</h3>
+                    <p>Complete a workout daily. Watch the streak grow. Miss a day and it resets. Simple, effective accountability.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Social Proof -->
-    <section class="social-proof section-spacer">
-        <div class="container">
-            <p class="proof-stat">Database: 77 Exercises</p>
-            <p class="proof-text">
-                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                Built by a 14-year competitive swimmer. Tested by athletes.
-            </p>
+    <section class="proof">
+        <div class="proof-badge">
+            <svg class="proof-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Built by a 14-year competitive swimmer. Tested by athletes.
         </div>
     </section>
 
     <!-- Final CTA -->
-    <section class="final-cta section-spacer">
-        <div class="container">
-            <h2>Join the 1%.</h2>
-            <a href="/app" class="btn-launch">Launch Dryland Pro &rarr;</a>
-        </div>
+    <section class="final-cta">
+        <h2>Your dryland starts here.</h2>
+        <p>Free. No sign-up. Works on any device.</p>
+        <a href="/app" class="btn-primary">Launch Dryland Pro →</a>
     </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Dryland Pro. Built by Alex. Follow <a href="https://instagram.com/dryland.pro" target="_blank">@dryland.pro</a></p>
+    </footer>
+
+    <script>
+    // ═══════════════════════════════════════════════════════════
+    // MINI EXERCISE DATABASE FOR DEMO
+    // ═══════════════════════════════════════════════════════════
+    const T = { S: 'STRENGTH', P: 'POWER', H: 'HYPERTROPHY', M: 'MOBILITY', X: 'METABOLIC' };
+
+    const demoExercises = [
+        // STRENGTH
+        { name: 'Pull-Up', eq: 'Bodyweight', target: 'Back & Lats', tier: T.S },
+        { name: 'Barbell Back Squat', eq: 'Barbell', target: 'Legs & Glutes', tier: T.S },
+        { name: 'Barbell Deadlift', eq: 'Barbell', target: 'Back & Glutes', tier: T.S },
+        { name: 'Barbell Bench Press', eq: 'Barbell', target: 'Chest & Triceps', tier: T.S },
+        { name: 'Dumbbell Goblet Squat', eq: 'Dumbbell', target: 'Legs & Glutes', tier: T.S },
+        { name: 'Dumbbell Row', eq: 'Dumbbell', target: 'Back & Lats', tier: T.S },
+        { name: 'Band Pull-Apart', eq: 'Resistance Band', target: 'Shoulders', tier: T.S },
+        { name: 'Banded Pull-Up', eq: 'Resistance Band', target: 'Back & Lats', tier: T.S },
+        { name: 'Dip', eq: 'Bodyweight', target: 'Chest & Triceps', tier: T.S },
+        { name: 'Pistol Squat', eq: 'Bodyweight', target: 'Legs & Glutes', tier: T.S },
+        { name: 'Barbell Overhead Press', eq: 'Barbell', target: 'Shoulders', tier: T.S },
+        { name: 'Dumbbell Bulgarian Split Squat', eq: 'Dumbbell', target: 'Legs & Glutes', tier: T.S },
+        // POWER
+        { name: 'Box Jump', eq: 'Bodyweight', target: 'Legs & Glutes', tier: T.P },
+        { name: 'Broad Jump', eq: 'Bodyweight', target: 'Legs & Glutes', tier: T.P },
+        { name: 'Medicine Ball Slam', eq: 'Bodyweight', target: 'Core & Lats', tier: T.P },
+        { name: 'Clap Push-Up', eq: 'Bodyweight', target: 'Chest & Triceps', tier: T.P },
+        { name: 'Squat Jump', eq: 'Bodyweight', target: 'Legs & Glutes', tier: T.P },
+        { name: 'Dumbbell Thruster', eq: 'Dumbbell', target: 'Full Body', tier: T.P },
+        { name: 'Power Clean', eq: 'Barbell', target: 'Full Body', tier: T.P },
+        { name: 'Push Press', eq: 'Barbell', target: 'Shoulders & Legs', tier: T.P },
+        // HYPERTROPHY
+        { name: 'Push-Up', eq: 'Bodyweight', target: 'Chest & Shoulders', tier: T.H },
+        { name: 'Dumbbell Lateral Raise', eq: 'Dumbbell', target: 'Shoulders', tier: T.H },
+        { name: 'Dumbbell Reverse Fly', eq: 'Dumbbell', target: 'Rear Shoulders', tier: T.H },
+        { name: 'Walking Lunge', eq: 'Bodyweight', target: 'Legs & Glutes', tier: T.H },
+        { name: 'Glute Bridge', eq: 'Bodyweight', target: 'Glutes', tier: T.H },
+        { name: 'Dumbbell Arnold Press', eq: 'Dumbbell', target: 'Shoulders', tier: T.H },
+        { name: 'Bodyweight Hip Thrust', eq: 'Bodyweight', target: 'Glutes & Hamstrings', tier: T.H },
+        { name: 'Step-Up', eq: 'Bodyweight', target: 'Legs & Glutes', tier: T.H },
+        { name: 'Banded Tricep Extension', eq: 'Resistance Band', target: 'Triceps', tier: T.H },
+        // MOBILITY / CORE
+        { name: 'Front Plank', eq: 'Bodyweight', target: 'Core & Abs', tier: T.M },
+        { name: 'Dead Bug', eq: 'Bodyweight', target: 'Core & Abs', tier: T.M },
+        { name: 'Hollow Hold', eq: 'Bodyweight', target: 'Core & Abs', tier: T.M },
+        { name: 'Side Plank', eq: 'Bodyweight', target: 'Core & Abs', tier: T.M },
+        { name: 'Shoulder Dislocate', eq: 'Resistance Band', target: 'Shoulders', tier: T.M },
+        { name: 'Cat-Cow Stretch', eq: 'Bodyweight', target: 'Shoulders', tier: T.M },
+        { name: 'Superman', eq: 'Bodyweight', target: 'Core & Abs', tier: T.M },
+        { name: '90-90 Stretch', eq: 'Bodyweight', target: 'Hips & Glutes', tier: T.M },
+        { name: 'V-Up', eq: 'Bodyweight', target: 'Core & Abs', tier: T.M },
+        { name: 'Pigeon Stretch', eq: 'Bodyweight', target: 'Hips & Glutes', tier: T.M },
+        // METABOLIC
+        { name: 'Burpee', eq: 'Bodyweight', target: 'Full Body', tier: T.X },
+        { name: 'Mountain Climber', eq: 'Bodyweight', target: 'Core & Legs', tier: T.X },
+        { name: 'High Knees', eq: 'Bodyweight', target: 'Legs & Core', tier: T.X },
+        { name: 'Skater Jump', eq: 'Bodyweight', target: 'Legs & Core', tier: T.X },
+        { name: 'Squat Thrust', eq: 'Bodyweight', target: 'Full Body', tier: T.X },
+    ];
+
+    // Phase slot configurations (matches the full app)
+    const phaseSlots = {
+        PRE_SEASON: [
+            { cat: 'Warm-Up', tier: T.M },
+            { cat: 'Power', tier: T.P },
+            { cat: 'Strength', tier: T.S },
+            { cat: 'Strength', tier: T.S },
+            { cat: 'Core', tier: T.M, isCore: true }
+        ],
+        IN_SEASON: [
+            { cat: 'Warm-Up', tier: T.M },
+            { cat: 'Strength', tier: T.S },
+            { cat: 'Prehab', tier: T.H, isShoulder: true },
+            { cat: 'Core', tier: T.M, isCore: true },
+            { cat: 'Recovery', tier: T.M }
+        ],
+        TAPER: [
+            { cat: 'Mobility', tier: T.M },
+            { cat: 'Activation', tier: T.H },
+            { cat: 'Shoulders', tier: T.H, isShoulder: true },
+            { cat: 'Core', tier: T.M, isCore: true },
+            { cat: 'Flow', tier: T.M }
+        ],
+        OFF_SEASON: [
+            { cat: 'Warm-Up', tier: T.M },
+            { cat: 'Strength', tier: T.S },
+            { cat: 'Upper Body', tier: T.H },
+            { cat: 'Lower Body', tier: T.H, isLower: true },
+            { cat: 'Core', tier: T.M, isCore: true }
+        ]
+    };
+
+    const repSchemes = {
+        PRE_SEASON: { [T.S]: '4×5', [T.P]: '5×3', [T.H]: '3×8', [T.M]: '2×30s', [T.X]: '4×20s' },
+        IN_SEASON:  { [T.S]: '3×6', [T.P]: '3×5', [T.H]: '3×10', [T.M]: '2×30s', [T.X]: '2×30s' },
+        TAPER:      { [T.S]: '2×5', [T.P]: '2×3', [T.H]: '2×8', [T.M]: '2×45s', [T.X]: '1×30s' },
+        OFF_SEASON: { [T.S]: '4×8', [T.P]: '4×6', [T.H]: '3×12', [T.M]: '2×30s', [T.X]: '3×45s' }
+    };
+
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function findExercise(slot, used, equipFilter) {
+        let pool = demoExercises.filter(e => e.tier === slot.tier);
+        if (slot.isCore) pool = pool.filter(e => e.target.toLowerCase().includes('core') || e.target.toLowerCase().includes('abs'));
+        if (slot.isShoulder) { const s = pool.filter(e => e.target.toLowerCase().includes('shoulder') || e.target.toLowerCase().includes('rear')); if (s.length) pool = s; }
+        if (slot.isLower) { const l = pool.filter(e => e.target.toLowerCase().includes('leg') || e.target.toLowerCase().includes('glute') || e.target.toLowerCase().includes('hamstring')); if (l.length) pool = l; }
+        if (equipFilter !== 'All') {
+            const exact = pool.filter(e => e.eq.toLowerCase() === equipFilter.toLowerCase());
+            if (exact.length) pool = exact;
+            else { const bw = pool.filter(e => e.eq === 'Bodyweight'); if (bw.length) pool = bw; }
+        }
+        pool = pool.filter(e => !used.has(e.name));
+        if (!pool.length) pool = demoExercises.filter(e => e.tier === slot.tier && !used.has(e.name));
+        return pool.length ? pick(pool) : null;
+    }
+
+    // DOM
+    const demoBtn = document.getElementById('demoBtn');
+    const demoResults = document.getElementById('demoResults');
+    const demoCta = document.getElementById('demoCta');
+    const demoPhase = document.getElementById('demoPhase');
+    const demoEquip = document.getElementById('demoEquip');
+
+    demoBtn.addEventListener('click', () => {
+        const phase = demoPhase.value;
+        const equip = demoEquip.value;
+        const slots = phaseSlots[phase];
+        const reps = repSchemes[phase];
+        const used = new Set();
+        const workout = [];
+
+        for (const slot of slots) {
+            const ex = findExercise(slot, used, equip);
+            if (ex) {
+                used.add(ex.name);
+                workout.push({ ...ex, cat: slot.cat, reps: reps[ex.tier] || '3×10' });
+            }
+        }
+
+        demoResults.innerHTML = workout.map(ex => `
+            <div class="demo-card">
+                <div class="demo-card-slot">${ex.cat}</div>
+                <div class="demo-card-name">${ex.name}</div>
+                <div class="demo-card-meta">
+                    <span class="demo-tag reps">${ex.reps}</span>
+                    <span class="demo-tag equip">${ex.eq}</span>
+                    <span class="demo-tag target">${ex.target}</span>
+                </div>
+            </div>
+        `).join('');
+
+        demoCta.style.display = 'block';
+    });
+    </script>
 
 </body>
 
